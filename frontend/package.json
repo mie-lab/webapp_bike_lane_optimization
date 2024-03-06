@@ -1,14 +1,13 @@
 {
   "name": "webapp-ebike-city-zurich",
-  "private": true,
   "version": "0.0.0",
-  "type": "module",
+  "private": true,
   "scripts": {
-    "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview",
-    "lint": "eslint --ext .js,.vue src",
-    "prettier": "prettier . --write"
+    "lint": "vue-cli-service lint",
+    "dev": "vite",
+    "prettier": "prettier . --write",
+    "preview": "vite preview"
   },
   "dependencies": {
     "d3": "^7.8.5",
@@ -18,10 +17,14 @@
   "devDependencies": {
     "@mdi/font": "^7.3.67",
     "@vitejs/plugin-vue": "^4.3.4",
+    "@vue/cli-plugin-eslint": "~5.0.0",
     "eslint": "^8.55.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-vue": "^9.19.2",
     "prettier": "^3.1.1",
     "vite": "^4.5.2",
     "vite-plugin-svg-icons": "^2.0.1"
-  }
+  },
+  "type": "module"
 }
