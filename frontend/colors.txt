@@ -1,0 +1,4 @@
+Blue: #0d00a3
+Pink: #da5268
+Grey 1: #e0e0e0
+Grey 2: #b3b3b3
