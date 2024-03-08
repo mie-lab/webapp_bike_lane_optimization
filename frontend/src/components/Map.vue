@@ -45,7 +45,7 @@ export default {
 
     olms(map, styleUrl);*/
 
-    // Mapbox custom map
+    // Mapbox custom map (https://account.mapbox.com)
     mapboxgl.accessToken =
       "pk.eyJ1IjoibWlzY2hhYmNraGciLCJhIjoiY2p1Zm4xYjZhMGRrNjN5cGdxemxqaGdkNiJ9.jc7oGXFR8YcFJQTTEeXYEg";
 
