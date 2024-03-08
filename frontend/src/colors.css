@@ -1,12 +1,19 @@
-.text-pink{
-    color:#da5268;
+:root {
+  --pink-color: #da5268;
+  --blue-color: #0d00a3;
+  --lightgrey-bg: #e0e0e0;
+  --darkgrey-bg: #b3b3b3;
 }
-.text-blue{
-    color:#0d00a3;
+
+.text-pink {
+  color: #da5268;
 }
-.bg-lightgrey{
-    background-color:#e0e0e0 ;
+.text-blue {
+  color: #0d00a3;
 }
-.bg-darkgrey{
-    background-color:#b3b3b3 ;
+.bg-lightgrey {
+  background-color: #e0e0e0;
+}
+.bg-darkgrey {
+  background-color: #b3b3b3;
 }

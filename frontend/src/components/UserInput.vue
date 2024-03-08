@@ -69,4 +69,35 @@ export default {
   opacity: 1; /* Fully shown on mouse-over */
   cursor: pointer;
 }
+
+.slider {
+  width: 80%;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 8px;
+  background: var(--darkgrey-bg); /* Use light grey background color */
+  border-radius: 5px;
+  outline: none;
+}
+
+/* Style for slider thumb (handle) */
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  background: var(--pink-color); /* Use pink color for slider thumb */
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+/* Style for slider thumb (handle) when hovered */
+.slider:hover::-webkit-slider-thumb {
+  background: var(--pink-color); /* Change to blue color when hovered */
+}
+
+/* Style for slider thumb (handle) when active (clicked and dragged) */
+.slider:active::-webkit-slider-thumb {
+  background: var(--blue-color); /* Change to dark grey color when active */
+}
 </style>
