@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "d3": "^7.8.5",
+    "mapbox-gl": "^3.2.0",
     "ol": "^6.15.1",
     "ol-mapbox-style": "^12.2.1",
     "vue": "^3.3.4"
