@@ -1,8 +1,8 @@
 <template>
   <div>
-    <h1>User Input</h1>
+    <h1 class="text-pink">User Input</h1>
     <div class="user-input-container">
-      <h2>Car travel time weighting</h2>
+      <h2 class="text-blue">Car travel time weighting</h2>
       <div class="slide-container">
         <input
           class="slider"
@@ -15,7 +15,7 @@
       </div>
       <p>Chosen weighting: {{ timeWeighting }}</p>
       <br />
-      <h2>Allocation of lanes</h2>
+      <h2 class="text-blue">Allocation of lanes</h2>
       <div class="slide-container">
         <input
           class="slider"

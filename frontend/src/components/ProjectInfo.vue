@@ -1,7 +1,7 @@
 <template>
     <div>
-        <h1>Project Info</h1>
-        <p>Project info goes here</p>
+        <h1 class="text-pink">Project Info</h1>
+        <p class="text-blue">Project info goes here</p>
         <!-- Your HTML template code goes here -->
     </div>
 </template>

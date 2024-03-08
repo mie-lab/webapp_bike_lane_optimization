@@ -1,7 +1,7 @@
 <template>
     <div>
-        <h1>Bike Info</h1>
-        <p>bike info goes here</p>
+        <h1 class="text-pink">Bike Info</h1>
+        <p class="text-blue">bike info goes here</p>
     </div>
 </template>
 
