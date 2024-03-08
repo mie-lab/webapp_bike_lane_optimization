@@ -1,7 +1,11 @@
 <template>
   <div class="dashboard-container">
-    <div class="dashboard-navigation bg-darkgrey">
-      <button class="close-open" @click="toggleDashboard">close</button>
+    <div class="dashboard-navigation bg-darkgrey" @click="toggleDashboard">
+      <i
+        :class="
+          dashboardStatus ? 'fa-solid fa-angle-right' : 'fa-solid fa-angle-l'
+        "
+      ></i>
     </div>
     <div v-show="dashboardStatus" class="dashboard-content bg-lightgrey">
       <h1 class="text-pink">Dashboard</h1>
@@ -39,12 +43,14 @@ export default {
 }
 
 .dashboard-navigation {
+  background-color: rgba(149, 149, 149, 0.5);
   height: 100%; /* Take full height of the parent */
   width: 20px; /* Adjusted for visibility */
   display: flex; /* Enables Flexbox layout */
   justify-content: center; /* Centers items horizontally */
   align-items: center; /* Centers items vertically */
   flex-direction: column; /* Stacks items vertically */
+  cursor: pointer; /* Changes cursor to pointer on hover */
 }
 
 .dashboard-content {
