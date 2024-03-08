@@ -1,13 +1,11 @@
 <template>
   <div class="dashboard-container">
-    <div class="dashboard-navigation" @click="toggleDashboard">
-      <div class="angle-div">
-        <i class="fa-solid fa-angle-left"></i>
-      </div>
+    <div class="dashboard-navigation bg-darkgrey">
+      <button class="close-open" @click="toggleDashboard">close</button>
     </div>
-    <div v-show="dashboardStatus" class="dashboard-content">
-      <h1>Dashboard</h1>
-      <p>Dashboard content goes here</p>
+    <div v-show="dashboardStatus" class="dashboard-content bg-lightgrey">
+      <h1 class="text-pink">Dashboard</h1>
+      <p class="text-blue">Dashboard content goes here</p>
     </div>
   </div>
 </template>
@@ -41,9 +39,8 @@ export default {
 }
 
 .dashboard-navigation {
-  background-color: rgba(149, 149, 149, 0.5);
   height: 100%; /* Take full height of the parent */
-  width: 50px; /* Adjusted for visibility */
+  width: 20px; /* Adjusted for visibility */
   display: flex; /* Enables Flexbox layout */
   justify-content: center; /* Centers items horizontally */
   align-items: center; /* Centers items vertically */
@@ -51,7 +48,6 @@ export default {
 }
 
 .dashboard-content {
-  background-color: #cacaca;
   flex-grow: 1;
   width: 300px;
 }

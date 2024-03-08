@@ -1,33 +1,34 @@
 <template>
     <div>
         <div class="sidebar-container">
-            <div class="navigation-bar">
-                <button class="nav-button">
-                    <img class="arrow-img" src="../assets/parameter-2.png" alt="parameter" @click="activeTab ='UserInput'"/>
-                    
+            <div class="navigation-bar bg-darkgrey">
+
+                <button class="nav-button"  @click="activeTab ='UserInput'">
+                    <svg class="svg-icon" style="width: 2em; height: 2em;vertical-align: middle;fill: iconColors.UserInput;overflow: hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M146.285714 0m18.285715 0l36.571428 0q18.285714 0 18.285714 18.285714l0 596.662857q0 18.285714-18.285714 18.285715l-36.571428 0q-18.285714 0-18.285715-18.285715l0-596.662857q0-18.285714 18.285715-18.285714Z"  /><path d="M146.285714 776.228571m18.285715 0l36.571428 0q18.285714 0 18.285714 18.285715l0 211.2q0 18.285714-18.285714 18.285714l-36.571428 0q-18.285714 0-18.285715-18.285714l0-211.2q0-18.285714 18.285715-18.285715Z"  /><path d="M804.571429 0m18.285714 0l36.571428 0q18.285714 0 18.285715 18.285714l0 592.274286q0 18.285714-18.285715 18.285714l-36.571428 0q-18.285714 0-18.285714-18.285714l0-592.274286q0-18.285714 18.285714-18.285714Z"  /><path d="M804.571429 779.154286m18.285714 0l36.571428 0q18.285714 0 18.285715 18.285714l0 208.274286q0 18.285714-18.285715 18.285714l-36.571428 0q-18.285714 0-18.285714-18.285714l0-208.274286q0-18.285714 18.285714-18.285714Z"  /><path d="M475.428571 390.948571m18.285715 0l36.571428 0q18.285714 0 18.285715 18.285715l0 596.48q0 18.285714-18.285715 18.285714l-36.571428 0q-18.285714 0-18.285715-18.285714l0-596.48q0-18.285714 18.285715-18.285715Z"  /><path d="M182.857143 658.285714h3.108571a54.857143 54.857143 0 0 1-3.108571 109.714286h-2.925714a54.857143 54.857143 0 0 1 2.925714-109.714286m0-73.142857a128 128 0 0 0-6.582857 256H182.857143a128 128 0 0 0 6.582857-256zM512 251.428571h3.108571a54.857143 54.857143 0 0 1-2.742857 109.714286h-3.108571a54.857143 54.857143 0 0 1 2.742857-109.714286m0-73.142857a128 128 0 0 0-6.582857 256H512a128 128 0 0 0 6.582857-256zM841.142857 658.285714h3.108572a54.857143 54.857143 0 0 1-3.108572 109.714286h-3.108571a54.857143 54.857143 0 0 1 3.108571-109.714286m0-73.142857a128 128 0 0 0-6.582857 256H841.142857a128 128 0 0 0 6.582857-256z"  /><path d="M475.428571 0m18.285715 0l36.571428 0q18.285714 0 18.285715 18.285714l0 188.525715q0 18.285714-18.285715 18.285714l-36.571428 0q-18.285714 0-18.285715-18.285714l0-188.525715q0-18.285714 18.285715-18.285714Z"  /></svg>
                 </button>
-                <button class="nav-button">
-                    <img class="arrow-img" src="../assets/bike-14.png" alt="bike" @click="activeTab ='Bike'"/>
-                    
+
+                
+                <button class="nav-button" @click="activeTab='Bike'">
+                    <svg class="svg-icon" style="width: 2em; height: 2em;vertical-align: middle;horizontal-align:middle;fill:iconColors.Bike;overflow: hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M463.36 290.133333h-73.386667a34.133333 34.133333 0 0 1 0-68.266666h73.386667a34.133333 34.133333 0 0 1 0 68.266666z"  /><path d="M768 785.066667c-51.712 0-96.546133-18.619733-133.239467-55.3472C598.596267 693.5552 580.266667 649.0112 580.266667 597.333333c0-51.6096 18.295467-96.4096 54.408533-133.137066 17.578667-17.083733 37.034667-30.190933 58.129067-39.202134l-17.5104-52.053333-164.2496 164.983467 18.005333 54.016a16.981333 16.981333 0 0 1-2.338133 15.377066 17.117867 17.117867 0 0 1-13.858134 7.082667h-69.819733c-3.6864 44.526933-22.0672 83.3024-54.749867 115.421867C352.3584 766.395733 307.780267 785.066667 256 785.066667c-51.694933 0-96.529067-18.619733-133.239467-55.3472C86.596267 693.5552 68.266667 649.0112 68.266667 597.333333c0-51.6096 18.295467-96.4096 54.391466-133.137066C159.5904 427.895467 204.3904 409.6 256 409.6c46.2336 0 86.749867 14.660267 120.661333 43.656533l51.797334-52.411733-15.377067-45.448533-0.017067-0.085334-31.573333-93.866666a17.066667 17.066667 0 1 1 32.3584-10.888534L438.613333 324.266667H665.6v-68.266667a17.066667 17.066667 0 0 1 17.066667-17.066667h111.786666c16.5888 0 30.702933 5.700267 41.9328 16.964267A58.538667 58.538667 0 0 1 854.186667 298.666667c0 16.9472-6.144 31.419733-17.783467 41.949866C825.873067 352.256 811.383467 358.4 794.453333 358.4H768a17.066667 17.066667 0 1 1 0-34.133333h26.453333c7.5776 0 12.834133-2.133333 16.964267-6.912a16.622933 16.622933 0 0 1 1.7408-1.723734c4.7616-4.1472 6.894933-9.3696 6.894933-16.964266 0-7.406933-2.491733-13.329067-7.799466-18.653867-4.744533-4.744533-10.410667-6.946133-17.800534-6.946133H699.733333v65.467733l25.480534 75.776A190.3616 190.3616 0 0 1 768 409.6c51.677867 0 96.221867 18.3296 132.386133 54.493867C937.1136 500.804267 955.733333 545.6384 955.733333 597.333333c0 51.746133-18.653867 96.341333-55.4496 132.488534C864.341333 766.4128 819.746133 785.066667 768 785.066667z m-64.3584-327.560534a156.637867 156.637867 0 0 0-44.919467 30.907734C628.974933 518.656 614.4 554.376533 614.4 597.333333c0 42.9056 14.557867 78.301867 44.4928 108.253867C689.390933 736.1024 725.060267 750.933333 768 750.933333c42.8544 0 78.2336-14.7968 108.151467-45.243733C906.8032 675.566933 921.6 640.187733 921.6 597.333333c0-42.922667-14.830933-78.592-45.346133-109.1072C846.301867 458.2912 810.9056 443.733333 768 443.733333c-11.127467 0-21.8112 1.058133-31.914667 3.157334l48.110934 145.083733a17.066667 17.066667 0 1 1-32.4096 10.734933l-48.145067-145.2032zM256 443.733333c-42.9568 0-78.677333 14.592-109.2096 44.5952C116.992 518.656 102.4 554.376533 102.4 597.333333c0 42.9056 14.557867 78.301867 44.4928 108.253867C177.408 736.1024 213.0944 750.933333 256 750.933333c42.871467 0 78.2336-14.7968 108.1344-45.243733 26.487467-26.026667 41.147733-55.978667 44.629333-91.2896H256a17.032533 17.032533 0 0 1-12.014933-29.184l108.4416-107.690667C324.6592 454.638933 293.137067 443.733333 256 443.733333z m187.050667 136.533334h46.1312l-48.4352-143.291734-39.9872 40.465067c24.9344 29.508267 39.1168 63.965867 42.2912 102.826667z m-145.646934 0h111.377067c-2.884267-29.7472-13.5168-55.688533-32.256-78.574934L297.403733 580.266667z m166.7584-180.394667l34.6624 101.9392L641.604267 358.4H450.133333l14.0288 41.472z"  /></svg>
                 </button>
-                <button class="nav-button">
-                    <img class="arrow-img" src="../assets/info-61.png" alt="info" @click="activeTab ='Info'"/>
-                    
+
+                <button class="nav-button" @click="activeTab ='Info'">
+                    <svg class="svg-icon" style="width: 2em; height: 2em;vertical-align: middle;fill: iconColors.Info;overflow: hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M512 958.016C266.08 958.016 65.984 757.952 65.984 512 65.984 266.08 266.08 65.984 512 65.984c245.952 0 446.016 200.064 446.016 446.016 0 245.952-200.064 446.016-446.016 446.016z m0-828.032c-210.656 0-382.016 171.36-382.016 382.016 0 210.624 171.36 382.016 382.016 382.016 210.624 0 382.016-171.36 382.016-382.016S722.624 129.984 512 129.984zM464 304a1.5 1.5 0 1 0 96 0 1.5 1.5 0 1 0-96 0z m48 464c-17.664 0-32-14.304-32-32V448c0-17.664 14.336-32 32-32s32 14.336 32 32v288c0 17.696-14.336 32-32 32z" fill="#333333" /></svg>
                 </button>
 
                 <button class="nav-button" @click="activeTab='None'">
                     Close
-                    
                 </button>
+
             </div>
 
-            <div class="sidebar-content" v-show="activeTab !== 'None'">
+            <div class="sidebar-content bg-lightgrey" v-show="activeTab !== 'None'">
                 <component :is="currentComponent"></component>
             </div>
-
         </div>
     </div>
 </template>
+
 
 
 <script>
@@ -41,7 +42,12 @@ export default {
     data() {
         return {
             activeTab: "UserInput",
-            // Your data properties go here
+            iconColors: {
+                UserInput: '#da5268', 
+                Bike: '#da5268',
+                Info: '#da5268', 
+            },
+            
         };
     },
     computed: {
@@ -52,7 +58,15 @@ export default {
                 case 'Bike': return BikeInfo; // Map 'Bike' to the BikeInfo component
                 default: return null; // No component for 'None' or unmatched value
             }
-        }
+        },
+        changeColor(iconName) {
+            // Reset colors if needed or implement logic to keep the color changed
+            Object.keys(this.iconColors).forEach(key => {
+                this.iconColors[key] = '#da5268'; // Reset to default
+            });
+            this.iconColors[iconName] = '#0d00a3'; // Change the clicked icon's color
+            this.activeTab = iconName; // Update activeTab as before
+        },
     },
     methods: {
     },
@@ -62,28 +76,28 @@ export default {
 </script>
 
 <style scoped>
-/* Your component-specific styles go here */
+
 .sidebar-container {
-    display: flex; /* Enables Flexbox layout */
+    display: flex; 
     height: 100vh;
     position:absolute;
     left: 0;
 }
 
 .navigation-bar {
-    background-color: #959595;
+
     height: 100%;
-    width: 50px; /* Adjust based on your preference */
+    width: 50px; 
     display: flex;
-    flex-direction: column; /* Aligns children vertically */
-    align-items: center; /* Centers items horizontally */
-    justify-content: start; /* Aligns items to the start of the flex-direction */
-    padding-top: 10px; /* Adds some space at the top */
+    flex-direction: column; 
+    align-items: center;
+    justify-content: start; 
+    padding-top: 10px; 
 }
 
 .nav-button {
-    display: flex; /* Enables flexbox layout within the button */
-    align-items: center; /* Centers items vertically */
+    display: flex; 
+    align-items: center; 
     background-color: transparent;
     border: none;
     color: #333;
@@ -99,16 +113,16 @@ export default {
 }
 
 .nav-button img {
-    width: 24px; /* Adjust based on your SVG size preferences */
-    height: 24px; /* Adjust based on your SVG size preferences */
-    margin-right: 8px; /* Space between the SVG image and button text */
+    width: 24px; 
+    height: 24px;
+    margin-right: 8px; 
+    filter: invert(55%) sepia(95%) saturate(650%) hue-rotate(300deg) brightness(100%) contrast(101%);
 }
 
 
 
 .sidebar-content {
-    background-color: #cacaca;
-    width:300px; /* Adjust width to fill remaining space */
+    width:300px; 
     flex-grow: 1;
     
 }
