@@ -1,5 +1,6 @@
 <template>
   <div class="map-container" ref="mapContainer"></div>
+  <button class="enable" @click="enableDraw">Enable Draw</button>
 </template>
 
 <script>
@@ -13,9 +14,20 @@ import { XYZ } from "ol/source";
 import olms from "ol-mapbox-style";
 import "mapbox-gl/dist/mapbox-gl.css";
 import mapboxgl from "mapbox-gl";
+import DrawRectangle from "mapbox-gl-draw-rectangle-mode";
+import MapboxDraw from "@mapbox/mapbox-gl-draw";
+import mapboxGLDrawRectangleDrag from "mapboxgl-draw-rectangle-drag";
+import { enableDraw, onDrawCreate } from "../scripts/draw.js";
 
 export default {
   name: "Map",
+  data() {
+    return {
+      map: null,
+      draw: null,
+      rectangleCoordinates: null,
+    };
+  },
   mounted() {
     /*
     // basi OSM map
@@ -54,21 +66,65 @@ export default {
       dark: "mapbox://styles/mischabckhg/cltiglf9g00an01qwbinn48w5",
     };
 
-    this.$nextTick(() => {
-      var map = new mapboxgl.Map({
-        container: this.$refs.mapContainer,
-        style: mapboxmaps.dark,
-        center: [8.5417, 47.3769], // Zurich's coordinates
-        zoom: 12, // Adjust zoom level to your preference
-      });
+    /*
+    // working polygon draw
+    this.draw = new MapboxDraw({
+      displayControlsDefault: false,
+      // Select which mapbox-gl-draw control buttons to add to the map.
+      controls: {
+        polygon: true,
+        trash: true,
+      },
+      // Set mapbox-gl-draw to draw by default.
+      // The user does not have to click the polygon control button first.
+      defaultMode: "draw_polygon",
+    });*/
+
+    // MapboxGL Draw
+    this.draw = new MapboxDraw({
+      displayControlsDefault: false,
+      modes: {
+        ...MapboxDraw.modes,
+        draw_rectangle_drag: mapboxGLDrawRectangleDrag,
+      },
     });
+
+    this.map = new mapboxgl.Map({
+      container: this.$refs.mapContainer,
+      style: mapboxmaps.dark,
+      center: [8.5417, 47.3769], // Zurich's coordinates
+      zoom: 12, // Adjust zoom level to your preference
+    });
+
+    // Add draw control to map
+    this.map.addControl(this.draw, "top-left");
+
+    // Listen for draw.create event
+    this.map.on("draw.create", (event) => onDrawCreate(event, this));
+  },
+  methods: {
+    enableDraw() {
+      enableDraw(this.draw);
+    },
+  },
+  computed: {
+    mapDrawInstance() {
+      return this.draw;
+    },
   },
 };
 </script>
 
 <style scoped>
 .map-container {
+  position: absolute;
   width: 100%;
   height: 100%;
+}
+.enable {
+  position: absolute;
+  top: 10px;
+  left: 800px;
+  z-index: 10;
 }
 </style>

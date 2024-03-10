@@ -3,7 +3,7 @@
     <div class="dashboard-navigation bg-darkgrey" @click="toggleDashboard">
       <i
         :class="
-          dashboardStatus ? 'fa-solid fa-angle-right' : 'fa-solid fa-angle-l'
+          dashboardStatus ? 'fa-solid fa-angle-right' : 'fa-solid fa-angle-left'
         "
       ></i>
     </div>
