@@ -27,17 +27,28 @@
       </div>
       <p>Chosen Value in percent: {{ laneAllocation }} %</p>
       <br />
-      <button @click="runOptimization">Run</button>
+      <button @click="runOptimization">Run {{boundingBox}}</button>
     </div>
   </div>
 </template>
 
 <script>
-import { runOptimization } from "../api/api.js";
+import { runOptimization } from "../scripts/api.js";
+import { useInputStore } from "../stores/usertInputStore.js";
 
 export default {
+  setup () {
+      const { timeWeighting, laneAllocation, boundingBox } = useInputStore();
+      return {
+        timeWeighting,
+        laneAllocation,
+        boundingBox
+      };
+    },
+    
   name: "UserInput",
   data() {
+    
     return {
       timeWeighting: 0.7,
       laneAllocation: 10,

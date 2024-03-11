@@ -18,6 +18,7 @@ import DrawRectangle from "mapbox-gl-draw-rectangle-mode";
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import mapboxGLDrawRectangleDrag from "mapboxgl-draw-rectangle-drag";
 import { enableDraw, onDrawCreate } from "../scripts/draw.js";
+import { useInputStore } from "../stores/usertInputStore.js";
 
 export default {
   name: "Map",
@@ -100,11 +101,20 @@ export default {
     this.map.addControl(this.draw, "top-left");
 
     // Listen for draw.create event
-    this.map.on("draw.create", (event) => onDrawCreate(event, this));
+    this.map.on("draw.create", (event) => {
+      onDrawCreate(event, this);
+      this.saveBoundingBox(event.features[0].geometry.coordinates[0]);
+    });
+    
   },
   methods: {
     enableDraw() {
       enableDraw(this.draw);
+    },
+    saveBoundingBox(boundingBox) {
+      const InputStore = useInputStore();
+      InputStore.setBoundingBox(boundingBox); 
+      console.log(boundingBox);
     },
   },
   computed: {
