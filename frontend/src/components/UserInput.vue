@@ -41,18 +41,21 @@ import { useInputStore } from "../stores/usertInputStore.js";
 export default {
   setup () {
       const { timeWeighting, laneAllocation, boundingBox } = useInputStore();
-     
-
-      // Return the variables and methods needed in the template
       return {
-        laneAllocation,
         timeWeighting,
-       
+        laneAllocation,
+        boundingBox
       };
     },
     
   name: "UserInput",
-  
+  data() {
+    
+    return {
+      timeWeighting: 0.7,
+      laneAllocation: 10,
+    };
+  },
   methods: {
     async runOptimization() {
       try {
