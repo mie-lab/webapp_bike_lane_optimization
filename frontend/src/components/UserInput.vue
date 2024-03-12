@@ -11,6 +11,7 @@
           max="1"
           step="0.01"
           v-model="timeWeighting"
+          @input="setTimeWeighting($event.target.value)"
         />
       </div>
       <p>Chosen weighting: {{ timeWeighting }}</p>
@@ -23,11 +24,12 @@
           min="0"
           max="100"
           v-model="laneAllocation"
+          @input="setLaneAllocation($event.target.value)"
         />
       </div>
       <p>Chosen Value in percent: {{ laneAllocation }} %</p>
       <br />
-      <button @click="runOptimization">Run {{boundingBox}}</button>
+      <button @click="runOptimization">Run </button>
     </div>
   </div>
 </template>
@@ -39,21 +41,18 @@ import { useInputStore } from "../stores/usertInputStore.js";
 export default {
   setup () {
       const { timeWeighting, laneAllocation, boundingBox } = useInputStore();
+     
+
+      // Return the variables and methods needed in the template
       return {
-        timeWeighting,
         laneAllocation,
-        boundingBox
+        timeWeighting,
+       
       };
     },
     
   name: "UserInput",
-  data() {
-    
-    return {
-      timeWeighting: 0.7,
-      laneAllocation: 10,
-    };
-  },
+  
   methods: {
     async runOptimization() {
       try {

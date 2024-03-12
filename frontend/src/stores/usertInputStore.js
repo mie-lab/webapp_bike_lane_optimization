@@ -10,5 +10,11 @@ export const useInputStore = defineStore("variableStore", {
         setBoundingBox(boundingBox) {
           this.boundingBox = boundingBox;
         },
+        setLaneAllocation(laneAllocation) {
+          this.laneAllocation = laneAllocation;
+        },
+        setTimeWeighting(timeWeighting) {
+          this.timeWeighting = timeWeighting;
+        },
       },
 });
