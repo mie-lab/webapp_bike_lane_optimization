@@ -1,20 +1,21 @@
 import { defineStore } from "pinia";
 
-export const statusVariableStore = defineStore("statusVariables", {
+export const statusVariablesStore = defineStore("statusVariables", {
   state: () => ({
     activeTab: "UserInput",
     openTabs: true,
-    drawingEnabled: false,
+    drawingPolygonEnabled: false,
+    drawingRectangleEnabled: false,
   }),
   actions: {
     toggleTabsVisibility() {
       this.openTabs = !this.openTabs;
     },
-    setDraw(drawObject) {
-      this.draw = drawObject;
+    toggleDrawingPolygonEnabled() {
+      this.drawingPolygonEnabled = !this.drawingPolygonEnabled;
     },
-    toggleDrawingEnabled() {
-      this.drawingEnabled = !this.drawingEnabled;
+    toggleDrawingRectangleEnabled() {
+      this.drawingRectangleEnabled = !this.drawingRectangleEnabled;
     },
   },
 });

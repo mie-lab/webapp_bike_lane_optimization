@@ -29,7 +29,34 @@
       </div>
       <p>Chosen Value in percent: {{ laneAllocation }} %</p>
       <br />
-      <button class="enable" @click="enableDraw">Enable Draw</button>
+      <div class="button-container">
+        <button
+          :class="{
+            enable: statusStore.drawingPolygonEnabled,
+            disable: !statusStore.drawingPolygonEnabled,
+          }"
+          @click="enableDrawPolygon"
+          class="draw-button"
+        >
+          <i class="fa-solid fa-draw-polygon"></i>
+        </button>
+        <button
+          :class="{
+            enable: statusStore.drawingRectangleEnabled,
+            disable: !statusStore.drawingRectangleEnabled,
+          }"
+          @click="enableDrawRectangle"
+          class="draw-button"
+        >
+          <img
+            class="draw-square-icon"
+            src="../assets/draw-square.svg"
+            alt="Draw Polygon"
+          />
+        </button>
+      </div>
+      <br />
+      <br />
       <button @click="runConstructGraph">Run</button>
     </div>
   </div>
@@ -38,14 +65,15 @@
 <script>
 import { runConstructGraph, runOptimization } from "../scripts/api.js";
 import { userInputStore } from "../stores/userInputStore.js";
-import { enableDraw, onDrawCreate } from "../scripts/draw.js";
+import { enableDrawRectangle, onDrawCreate } from "../scripts/draw.js";
 import { statusVariablesStore } from "../stores/statusVariablesStore.js";
-
-const statusStore = statusVariablesStore();
-console.log("test");
 
 export default {
   name: "UserInput",
+  setup() {
+    const statusStore = statusVariablesStore();
+    return { statusStore };
+  },
   data() {
     return {
       timeWeighting: 0.7,
@@ -53,11 +81,28 @@ export default {
     };
   },
   methods: {
-    async enableDraw() {
+    async enableDrawRectangle() {
       const mapStore = userInputStore();
-      const drawObject = mapStore.draw;
+      const statusStore = statusVariablesStore();
+      const drawObject = mapStore.drawRectangleObject;
       if (drawObject) {
-        enableDraw(drawObject);
+        drawObject.deleteAll();
+        console.log("drawRect:", statusStore.drawingRectangleEnabled);
+        enableDrawRectangle(drawObject);
+        statusStore.toggleDrawingRectangleEnabled();
+        console.log("drawRect:", statusStore.drawingRectangleEnabled);
+      } else {
+        console.error("Draw object not found in Pinia store.");
+      }
+    },
+    async enableDrawPolygon() {
+      const mapStore = userInputStore();
+      const statusStore = statusVariablesStore();
+      const drawObject = mapStore.drawPolygonObject;
+      if (drawObject) {
+        drawObject.deleteAll();
+        //this.enableDrawPolygon(drawObject);
+        statusStore.toggleDrawingPolygonEnabled();
       } else {
         console.error("Draw object not found in Pinia store.");
       }
@@ -125,5 +170,34 @@ export default {
 
 .slider:active::-webkit-slider-thumb {
   background: var(--blue-color);
+}
+
+.disable {
+  background-color: var(--pink-color);
+}
+
+.enable {
+  background-color: var(--pink-bright);
+}
+
+.button-container {
+  display: flex;
+  margin-left: 30px;
+}
+
+.draw-button {
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
+  padding: 0%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.draw-square-icon {
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
 }
 </style>

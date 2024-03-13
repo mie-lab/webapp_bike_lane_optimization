@@ -1,5 +1,5 @@
 // MapMethods.js
-export function enableDraw(draw) {
+export function enableDrawRectangle(draw) {
   // Change mode to draw_rectangle_drag
   draw.changeMode("draw_rectangle_drag");
 }

@@ -6,14 +6,18 @@ export const userInputStore = defineStore("variableStore", {
     timeWeighting: 0.5,
     laneAllocation: 0.5,
     boundingBox: null,
-    draw: null,
+    drawRectangleObject: null,
+    drawPolygonObject: null,
   }),
   actions: {
     setBoundingBox(boundingBox) {
       this.boundingBox = boundingBox;
     },
-    setDraw(drawObject) {
-      this.draw = drawObject;
+    setDrawRectangle(drawObject) {
+      this.drawRectangleObject = drawObject;
+    },
+    setDrawPolygon(drawObject) {
+      this.drawPolygonObject = drawObject;
     },
   },
 });

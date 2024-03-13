@@ -8,7 +8,7 @@ import Map from "ol/Map";
 import View from "ol/View";
 import TileLayer from "ol/layer/Tile";
 import OSM from "ol/source/OSM";
-import { fromLonLat } from "ol/proj"; // Import the fromLonLat function
+import { fromLonLat } from "ol/proj";
 import { XYZ } from "ol/source";
 import olms from "ol-mapbox-style";
 import "mapbox-gl/dist/mapbox-gl.css";
@@ -16,8 +16,9 @@ import mapboxgl from "mapbox-gl";
 import DrawRectangle from "mapbox-gl-draw-rectangle-mode";
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import mapboxGLDrawRectangleDrag from "mapboxgl-draw-rectangle-drag";
-import { enableDraw, onDrawCreate } from "../scripts/draw.js";
+import { enableDrawRectangle, onDrawCreate } from "../scripts/draw.js";
 import { userInputStore } from "../stores/userInputStore.js";
+import { statusVariablesStore } from "../stores/statusVariablesStore.js";
 
 export default {
   name: "Map",
@@ -29,33 +30,8 @@ export default {
     };
   },
   mounted() {
-    /*
-    // basi OSM map
-    new Map({
-      target: this.$refs.mapContainer,
-      layers: [
-        new TileLayer({
-          source: new OSM(),
-        }),
-      ],
-      view: new View({
-        center: fromLonLat([8.5417, 47.3769]), // Convert Zurich's coordinates to EPSG:3857
-        zoom: 12, // Adjust zoom level to your preference
-      }),
-    });
-
-    // Maptile or Geoapify custom maps
-    const styleUrl = `https://maps.geoapify.com/v1/styles/positron/style.json?apiKey=3b026fe01d6e4a9ca7a656c8c184708b`; //`https://api.maptiler.com/maps/b6c446fe-e69d-4ba7-aaa2-ff9d9a986edd/style.json?key=0dJLMrCXtW7PeQcQWx8a`;
-
-    const map = new Map({
-      target: this.$refs.mapContainer,
-      view: new View({
-        center: fromLonLat([8.5417, 47.3769]), // Convert Zurich's coordinates to EPSG:3857
-        zoom: 12, // Adjust zoom level to your preference
-      }),
-    });
-
-    olms(map, styleUrl);*/
+    const inputStore = userInputStore();
+    const statusStore = statusVariablesStore();
 
     // Mapbox custom map (https://account.mapbox.com)
     mapboxgl.accessToken =
@@ -66,31 +42,21 @@ export default {
       dark: "mapbox://styles/mischabckhg/cltiglf9g00an01qwbinn48w5",
     };
 
-    /*
-    // working polygon draw
-    this.draw = new MapboxDraw({
+    // Draw Polygon Object
+    this.drawPolygonObject = new MapboxDraw({
       displayControlsDefault: false,
-      // Select which mapbox-gl-draw control buttons to add to the map.
-      controls: {
-        polygon: true,
-        trash: true,
-      },
-      // Set mapbox-gl-draw to draw by default.
-      // The user does not have to click the polygon control button first.
-      defaultMode: "draw_polygon",
-    });*/
+    });
+    inputStore.setDrawPolygon(this.drawPolygonObject);
 
-    // MapboxGL Draw
-    this.draw = new MapboxDraw({
+    // Draw Rectanlge Object
+    this.drawRectangleObject = new MapboxDraw({
       displayControlsDefault: false,
       modes: {
         ...MapboxDraw.modes,
         draw_rectangle_drag: mapboxGLDrawRectangleDrag,
       },
     });
-
-    const inputStore = userInputStore();
-    inputStore.setDraw(this.draw);
+    inputStore.setDrawRectangle(this.drawRectangleObject);
 
     this.map = new mapboxgl.Map({
       container: this.$refs.mapContainer,
@@ -99,28 +65,28 @@ export default {
       zoom: 12, // Adjust zoom level to your preference
     });
 
-    // Add draw control to map
-    this.map.addControl(this.draw, "top-left");
+    this.map.addControl(this.drawRectangleObject, "top-left");
+    //this.map.addControl(this.drawPolygonObject, "top-left");
 
-    // Listen for draw.create event
     this.map.on("draw.create", (event) => {
       onDrawCreate(event, this);
+      statusStore.toggleDrawingRectangleEnabled();
       this.saveBoundingBox(event.features[0].geometry.coordinates[0]);
     });
   },
   methods: {
-    enableDraw() {
-      enableDraw(this.draw);
+    enableDrawRectangle() {
+      enableDrawRectangle(this.drawRectangleObject);
     },
     saveBoundingBox(boundingBox) {
-      const InputStore = userInputStore();
-      InputStore.setBoundingBox(boundingBox);
+      const inputStore = userInputStore();
+      inputStore.setBoundingBox(boundingBox);
       console.log(boundingBox);
     },
   },
   computed: {
     mapDrawInstance() {
-      return this.draw;
+      return this.drawRectangleObject;
     },
   },
 };
