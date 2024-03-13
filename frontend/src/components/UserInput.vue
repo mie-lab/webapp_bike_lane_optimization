@@ -27,6 +27,7 @@
       </div>
       <p>Chosen Value in percent: {{ laneAllocation }} %</p>
       <br />
+      <button class="enable" @click="enableDraw">Enable Draw</button>
       <button @click="runOptimization">Run {{ boundingBox }}</button>
     </div>
   </div>
@@ -34,15 +35,18 @@
 
 <script>
 import { runOptimization } from "../scripts/api.js";
-import { useInputStore } from "../stores/usertInputStore.js";
+import { userInputStore } from "../stores/userInputStore.js";
+
+import { enableDraw, onDrawCreate } from "../scripts/draw.js";
 
 export default {
   setup() {
-    const { timeWeighting, laneAllocation, boundingBox } = useInputStore();
+    const { timeWeighting, laneAllocation, boundingBox } = userInputStore();
     return {
       timeWeighting,
       laneAllocation,
       boundingBox,
+      drawingEnabled: false,
     };
   },
 
@@ -54,6 +58,17 @@ export default {
     };
   },
   methods: {
+    async enableDraw() {
+      const mapStore = userInputStore(); // Access the Pinia store
+      const drawObject = mapStore.draw; // Get the draw object from the Pinia store
+      // Check if draw object exists
+      if (drawObject) {
+        // Call enableDraw function with draw object
+        enableDraw(drawObject);
+      } else {
+        console.error("Draw object not found in Pinia store.");
+      }
+    },
     async runOptimization() {
       try {
         const response = await runOptimization(
