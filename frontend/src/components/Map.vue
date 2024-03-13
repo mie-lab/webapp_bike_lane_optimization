@@ -1,6 +1,5 @@
 <template>
   <div class="map-container" ref="mapContainer"></div>
-  <button class="enable" @click="enableDraw">Enable Draw</button>
 </template>
 
 <script>
@@ -18,7 +17,7 @@ import DrawRectangle from "mapbox-gl-draw-rectangle-mode";
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import mapboxGLDrawRectangleDrag from "mapboxgl-draw-rectangle-drag";
 import { enableDraw, onDrawCreate } from "../scripts/draw.js";
-import { useInputStore } from "../stores/usertInputStore.js";
+import { userInputStore } from "../stores/userInputStore.js";
 
 export default {
   name: "Map",
@@ -90,6 +89,9 @@ export default {
       },
     });
 
+    const inputStore = userInputStore();
+    inputStore.setDraw(this.draw);
+
     this.map = new mapboxgl.Map({
       container: this.$refs.mapContainer,
       style: mapboxmaps.dark,
@@ -105,15 +107,14 @@ export default {
       onDrawCreate(event, this);
       this.saveBoundingBox(event.features[0].geometry.coordinates[0]);
     });
-    
   },
   methods: {
     enableDraw() {
       enableDraw(this.draw);
     },
     saveBoundingBox(boundingBox) {
-      const InputStore = useInputStore();
-      InputStore.setBoundingBox(boundingBox); 
+      const InputStore = userInputStore();
+      InputStore.setBoundingBox(boundingBox);
       console.log(boundingBox);
     },
   },
@@ -138,3 +139,4 @@ export default {
   z-index: 10;
 }
 </style>
+../stores/userInputStore.js
