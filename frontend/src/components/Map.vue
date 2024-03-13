@@ -139,4 +139,3 @@ export default {
   z-index: 10;
 }
 </style>
-../stores/userInputStore.js

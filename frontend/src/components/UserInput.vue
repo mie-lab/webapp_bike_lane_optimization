@@ -11,7 +11,7 @@
           max="1"
           step="0.01"
           v-model="timeWeighting"
-          @click= setTimeWeight(timeWeighting);
+          @click="setTimeWeight(timeWeighting)"
         />
       </div>
       <p>Chosen weighting: {{ timeWeighting }}</p>
@@ -24,29 +24,29 @@
           min="0"
           max="100"
           v-model="laneAllocation"
-          @click= setLaneAllocation(laneAllocation);
+          @click="setLaneAllocation(laneAllocation)"
         />
       </div>
       <p>Chosen Value in percent: {{ laneAllocation }} %</p>
       <br />
       <button class="enable" @click="enableDraw">Enable Draw</button>
-      <button @click="runConstructGraph">Run </button>
+      <button @click="runConstructGraph">Run</button>
     </div>
   </div>
 </template>
 
-
 <script>
-import { runConstructGraph,runOptimization } from "../scripts/api.js";
+import { runConstructGraph, runOptimization } from "../scripts/api.js";
 import { userInputStore } from "../stores/userInputStore.js";
-
 import { enableDraw, onDrawCreate } from "../scripts/draw.js";
+import { statusVariablesStore } from "../stores/statusVariablesStore.js";
+
+const statusStore = statusVariablesStore();
+console.log("test");
 
 export default {
-    
   name: "UserInput",
   data() {
-    
     return {
       timeWeighting: 0.7,
       laneAllocation: 10,
@@ -54,21 +54,19 @@ export default {
   },
   methods: {
     async enableDraw() {
-      const mapStore = userInputStore(); // Access the Pinia store
-      const drawObject = mapStore.draw; // Get the draw object from the Pinia store
-      // Check if draw object exists
+      const mapStore = userInputStore();
+      const drawObject = mapStore.draw;
       if (drawObject) {
-        // Call enableDraw function with draw object
         enableDraw(drawObject);
       } else {
         console.error("Draw object not found in Pinia store.");
       }
     },
-    setTimeWeight(value){
+    setTimeWeight(value) {
       const InputStore = useInputStore();
       InputStore.setTimeWeighting(value);
     },
-    setLaneAllocation(value){
+    setLaneAllocation(value) {
       const InputStore = useInputStore();
       InputStore.setLaneAllocation(value);
     },
@@ -78,17 +76,13 @@ export default {
         [2678000.0, 1247000.0],
         [2678000.0, 1250000.0],
         [2681000.0, 1250000.0],
-        [2681000.0, 1247000.0]
+        [2681000.0, 1247000.0],
       ]; // Example coordinates
 
       try {
-        const response = await runConstructGraph(
-          coordinates, "test_elina"
-        );
+        const response = await runConstructGraph(coordinates, "test_elina");
         console.log("Response:", response);
-        // Handle response data as needed
       } catch (error) {
-        // Handle error
         console.error("Error:", error.message);
       }
     },
@@ -101,7 +95,7 @@ export default {
   width: 80%;
 }
 .slider:hover {
-  opacity: 1; 
+  opacity: 1;
   cursor: pointer;
 }
 
@@ -110,29 +104,26 @@ export default {
   -webkit-appearance: none;
   appearance: none;
   height: 8px;
-  background: var(--darkgrey-bg); 
+  background: var(--darkgrey-bg);
   border-radius: 5px;
   outline: none;
 }
-
 
 .slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
   width: 18px;
   height: 18px;
-  background: var(--pink-color); 
+  background: var(--pink-color);
   border-radius: 50%;
   cursor: pointer;
 }
 
-
 .slider:hover::-webkit-slider-thumb {
-  background: var(--pink-color); 
+  background: var(--pink-color);
 }
 
-
 .slider:active::-webkit-slider-thumb {
-  background: var(--blue-color); 
+  background: var(--blue-color);
 }
 </style>
