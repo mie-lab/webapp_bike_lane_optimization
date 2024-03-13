@@ -11,7 +11,7 @@
           max="1"
           step="0.01"
           v-model="timeWeighting"
-          @input="setTimeWeighting($event.target.value)"
+          @click= setTimeWeight(timeWeighting);
         />
       </div>
       <p>Chosen weighting: {{ timeWeighting }}</p>
@@ -24,29 +24,22 @@
           min="0"
           max="100"
           v-model="laneAllocation"
-          @input="setLaneAllocation($event.target.value)"
+          @click= setLaneAllocation(laneAllocation);
         />
       </div>
       <p>Chosen Value in percent: {{ laneAllocation }} %</p>
       <br />
-      <button @click="runOptimization">Run </button>
+      <button @click="runConstructGraph">Run </button>
     </div>
   </div>
 </template>
 
+
 <script>
-import { runOptimization } from "../scripts/api.js";
+import { runConstructGraph,runOptimization } from "../scripts/api.js";
 import { useInputStore } from "../stores/usertInputStore.js";
 
 export default {
-  setup () {
-      const { timeWeighting, laneAllocation, boundingBox } = useInputStore();
-      return {
-        timeWeighting,
-        laneAllocation,
-        boundingBox
-      };
-    },
     
   name: "UserInput",
   data() {
@@ -57,11 +50,26 @@ export default {
     };
   },
   methods: {
-    async runOptimization() {
+    setTimeWeight(value){
+      const InputStore = useInputStore();
+      InputStore.setTimeWeighting(value);
+    },
+    setLaneAllocation(value){
+      const InputStore = useInputStore();
+      InputStore.setLaneAllocation(value);
+    },
+
+    async runConstructGraph() {
+      const coordinates = [
+        [2678000.0, 1247000.0],
+        [2678000.0, 1250000.0],
+        [2681000.0, 1250000.0],
+        [2681000.0, 1247000.0]
+      ]; // Example coordinates
+
       try {
-        const response = await runOptimization(
-          this.timeWeighting,
-          this.laneAllocation
+        const response = await runConstructGraph(
+          coordinates, "test_elina"
         );
         console.log("Response:", response);
         // Handle response data as needed
@@ -79,7 +87,7 @@ export default {
   width: 80%;
 }
 .slider:hover {
-  opacity: 1; /* Fully shown on mouse-over */
+  opacity: 1; 
   cursor: pointer;
 }
 
@@ -88,29 +96,29 @@ export default {
   -webkit-appearance: none;
   appearance: none;
   height: 8px;
-  background: var(--darkgrey-bg); /* Use light grey background color */
+  background: var(--darkgrey-bg); 
   border-radius: 5px;
   outline: none;
 }
 
-/* Style for slider thumb (handle) */
+
 .slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
   width: 18px;
   height: 18px;
-  background: var(--pink-color); /* Use pink color for slider thumb */
+  background: var(--pink-color); 
   border-radius: 50%;
   cursor: pointer;
 }
 
-/* Style for slider thumb (handle) when hovered */
+
 .slider:hover::-webkit-slider-thumb {
-  background: var(--pink-color); /* Change to blue color when hovered */
+  background: var(--pink-color); 
 }
 
-/* Style for slider thumb (handle) when active (clicked and dragged) */
+
 .slider:active::-webkit-slider-thumb {
-  background: var(--blue-color); /* Change to dark grey color when active */
+  background: var(--blue-color); 
 }
 </style>
