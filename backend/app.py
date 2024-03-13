@@ -27,7 +27,7 @@ from ebike_city_tools.app_utils import (
 )
 
 # Set to True if you want to use the Database - otherwise, everything will just be saved in a dictionary
-DATABASE = False
+DATABASE = True
 if DATABASE:
     DATABASE_CONNECTOR = get_database_connector()
 
