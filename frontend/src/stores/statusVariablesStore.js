@@ -17,5 +17,11 @@ export const statusVariablesStore = defineStore("statusVariables", {
     toggleDrawingRectangleEnabled() {
       this.drawingRectangleEnabled = !this.drawingRectangleEnabled;
     },
+    setDrawingPolygon(enabled) {
+      this.drawingPolygonEnabled = enabled;
+    },
+    setDrawingRectangle(enabled) {
+      this.drawingRectangleEnabled = enabled;
+    },
   },
 });

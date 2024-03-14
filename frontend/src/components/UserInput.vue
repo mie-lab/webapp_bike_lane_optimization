@@ -29,6 +29,7 @@
       </div>
       <p>Chosen Value in percent: {{ laneAllocation }} %</p>
       <br />
+      <h2 class="text-blue">Area of interest</h2>
       <div class="button-container">
         <button
           :class="{
@@ -68,16 +69,11 @@ import { userInputStore } from "../stores/userInputStore.js";
 import {
   enableDrawRectangle,
   enableDrawPolygon,
-  onDrawCreate,
+  drawRectangle,
+  drawPolygon,
 } from "../scripts/draw.js";
 import { statusVariablesStore } from "../stores/statusVariablesStore.js";
 import { mapStore } from "../stores/mapStore.js";
-import {
-  addDrawToMap,
-  removeDrawFromMap,
-  createDrawRectangleObject,
-  createDrawPolygonObject,
-} from "../scripts/draw.js";
 
 export default {
   name: "UserInput",
@@ -93,66 +89,10 @@ export default {
   },
   methods: {
     enableDrawRectangle() {
-      const userInput = userInputStore();
-      const statusStore = statusVariablesStore();
-      const mapStoreInstance = mapStore();
-
-      // Draw-Rectanlge Object
-      if (!mapStoreInstance.drawRectangleObject) {
-        this.drawRectangleObject = createDrawRectangleObject();
-        mapStoreInstance.setDrawRectangle(this.drawRectangleObject);
-      }
-
-      const drawObjectRectangle = mapStoreInstance.drawRectangleObject;
-      const drawObjectPolygon = mapStoreInstance.drawPolygonObject;
-      const mapObject = mapStoreInstance.map;
-
-      if (drawObjectRectangle) {
-        if (drawObjectPolygon) {
-          removeDrawFromMap(mapObject, drawObjectPolygon);
-          mapStoreInstance.setDrawPolygon(null);
-        }
-        if (mapStoreInstance.lastControl !== "draw-rectangle") {
-          addDrawToMap(mapObject, drawObjectRectangle);
-        }
-        drawObjectRectangle.deleteAll();
-        enableDrawRectangle(drawObjectRectangle);
-        statusStore.toggleDrawingRectangleEnabled();
-        mapStoreInstance.setLastControl("draw-rectangle");
-      } else {
-        console.error("Draw object not found in Pinia store.");
-      }
+      drawRectangle();
     },
     enableDrawPolygon() {
-      const userInput = userInputStore();
-      const statusStore = statusVariablesStore();
-      const mapStoreInstance = mapStore();
-
-      // Draw-Polygon Object
-      if (!mapStoreInstance.drawPolygonObject) {
-        this.drawPolygonObject = createDrawPolygonObject();
-        mapStoreInstance.setDrawPolygon(this.drawPolygonObject);
-      }
-
-      const drawObjectPolygon = mapStoreInstance.drawPolygonObject;
-      const drawObjectRectangle = mapStoreInstance.drawRectangleObject;
-      const mapObject = mapStoreInstance.map;
-
-      if (drawObjectPolygon) {
-        if (drawObjectRectangle) {
-          removeDrawFromMap(mapObject, drawObjectRectangle);
-          mapStoreInstance.setDrawRectangle(null);
-        }
-        if (mapStoreInstance.lastControl !== "draw-polygon") {
-          addDrawToMap(mapObject, drawObjectPolygon);
-        }
-        drawObjectPolygon.deleteAll();
-        enableDrawPolygon(drawObjectPolygon);
-        statusStore.toggleDrawingPolygonEnabled();
-        mapStoreInstance.setLastControl("draw-polygon");
-      } else {
-        console.error("Draw object not found in Pinia store.");
-      }
+      drawPolygon();
     },
     setTimeWeight(value) {
       const InputStore = useInputStore();

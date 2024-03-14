@@ -68,11 +68,6 @@ export default {
       }
 
       this.saveBoundingBox(event.features[0].geometry.coordinates[0]);
-
-      var style = this.map.getStyle();
-      var sources = style.sources;
-      var layers = style.layers;
-      console.log("layer 3:", layers);
     });
   },
   methods: {
