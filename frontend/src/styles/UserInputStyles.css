@@ -70,3 +70,18 @@
   height: 15px;
   cursor: pointer;
 }
+
+.project-name-input {
+  margin-left: 0px;
+}
+
+.project-name-input {
+  width: 77%;
+  display: flex;
+  margin-left: 30px;
+  border: 1.5px solid var(--darkgrey-bg);
+  border-radius: 8px;
+  background-color: var(--lightgrey-bg);
+  color: var(--darkgrey-2-bg);
+  padding: 5px;
+}

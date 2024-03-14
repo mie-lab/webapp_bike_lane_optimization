@@ -7,7 +7,7 @@
           :style="{ color: getIconColor('UserInput') }"
           @click="toggleActiveTab('UserInput')"
         >
-          <i class="fa-regular fa-sliders" style="font-size: 24px"></i>
+          <i class="fa-solid fa-sliders" style="font-size: 24px"></i>
         </button>
 
         <button
@@ -15,7 +15,7 @@
           :style="{ color: getIconColor('Bike') }"
           @click="toggleActiveTab('Bike')"
         >
-          <i class="fa-regular fa-bicycle" style="font-size: 24px"></i>
+          <i class="fa-solid fa-bicycle" style="font-size: 24px"></i>
         </button>
 
         <button
@@ -45,10 +45,10 @@ export default {
     return {
       activeTab: "UserInput",
       iconColors: {
-        UserInput: "#000", // Default color for UserInput
-        Bike: "#000", // Default color for Bike
-        Info: "#000", // Default color for Info
-        None: "#000", // Default color for Close button
+        UserInput: "#000",
+        Bike: "#000",
+        Info: "#000",
+        None: "#000",
       },
     };
   },
@@ -71,7 +71,9 @@ export default {
       this.activeTab = this.activeTab === tab ? "None" : tab;
     },
     getIconColor(icon) {
-      return this.activeTab === icon ? "#da5268" : this.iconColors[icon];
+      return this.activeTab === icon
+        ? "var(--pink-color)"
+        : this.iconColors[icon];
     },
   },
   mounted() {},

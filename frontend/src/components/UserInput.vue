@@ -57,8 +57,21 @@
         </button>
       </div>
       <br />
+      <h2 class="text-blue">Project name</h2>
+      <input
+        class="project-name-input"
+        type="text"
+        v-model="projectName"
+        @input="setProjectName($event.target.value)"
+      />
+
       <br />
-      <button @click="runConstructGraph">Run</button>
+      <button
+        :class="{ 'disabled-button': isButtonDisabled || !projectName }"
+        @click="runConstructGraph"
+      >
+        Run
+      </button>
     </div>
   </div>
 </template>
@@ -79,28 +92,39 @@ export default {
   name: "UserInput",
   setup() {
     const statusStore = statusVariablesStore();
-    return { statusStore };
+    const inputStore = userInputStore();
+
+    return {
+      statusStore,
+      projectName: inputStore.projectName,
+      setProjectName: inputStore.setProjectName,
+    };
   },
   data() {
+    const inputStore = userInputStore();
     return {
       timeWeighting: 0.7,
       laneAllocation: 10,
+      isButtonDisabled: true,
+      projectName: inputStore.projectName,
     };
   },
   methods: {
     enableDrawRectangle() {
       drawRectangle();
+      this.isButtonDisabled = false;
     },
     enableDrawPolygon() {
       drawPolygon();
+      this.isButtonDisabled = false;
     },
     setTimeWeight(value) {
-      const InputStore = useInputStore();
-      InputStore.setTimeWeighting(value);
+      const inputStore = useInputStore();
+      inputStore.setTimeWeighting(value);
     },
     setLaneAllocation(value) {
-      const InputStore = useInputStore();
-      InputStore.setLaneAllocation(value);
+      const inputStore = useInputStore();
+      inputStore.setLaneAllocation(value);
     },
 
     async runConstructGraph() {
@@ -124,4 +148,10 @@ export default {
 
 <style scoped>
 @import "../styles/UserInputStyles.css";
+
+.disabled-button {
+  background-color: #ccc; /* Grey color */
+  color: #666; /* Darker grey color for text */
+  cursor: not-allowed; /* Change cursor to not-allowed */
+}
 </style>
