@@ -1,7 +1,18 @@
-// MapMethods.js
+import MapboxDraw from "@mapbox/mapbox-gl-draw";
+import mapboxGLDrawRectangleDrag from "mapboxgl-draw-rectangle-drag";
+import mapboxgl from "mapbox-gl";
+
+import { mapStore } from "../stores/mapStore.js";
+
+mapboxgl.accessToken =
+  "pk.eyJ1IjoibWlzY2hhYmNraGciLCJhIjoiY2p1Zm4xYjZhMGRrNjN5cGdxemxqaGdkNiJ9.jc7oGXFR8YcFJQTTEeXYEg";
+
 export function enableDrawRectangle(draw) {
-  // Change mode to draw_rectangle_drag
   draw.changeMode("draw_rectangle_drag");
+}
+
+export function enableDrawPolygon(draw) {
+  draw.changeMode("draw_polygon");
 }
 
 export function onDrawCreate(event, vm) {
@@ -19,4 +30,34 @@ export function onDrawCreate(event, vm) {
     vm.rectangleCoordinates = rectangleCoordinates;
   }
   console.log("Rectangle coordinates", vm.rectangleCoordinates);
+}
+
+export function createDrawPolygonObject() {
+  return new MapboxDraw({
+    displayControlsDefault: false,
+    controls: {
+      polygon: true,
+    },
+  });
+}
+
+export function createDrawRectangleObject() {
+  return new MapboxDraw({
+    displayControlsDefault: false,
+    modes: {
+      ...MapboxDraw.modes,
+      draw_rectangle_drag: mapboxGLDrawRectangleDrag,
+    },
+  });
+}
+
+export function addDrawToMap(map, draw) {
+  const mapStoreInstance = mapStore();
+  const mapControl = map.addControl(draw, "top-left");
+  mapStoreInstance.setMapControl(mapControl);
+}
+
+export function removeDrawFromMap(map, draw) {
+  draw.deleteAll();
+  map.removeControl(draw);
 }

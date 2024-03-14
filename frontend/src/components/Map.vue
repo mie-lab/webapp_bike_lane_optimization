@@ -16,9 +16,15 @@ import mapboxgl from "mapbox-gl";
 import DrawRectangle from "mapbox-gl-draw-rectangle-mode";
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import mapboxGLDrawRectangleDrag from "mapboxgl-draw-rectangle-drag";
-import { enableDrawRectangle, onDrawCreate } from "../scripts/draw.js";
+import {
+  enableDrawRectangle,
+  onDrawCreate,
+  createDrawRectangleObject,
+  createDrawPolygonObject,
+} from "../scripts/draw.js";
 import { userInputStore } from "../stores/userInputStore.js";
 import { statusVariablesStore } from "../stores/statusVariablesStore.js";
+import { mapStore } from "../stores/mapStore.js";
 
 export default {
   name: "Map",
@@ -42,22 +48,6 @@ export default {
       dark: "mapbox://styles/mischabckhg/cltiglf9g00an01qwbinn48w5",
     };
 
-    // Draw Polygon Object
-    this.drawPolygonObject = new MapboxDraw({
-      displayControlsDefault: false,
-    });
-    inputStore.setDrawPolygon(this.drawPolygonObject);
-
-    // Draw Rectanlge Object
-    this.drawRectangleObject = new MapboxDraw({
-      displayControlsDefault: false,
-      modes: {
-        ...MapboxDraw.modes,
-        draw_rectangle_drag: mapboxGLDrawRectangleDrag,
-      },
-    });
-    inputStore.setDrawRectangle(this.drawRectangleObject);
-
     this.map = new mapboxgl.Map({
       container: this.$refs.mapContainer,
       style: mapboxmaps.dark,
@@ -65,13 +55,24 @@ export default {
       zoom: 12, // Adjust zoom level to your preference
     });
 
-    this.map.addControl(this.drawRectangleObject, "top-left");
-    //this.map.addControl(this.drawPolygonObject, "top-left");
+    const mapStoreInstance = mapStore();
+    mapStoreInstance.setMap(this.map);
 
     this.map.on("draw.create", (event) => {
       onDrawCreate(event, this);
-      statusStore.toggleDrawingRectangleEnabled();
+      if (statusStore.drawingRectangleEnabled) {
+        statusStore.toggleDrawingRectangleEnabled();
+      }
+      if (statusStore.drawingPolygonEnabled) {
+        statusStore.toggleDrawingPolygonEnabled();
+      }
+
       this.saveBoundingBox(event.features[0].geometry.coordinates[0]);
+
+      var style = this.map.getStyle();
+      var sources = style.sources;
+      var layers = style.layers;
+      console.log("layer 3:", layers);
     });
   },
   methods: {

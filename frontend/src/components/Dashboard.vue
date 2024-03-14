@@ -19,7 +19,7 @@ export default {
   name: "Dashboard",
   data() {
     return {
-      dashboardStatus: true,
+      dashboardStatus: false,
     };
   },
   methods: {
