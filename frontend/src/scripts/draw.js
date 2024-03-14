@@ -31,7 +31,6 @@ export function onDrawCreate(event, vm) {
     ];
     vm.rectangleCoordinates = rectangleCoordinates;
   }
-  console.log("Rectangle coordinates", vm.rectangleCoordinates);
 }
 
 export function createDrawPolygonObject() {

@@ -4,24 +4,10 @@
 
 <script>
 import "ol/ol.css";
-import Map from "ol/Map";
-import View from "ol/View";
-import TileLayer from "ol/layer/Tile";
-import OSM from "ol/source/OSM";
-import { fromLonLat } from "ol/proj";
-import { XYZ } from "ol/source";
-import olms from "ol-mapbox-style";
+
 import "mapbox-gl/dist/mapbox-gl.css";
 import mapboxgl from "mapbox-gl";
-import DrawRectangle from "mapbox-gl-draw-rectangle-mode";
-import MapboxDraw from "@mapbox/mapbox-gl-draw";
-import mapboxGLDrawRectangleDrag from "mapboxgl-draw-rectangle-drag";
-import {
-  enableDrawRectangle,
-  onDrawCreate,
-  createDrawRectangleObject,
-  createDrawPolygonObject,
-} from "../scripts/draw.js";
+import { enableDrawRectangle, onDrawCreate } from "../scripts/draw.js";
 import { userInputStore } from "../stores/userInputStore.js";
 import { statusVariablesStore } from "../stores/statusVariablesStore.js";
 import { mapStore } from "../stores/mapStore.js";
@@ -67,6 +53,10 @@ export default {
         statusStore.toggleDrawingPolygonEnabled();
       }
 
+      this.saveBoundingBox(event.features[0].geometry.coordinates[0]);
+    });
+    this.map.on("draw.update", (event) => {
+      onDrawCreate(event, this);
       this.saveBoundingBox(event.features[0].geometry.coordinates[0]);
     });
   },
