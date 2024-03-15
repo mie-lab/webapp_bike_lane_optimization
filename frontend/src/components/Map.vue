@@ -4,13 +4,23 @@
 
 <script>
 import "ol/ol.css";
-
+import proj4 from 'proj4';
 import "mapbox-gl/dist/mapbox-gl.css";
 import mapboxgl from "mapbox-gl";
 import { enableDrawRectangle, onDrawCreate } from "../scripts/draw.js";
 import { userInputStore } from "../stores/userInputStore.js";
 import { statusVariablesStore } from "../stores/statusVariablesStore.js";
 import { mapStore } from "../stores/mapStore.js";
+
+// Define projection definitions
+proj4.defs("EPSG:4326", "+proj=longlat +datum=WGS84 +no_defs"); // WGS84
+proj4.defs("EPSG:2056", "+proj=somerc +lat_0=46.95240555555556 +lon_0=7.439583333333333 +k_0=1 +x_0=2600000 +y_0=1200000 +ellps=bessel +towgs84=674.374,15.056,405.346,0,0,0,0 +units=m +no_defs");
+
+
+// Function to convert coordinates from EPSG:4326 to EPSG:2056
+function convertCoordinatesTo2056(coordinates) {
+    return coordinates.map(coord => proj4("EPSG:4326", "EPSG:2056", coord));
+}
 
 export default {
   name: "Map",
@@ -64,10 +74,13 @@ export default {
     enableDrawRectangle() {
       enableDrawRectangle(this.drawRectangleObject);
     },
+
     saveBoundingBox(boundingBox) {
+      const coordinatesWithoutLast = boundingBox.slice(0, -1); // don't save the last point
+      const convertedCoordinates = convertCoordinatesTo2056(coordinatesWithoutLast); // transform coordinates to EPSG:2056
+
       const inputStore = userInputStore();
-      inputStore.setBoundingBox(boundingBox);
-      console.log(boundingBox);
+      inputStore.setBoundingBox(convertedCoordinates);
     },
   },
   computed: {

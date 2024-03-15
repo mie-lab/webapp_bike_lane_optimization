@@ -90,15 +90,18 @@ import {
 } from "../scripts/draw.js";
 import { statusVariablesStore } from "../stores/statusVariablesStore.js";
 import { mapStore } from "../stores/mapStore.js";
+import { useResultsStore } from '../stores/algorithmResultsStore.js';
 
 export default {
   name: "UserInput",
   setup() {
     const statusStore = statusVariablesStore();
     const inputStore = userInputStore();
+    const resultsStore = useResultsStore();
 
     return {
       statusStore,
+      resultsStore,
       projectName: inputStore.projectName,
       setProjectName: inputStore.setProjectName,
     };
@@ -126,25 +129,28 @@ export default {
       this.isButtonDisabled = false;
     },
     setTimeWeight(value) {
-      const inputStore = useInputStore();
+      const inputStore = userInputStore();
       inputStore.setTimeWeighting(value);
     },
     setLaneAllocation(value) {
-      const inputStore = useInputStore();
+      const inputStore = userInputStore();
       inputStore.setLaneAllocation(value);
     },
 
     async runConstructGraph() {
-      const coordinates = [
-        [2678000.0, 1247000.0],
-        [2678000.0, 1250000.0],
-        [2681000.0, 1250000.0],
-        [2681000.0, 1247000.0],
-      ]; // Example coordinates
+      const inputStore = userInputStore();
+      const resultsStore = useResultsStore();
 
       try {
-        const response = await runConstructGraph(coordinates, "test_elina");
-        console.log("Response:", response);
+        const response = await runConstructGraph(inputStore.boundingBox, inputStore.projectName);
+        const result = {
+          expected_runtime: response.expected_runtime,
+          project_name: inputStore.projectName,
+          variables: response.variables,
+        };
+        //resultsStore.addResult(result);
+        console.log("Response:", response.expected_runtime);
+        //console.log("Result:", resultsStore.results);
       } catch (error) {
         console.error("Error:", error.message);
       }

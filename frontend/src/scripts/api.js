@@ -1,17 +1,16 @@
 // api.js
 export async function runConstructGraph(boundingBox,projectName) {
-  //console.log("timeWeighting", timeWeighting);
-  console.log("boundingBox", boundingBox);
+
   const url = `http://localhost:8989/construct_graph?project_name=${projectName}`; 
   const params = {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: boundingBox,
+    body:JSON.stringify(boundingBox),
 
   };
-  console.log("laneAllocation", params);
+  console.log("params", params);
 
 
   try {
