@@ -20,6 +20,14 @@
 
         <button
           class="nav-button"
+          :style="{ color: getIconColor('Help') }"
+          @click="toggleActiveTab('Help')"
+        >
+          <i class="fa-solid fa-circle-question" style="font-size: 24px"></i>
+        </button>
+
+        <button
+          class="nav-button"
           :style="{ color: getIconColor('Info') }"
           @click="toggleActiveTab('Info')"
         >
@@ -38,7 +46,7 @@
 import ProjectInfo from "./ProjectInfo.vue";
 import UserInput from "./UserInput.vue";
 import BikeInfo from "./BikeInfo.vue";
-import { statusVariablesStore } from '../stores/statusVariablesStore.js';
+import { statusVariablesStore } from "../stores/statusVariablesStore.js";
 
 export default {
   name: "SideBar",
@@ -47,6 +55,7 @@ export default {
       iconColors: {
         UserInput: "#000",
         Bike: "#000",
+        Help: "#000",
         Info: "#000",
         None: "#000",
       },
@@ -71,14 +80,13 @@ export default {
     },
   },
   methods: {
-    
     toggleActiveTab(tab) {
       // Toggle the active tab using the Pinia store
       const statusStore = statusVariablesStore();
       const storedTab = this.activeTab;
-      if (tab == storedTab){
+      if (tab == storedTab) {
         statusStore.setActiveTab("None");
-      }else{
+      } else {
         statusStore.setActiveTab(tab);
       }
     },

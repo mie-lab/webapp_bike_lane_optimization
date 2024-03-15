@@ -75,17 +75,7 @@
       >
         Run
       </button>
-      <pulse-loader
-        :loading="loading"
-        :color="color"
-        :size="size"
-      ></pulse-loader>
       <ring-loader :loading="loading" :color="color" :size="size"></ring-loader>
-      <bounce-loader
-        :loading="loading"
-        :color="color"
-        :size="size"
-      ></bounce-loader>
     </div>
   </div>
 </template>
@@ -102,7 +92,6 @@ import {
 import { statusVariablesStore } from "../stores/statusVariablesStore.js";
 import { mapStore } from "../stores/mapStore.js";
 import { useResultsStore } from "../stores/algorithmResultsStore.js";
-
 import PulseLoader from "vue-spinner/src/PulseLoader.vue";
 import RingLoader from "vue-spinner/src/RingLoader.vue";
 import BounceLoader from "vue-spinner/src/BounceLoader.vue";
@@ -128,19 +117,17 @@ export default {
       laneAllocation: 10,
       isButtonDisabled: true,
       projectName: inputStore.projectName,
-      color: "#3d91e5",
-      size: "35px",
+      color: "#da5268",
+      size: "25px",
     };
   },
   components: {
-    PulseLoader,
     RingLoader,
-    BounceLoader,
   },
   methods: {
     toggleTabsVisibility() {
       const statusStore = statusVariablesStore();
-      statusStore.toggleTabsVisibility(); // Toggle the visibility of the tabs using the Pinia store
+      statusStore.toggleTabsVisibility();
     },
     enableDrawRectangle() {
       drawRectangle();
@@ -214,16 +201,14 @@ export default {
           optimizeFrequency,
           carWeight,
           bikeSafetyPenatly
-
         );
 
         const result = {
           bikeEdges: response.bike_edges,
           variables: response.run_name,
         };
-        resultsStore.addRunResult(response.project_name,result);
+        resultsStore.addRunResult(response.project_name, result);
         console.log("Response:", result);
-        
       } catch (error) {
         console.error("Error:", error.message);
       }
