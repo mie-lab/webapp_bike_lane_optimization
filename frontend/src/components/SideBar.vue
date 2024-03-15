@@ -38,12 +38,12 @@
 import ProjectInfo from "./ProjectInfo.vue";
 import UserInput from "./UserInput.vue";
 import BikeInfo from "./BikeInfo.vue";
+import { statusVariablesStore } from '../stores/statusVariablesStore.js';
 
 export default {
   name: "SideBar",
   data() {
     return {
-      activeTab: "UserInput",
       iconColors: {
         UserInput: "#000",
         Bike: "#000",
@@ -53,6 +53,10 @@ export default {
     };
   },
   computed: {
+    activeTab() {
+      const statusStore = statusVariablesStore();
+      return statusStore.activeTab;
+    },
     currentComponent() {
       switch (this.activeTab) {
         case "Info":
@@ -67,8 +71,16 @@ export default {
     },
   },
   methods: {
+    
     toggleActiveTab(tab) {
-      this.activeTab = this.activeTab === tab ? "None" : tab;
+      // Toggle the active tab using the Pinia store
+      const statusStore = statusVariablesStore();
+      const storedTab = this.activeTab;
+      if (tab == storedTab){
+        statusStore.setActiveTab("None");
+      }else{
+        statusStore.setActiveTab(tab);
+      }
     },
     getIconColor(icon) {
       return this.activeTab === icon

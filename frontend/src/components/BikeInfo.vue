@@ -1,27 +1,28 @@
 <template>
     <div>
+        <button class="close-btn" @click="toggleTabsVisibility">
+             <i class="fa-solid fa-times" style="font-size: 24px"></i>
+        </button>
         <h1 class="text-pink">Bike Info</h1>
         <p class="text-blue">bike info goes here</p>
     </div>
 </template>
 
 <script>
+import { statusVariablesStore } from '../stores/statusVariablesStore.js';
 export default {
     name: 'BikeInfo',
-    data() {
-        return {
-            // Your data properties go here
-        };
-    },
+    
     methods: {
-        // Your methods go here
+        toggleTabsVisibility() {
+            const statusStore = statusVariablesStore();
+            statusStore.toggleTabsVisibility(); // Toggle the visibility of the tabs using the Pinia store
+        }
     },
-    mounted() {
-        // Code to run when the component is mounted goes here
-    },
+    
 };
 </script>
 
 <style scoped>
-/* Your component-specific styles go here */
+@import "../styles/SideBarStyle.css";
 </style>

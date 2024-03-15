@@ -1,5 +1,8 @@
 <template>
   <div>
+    <button class="close-btn" @click="toggleTabsVisibility">
+             <i class="fa-solid fa-times" style="font-size: 24px"></i>
+    </button>
     <h1 class="text-pink">User Input</h1>
     <div class="user-input-container">
       <h2 class="text-blue">Car travel time weighting</h2>
@@ -110,6 +113,10 @@ export default {
     };
   },
   methods: {
+    toggleTabsVisibility() {
+        const statusStore = statusVariablesStore();
+        statusStore.toggleTabsVisibility(); // Toggle the visibility of the tabs using the Pinia store
+    },
     enableDrawRectangle() {
       drawRectangle();
       this.isButtonDisabled = false;
@@ -148,6 +155,7 @@ export default {
 
 <style scoped>
 @import "../styles/UserInputStyles.css";
+@import "../styles/SideBarStyle.css";
 
 .disabled-button {
   background-color: #ccc; /* Grey color */

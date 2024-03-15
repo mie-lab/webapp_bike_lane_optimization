@@ -44,3 +44,19 @@
   width: 300px;
   flex-grow: 1;
 }
+
+.close-btn {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: transparent;
+  border: none;
+  color: #333;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.close-btn:hover {
+  color: #da5268;
+}
