@@ -75,6 +75,17 @@
       >
         Run
       </button>
+      <pulse-loader
+        :loading="loading"
+        :color="color"
+        :size="size"
+      ></pulse-loader>
+      <ring-loader :loading="loading" :color="color" :size="size"></ring-loader>
+      <bounce-loader
+        :loading="loading"
+        :color="color"
+        :size="size"
+      ></bounce-loader>
     </div>
   </div>
 </template>
@@ -91,6 +102,11 @@ import {
 import { statusVariablesStore } from "../stores/statusVariablesStore.js";
 import { mapStore } from "../stores/mapStore.js";
 import { useResultsStore } from "../stores/algorithmResultsStore.js";
+
+import PulseLoader from "vue-spinner/src/PulseLoader.vue";
+import RingLoader from "vue-spinner/src/RingLoader.vue";
+import BounceLoader from "vue-spinner/src/BounceLoader.vue";
+import { CSpinner } from "@coreui/vue";
 
 export default {
   name: "UserInput",
@@ -113,7 +129,14 @@ export default {
       laneAllocation: 10,
       isButtonDisabled: true,
       projectName: inputStore.projectName,
+      color: "#3d91e5",
+      size: "35px",
     };
+  },
+  components: {
+    PulseLoader,
+    RingLoader,
+    BounceLoader,
   },
   methods: {
     toggleTabsVisibility() {
