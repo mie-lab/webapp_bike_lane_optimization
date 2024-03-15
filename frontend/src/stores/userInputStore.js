@@ -6,14 +6,14 @@ export const userInputStore = defineStore("variableStore", {
     timeWeighting: 0.5,
     laneAllocation: 0.5,
     boundingBox: null,
-    draw: null,
+    projectName: "",
   }),
   actions: {
     setBoundingBox(boundingBox) {
       this.boundingBox = boundingBox;
     },
-    setDraw(drawObject) {
-      this.draw = drawObject;
+    setProjectName(projectName) {
+      this.projectName = projectName;
     },
     setLaneAllocation(laneAllocation) {
       this.laneAllocation = laneAllocation;

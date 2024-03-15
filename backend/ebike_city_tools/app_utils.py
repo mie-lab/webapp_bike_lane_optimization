@@ -9,7 +9,7 @@ import psycopg2
 
 # configuratio & pathas
 PATH_DATA = "../data/zurich_data/"
-DB_LOGIN_PATH = "../../dblogin_mielab.json"
+DB_LOGIN_PATH = "backend/dblogin_mielab.json"
 SCHEMA = "webapp"
 CRS = 2056
 

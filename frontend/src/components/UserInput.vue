@@ -11,7 +11,7 @@
           max="1"
           step="0.01"
           v-model="timeWeighting"
-          @click= setTimeWeight(timeWeighting);
+          @click="setTimeWeight(timeWeighting)"
         />
       </div>
       <p>Chosen weighting: {{ timeWeighting }}</p>
@@ -24,53 +24,107 @@
           min="0"
           max="100"
           v-model="laneAllocation"
-          @click= setLaneAllocation(laneAllocation);
+          @click="setLaneAllocation(laneAllocation)"
         />
       </div>
       <p>Chosen Value in percent: {{ laneAllocation }} %</p>
       <br />
-      <button class="enable" @click="enableDraw">Enable Draw</button>
-      <button @click="runConstructGraph">Run </button>
+      <h2 class="text-blue">Area of interest</h2>
+      <div class="button-container">
+        <button
+          :class="{
+            enablepolygon: statusStore.drawingPolygonEnabled,
+            disablepolygon: !statusStore.drawingPolygonEnabled,
+          }"
+          @click="enableDrawPolygon"
+          class="draw-button"
+        >
+          <i class="fa-solid fa-draw-polygon"></i>
+        </button>
+        <button
+          :class="{
+            enablerectangle: statusStore.drawingRectangleEnabled,
+            disablerectangle: !statusStore.drawingRectangleEnabled,
+          }"
+          @click="enableDrawRectangle"
+          class="draw-button"
+        >
+          <img
+            class="draw-square-icon"
+            src="../assets/draw-square.svg"
+            alt="Draw Polygon"
+          />
+        </button>
+      </div>
+      <br />
+      <h2 class="text-blue">Project name</h2>
+      <input
+        class="project-name-input"
+        type="text"
+        v-model="projectName"
+        @input="setProjectName($event.target.value)"
+      />
+
+      <br />
+      <button
+        :class="{ 'disabled-button': isButtonDisabled || !projectName }"
+        @click="runConstructGraph"
+      >
+        Run
+      </button>
     </div>
   </div>
 </template>
 
-
 <script>
-import { runConstructGraph,runOptimization } from "../scripts/api.js";
+import { runConstructGraph, runOptimization } from "../scripts/api.js";
 import { userInputStore } from "../stores/userInputStore.js";
-
-import { enableDraw, onDrawCreate } from "../scripts/draw.js";
+import {
+  enableDrawRectangle,
+  enableDrawPolygon,
+  drawRectangle,
+  drawPolygon,
+} from "../scripts/draw.js";
+import { statusVariablesStore } from "../stores/statusVariablesStore.js";
+import { mapStore } from "../stores/mapStore.js";
 
 export default {
-    
   name: "UserInput",
+  setup() {
+    const statusStore = statusVariablesStore();
+    const inputStore = userInputStore();
+
+    return {
+      statusStore,
+      projectName: inputStore.projectName,
+      setProjectName: inputStore.setProjectName,
+    };
+  },
   data() {
-    
+    const inputStore = userInputStore();
     return {
       timeWeighting: 0.7,
       laneAllocation: 10,
+      isButtonDisabled: true,
+      projectName: inputStore.projectName,
     };
   },
   methods: {
-    async enableDraw() {
-      const mapStore = userInputStore(); // Access the Pinia store
-      const drawObject = mapStore.draw; // Get the draw object from the Pinia store
-      // Check if draw object exists
-      if (drawObject) {
-        // Call enableDraw function with draw object
-        enableDraw(drawObject);
-      } else {
-        console.error("Draw object not found in Pinia store.");
-      }
+    enableDrawRectangle() {
+      drawRectangle();
+      this.isButtonDisabled = false;
     },
-    setTimeWeight(value){
-      const InputStore = useInputStore();
-      InputStore.setTimeWeighting(value);
+    enableDrawPolygon() {
+      drawPolygon();
+      this.isButtonDisabled = false;
     },
-    setLaneAllocation(value){
-      const InputStore = useInputStore();
-      InputStore.setLaneAllocation(value);
+    setTimeWeight(value) {
+      const inputStore = useInputStore();
+      inputStore.setTimeWeighting(value);
+    },
+    setLaneAllocation(value) {
+      const inputStore = useInputStore();
+      inputStore.setLaneAllocation(value);
     },
 
     async runConstructGraph() {
@@ -78,17 +132,13 @@ export default {
         [2678000.0, 1247000.0],
         [2678000.0, 1250000.0],
         [2681000.0, 1250000.0],
-        [2681000.0, 1247000.0]
+        [2681000.0, 1247000.0],
       ]; // Example coordinates
 
       try {
-        const response = await runConstructGraph(
-          coordinates, "test_elina"
-        );
+        const response = await runConstructGraph(coordinates, "test_elina");
         console.log("Response:", response);
-        // Handle response data as needed
       } catch (error) {
-        // Handle error
         console.error("Error:", error.message);
       }
     },
@@ -97,42 +147,11 @@ export default {
 </script>
 
 <style scoped>
-.slider {
-  width: 80%;
-}
-.slider:hover {
-  opacity: 1; 
-  cursor: pointer;
-}
+@import "../styles/UserInputStyles.css";
 
-.slider {
-  width: 80%;
-  -webkit-appearance: none;
-  appearance: none;
-  height: 8px;
-  background: var(--darkgrey-bg); 
-  border-radius: 5px;
-  outline: none;
-}
-
-
-.slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 18px;
-  height: 18px;
-  background: var(--pink-color); 
-  border-radius: 50%;
-  cursor: pointer;
-}
-
-
-.slider:hover::-webkit-slider-thumb {
-  background: var(--pink-color); 
-}
-
-
-.slider:active::-webkit-slider-thumb {
-  background: var(--blue-color); 
+.disabled-button {
+  background-color: #ccc; /* Grey color */
+  color: #666; /* Darker grey color for text */
+  cursor: not-allowed; /* Change cursor to not-allowed */
 }
 </style>
