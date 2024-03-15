@@ -65,6 +65,8 @@ export default {
           return UserInput;
         case "Bike":
           return BikeInfo;
+        case "Help":
+          return Help;
         default:
           return null;
       }
