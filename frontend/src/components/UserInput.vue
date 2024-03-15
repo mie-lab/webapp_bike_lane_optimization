@@ -106,7 +106,6 @@ import { useResultsStore } from "../stores/algorithmResultsStore.js";
 import PulseLoader from "vue-spinner/src/PulseLoader.vue";
 import RingLoader from "vue-spinner/src/RingLoader.vue";
 import BounceLoader from "vue-spinner/src/BounceLoader.vue";
-import { CSpinner } from "@coreui/vue";
 
 export default {
   name: "UserInput",
