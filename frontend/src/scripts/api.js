@@ -27,8 +27,8 @@ export async function runConstructGraph(boundingBox,projectName) {
 
 
 
-export async function runOptimization(projectName, runName, algorithm, bikeRatio, optimizeFrequency, carWeight, bikeSafetyPenalty) {
-  
+export async function runOptimization(projectName, algorithm, bikeRatio, optimizeFrequency, carWeight, bikeSafetyPenalty) {
+  const runName =  bikeRatio + "_"+ carWeight;
   const url = "http://localhost:8989/optimize"; 
   const params = {
     method: "POST",
