@@ -20,3 +20,18 @@ export const useResultsStore = defineStore({
 
   
 });
+
+/* 
+Structure of results:
+
+[
+  {
+  expected_runtime:
+  project_name: 
+  internal_project_name: bounding box als string
+  variable: ??
+  runs: {} 
+  }
+]
+
+*/

@@ -147,14 +147,42 @@ export default {
           expected_runtime: response.expected_runtime,
           project_name: inputStore.projectName,
           variables: response.variables,
+          internal_project_name: JSON.stringify(inputStore.boundingBox),
         };
-        //resultsStore.addResult(result);
-        console.log("Response:", response.expected_runtime);
-        //console.log("Result:", resultsStore.results);
+        resultsStore.addResult(result);
+        console.log("Response:", result);
+
+        // Display a confirmation dialog
+        const continueOperation = window.confirm(`Running the algorithm will take ${result.expected_runtime.toFixed(2)} seconds. Do you want to continue?`);
+
+        // Check user's response
+        if (continueOperation) {
+          // User clicked OK, continue with the operation
+          console.log("Operation continued!");
+          runOptimization();
+        } else {
+          // User clicked Cancel or closed the dialog, abort the operation
+          console.log("Operation aborted!");
+        }
+
+      
       } catch (error) {
         console.error("Error:", error.message);
       }
     },
+
+    async runOptimization(){
+      const inputStore = userInputStore();
+      const resultsStore = useResultsStore();
+
+      try {
+        const response = await runOptimization(project_name = inputStore.projectName,algorithm="betweenness_biketime",bikeRatio = inputStore.laneAllocation,carWeught = inputStore.timeWeighting);
+        console.log("Response:", response);
+
+      } catch (error) {
+        console.error("Error:", error.message);
+      }
+    }
   },
 };
 </script>
