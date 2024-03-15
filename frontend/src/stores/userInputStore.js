@@ -15,5 +15,11 @@ export const userInputStore = defineStore("variableStore", {
     setDraw(drawObject) {
       this.draw = drawObject;
     },
+    setLaneAllocation(laneAllocation) {
+      this.laneAllocation = laneAllocation;
+    },
+    setTimeWeighting(timeWeighting) {
+      this.timeWeighting = timeWeighting;
+    },
   },
 });
