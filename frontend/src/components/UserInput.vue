@@ -151,6 +151,7 @@ export default {
           project_name: inputStore.projectName,
           variables: response.variables,
           internal_project_name: JSON.stringify(inputStore.boundingBox),
+          runs: [],
         };
         resultsStore.addResult(result);
         console.log("Response:", result);
@@ -191,8 +192,16 @@ export default {
           optimizeFrequency,
           carWeight,
           bikeSafetyPenatly
+
         );
-        console.log("Response:", response);
+
+        const result = {
+          bikeEdges: response.bike_edges,
+          variables: response.run_name,
+        };
+        resultsStore.addRunResult(response.project_name,result);
+        console.log("Response:", result);
+        
       } catch (error) {
         console.error("Error:", error.message);
       }
