@@ -15,6 +15,15 @@ export const useResultsStore = defineStore({
     addResult(result) {
       this.results.push(result);
     },
+
+    addRunResult(projectName,runResult){
+      const index = this.results.findIndex(result => result.project_name === projectName);
+      
+      if (index !== -1) {
+        // Push the new element into the runs array of that object
+        this.results[index].runs.push(runResult);
+      }
+    }
   },
 
 
@@ -30,7 +39,7 @@ Structure of results:
   project_name: 
   internal_project_name: bounding box als string
   variable: ??
-  runs: {} 
+  runs: []
   }
 ]
 
