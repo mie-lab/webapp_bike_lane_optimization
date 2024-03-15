@@ -1,18 +1,15 @@
 // api.js
-export async function runConstructGraph(boundingBox,projectName) {
-
-  const url = `http://localhost:8989/construct_graph?project_name=${projectName}`; 
+export async function runConstructGraph(boundingBox, projectName) {
+  const url = `http://localhost:8989/construct_graph?project_name=${projectName}`;
   const params = {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body:JSON.stringify(boundingBox),
-
+    body: JSON.stringify(boundingBox),
   };
   console.log("params", params);
 
-
   try {
     const response = await fetch(url, params);
     if (!response.ok) {
@@ -25,26 +22,35 @@ export async function runConstructGraph(boundingBox,projectName) {
   }
 }
 
+export async function runOptimization(
+  projectName,
+  algorithm,
+  bikeRatio,
+  optimizeFrequency,
+  carWeight,
+  bikeSafetyPenalty
+) {
+  const runName = "_" + bikeRatio + "_" + carWeight;
+  const runNameFix = runName.replace(/\./g, "_");
 
+  const url =
+    `http://localhost:8989/optimize?` +
+    `project_name=${encodeURIComponent(projectName)}` +
+    `&run_name=${encodeURIComponent(runNameFix)}` +
+    `&algorithm=${encodeURIComponent(algorithm)}` +
+    `&bike_ratio=${encodeURIComponent(bikeRatio)}` +
+    `&optimize_frequency=${encodeURIComponent(optimizeFrequency)}` +
+    `&car_weight=${encodeURIComponent(carWeight)}` +
+    `&bike_safety_penalty=${encodeURIComponent(bikeSafetyPenalty)}`;
 
-export async function runOptimization(projectName, algorithm, bikeRatio, optimizeFrequency, carWeight, bikeSafetyPenalty) {
-  const runName =  bikeRatio + "_"+ carWeight;
-  const url = "http://localhost:8989/optimize"; 
   const params = {
-    method: "POST",
+    method: "GET",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      project_name: projectName,
-      run_name: runName,
-      algorithm: algorithm,
-      bike_ratio: bikeRatio,
-      optimize_frequency: optimizeFrequency,
-      car_weight: carWeight,
-      bike_safety_penalty: bikeSafetyPenalty
-    }),
   };
+
+  console.log("params optimize", params);
 
   try {
     const response = await fetch(url, params);
@@ -57,4 +63,3 @@ export async function runOptimization(projectName, algorithm, bikeRatio, optimiz
     throw error; // Rethrow error for handling in the Vue component
   }
 }
-

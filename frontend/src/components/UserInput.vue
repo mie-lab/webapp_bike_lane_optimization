@@ -1,7 +1,7 @@
 <template>
   <div>
     <button class="close-btn" @click="toggleTabsVisibility">
-             <i class="fa-solid fa-times" style="font-size: 24px"></i>
+      <i class="fa-solid fa-times" style="font-size: 24px"></i>
     </button>
     <h1 class="text-pink">User Input</h1>
     <div class="user-input-container">
@@ -90,7 +90,7 @@ import {
 } from "../scripts/draw.js";
 import { statusVariablesStore } from "../stores/statusVariablesStore.js";
 import { mapStore } from "../stores/mapStore.js";
-import { useResultsStore } from '../stores/algorithmResultsStore.js';
+import { useResultsStore } from "../stores/algorithmResultsStore.js";
 
 export default {
   name: "UserInput",
@@ -117,8 +117,8 @@ export default {
   },
   methods: {
     toggleTabsVisibility() {
-        const statusStore = statusVariablesStore();
-        statusStore.toggleTabsVisibility(); // Toggle the visibility of the tabs using the Pinia store
+      const statusStore = statusVariablesStore();
+      statusStore.toggleTabsVisibility(); // Toggle the visibility of the tabs using the Pinia store
     },
     enableDrawRectangle() {
       drawRectangle();
@@ -142,7 +142,10 @@ export default {
       const resultsStore = useResultsStore();
 
       try {
-        const response = await runConstructGraph(inputStore.boundingBox, inputStore.projectName);
+        const response = await runConstructGraph(
+          inputStore.boundingBox,
+          inputStore.projectName
+        );
         const result = {
           expected_runtime: response.expected_runtime,
           project_name: inputStore.projectName,
@@ -153,36 +156,47 @@ export default {
         console.log("Response:", result);
 
         // Display a confirmation dialog
-        const continueOperation = window.confirm(`Running the algorithm will take ${result.expected_runtime.toFixed(2)} seconds. Do you want to continue?`);
+        const continueOperation = window.confirm(
+          `Running the algorithm will take ${result.expected_runtime.toFixed(2)} seconds. Do you want to continue?`
+        );
 
         // Check user's response
         if (continueOperation) {
           // User clicked OK, continue with the operation
           console.log("Operation continued!");
-          runOptimization();
+          this.callOptimization();
         } else {
           // User clicked Cancel or closed the dialog, abort the operation
           console.log("Operation aborted!");
         }
-
-      
       } catch (error) {
         console.error("Error:", error.message);
       }
     },
 
-    async runOptimization(){
+    async callOptimization() {
       const inputStore = userInputStore();
       const resultsStore = useResultsStore();
-
+      const project_name = inputStore.projectName;
+      const algorithm = "betweenness_biketime";
+      const bikeRatio = inputStore.laneAllocation;
+      const carWeight = inputStore.timeWeighting;
+      const bikeSafetyPenatly = 2;
+      const optimizeFrequency = 30;
       try {
-        const response = await runOptimization(project_name = inputStore.projectName,algorithm="betweenness_biketime",bikeRatio = inputStore.laneAllocation,carWeught = inputStore.timeWeighting);
+        const response = await runOptimization(
+          project_name,
+          algorithm,
+          bikeRatio,
+          optimizeFrequency,
+          carWeight,
+          bikeSafetyPenatly
+        );
         console.log("Response:", response);
-
       } catch (error) {
         console.error("Error:", error.message);
       }
-    }
+    },
   },
 };
 </script>
