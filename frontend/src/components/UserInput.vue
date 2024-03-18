@@ -75,6 +75,7 @@
       >
         Run
       </button>
+
       <ring-loader :loading="loading" :color="color" :size="size"></ring-loader>
     </div>
   </div>

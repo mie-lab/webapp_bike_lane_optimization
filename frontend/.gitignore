@@ -34,3 +34,5 @@ secrets.properties
 # Ignore user-specific files
 /.env
 /.env.local
+
+colors.txt

@@ -46,6 +46,7 @@
 import ProjectInfo from "./ProjectInfo.vue";
 import UserInput from "./UserInput.vue";
 import BikeInfo from "./BikeInfo.vue";
+import Help from "./Help.vue";
 import { statusVariablesStore } from "../stores/statusVariablesStore.js";
 
 export default {
