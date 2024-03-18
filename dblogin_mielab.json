@@ -1,0 +1,7 @@
+{
+  "user": "mbauckhage",
+  "password": "ebike_gmp_24_1",
+  "host": "ikgpgis.ethz.ch",
+  "port": "5432",
+  "database": "ebikecity"
+}
