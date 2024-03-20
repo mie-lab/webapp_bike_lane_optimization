@@ -14,6 +14,8 @@ button {
   background-color: #da5268;
   cursor: pointer;
   transition: border-color 0.25s;
+  margin-left: 3px;
+  margin-right: 3px;
 }
 button:hover {
   border-color: #0d00a3;

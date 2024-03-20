@@ -85,3 +85,7 @@
   color: var(--darkgrey-2-bg);
   padding: 5px;
 }
+
+.user-input-container{
+  padding-right: 10px;
+}

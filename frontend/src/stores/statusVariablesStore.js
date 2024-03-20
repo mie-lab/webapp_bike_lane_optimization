@@ -5,8 +5,12 @@ export const statusVariablesStore = defineStore("statusVariables", {
     activeTab: "UserInput",
     drawingPolygonEnabled: false,
     drawingRectangleEnabled: false,
+    userInputSide: false,
   }),
   actions: {
+    changeUserInputSide() {
+      this.userInputSide = !this.userInputSide;
+    },
     setActiveTab(tab) {
       this.activeTab = tab;
     },
