@@ -14,6 +14,28 @@
 
       <h2 class="text-blue">Project name</h2>
 
+      <!-- Search input -->
+      <input
+        type="text"
+        v-model="searchQuery"
+        placeholder="Search projects..."
+        class="project-name-input"
+      />
+
+      <!-- Project list -->
+      <div class="project-list">
+        <ul>
+          <li
+            v-for="project in filteredProjects"
+            :key="project.id"
+            @click="setProjectName(project)"
+          >
+            {{ project.prj_name }}
+            <hr class="divider" />
+          </li>
+        </ul>
+      </div>
+
       <br />
 
       <br />
@@ -33,16 +55,11 @@
 
 <script>
 import { userInputStore } from "../stores/userInputStore.js";
-import {
-  enableDrawRectangle,
-  enableDrawPolygon,
-  drawRectangle,
-  drawPolygon,
-} from "../scripts/draw.js";
 import { statusVariablesStore } from "../stores/statusVariablesStore.js";
-import { mapStore } from "../stores/mapStore.js";
 import { useResultsStore } from "../stores/algorithmResultsStore.js";
 import UserInputRun from "./UserInputRun.vue";
+import { projectsStore } from "../stores/projectsStore.js";
+import { computed, ref } from "vue";
 
 export default {
   name: "UserInputLoad",
@@ -53,6 +70,20 @@ export default {
     const statusStore = statusVariablesStore();
     const inputStore = userInputStore();
     const resultsStore = useResultsStore();
+    const prjStore = projectsStore();
+    const searchQuery = ref(""); // Create a reactive variable for search query
+
+    const filteredProjects = computed(() => {
+      const prjArray = prjStore.projects.projects;
+      if (prjArray) {
+        return prjArray.filter((project) =>
+          project.prj_name
+            .toLowerCase()
+            .includes(searchQuery.value.toLowerCase())
+        );
+      }
+      return []; // Return an empty array if prjArray is not available
+    });
 
     return {
       statusStore,
@@ -60,6 +91,8 @@ export default {
       projectName: inputStore.projectName,
       setProjectName: inputStore.setProjectName,
       continue: statusStore.runPage,
+      searchQuery,
+      filteredProjects,
     };
   },
   data() {
@@ -86,14 +119,6 @@ export default {
     toggleTabsVisibility() {
       const statusStore = statusVariablesStore();
       statusStore.toggleTabsVisibility();
-    },
-    enableDrawRectangle() {
-      drawRectangle();
-      this.isButtonDisabled = false;
-    },
-    enableDrawPolygon() {
-      drawPolygon();
-      this.isButtonDisabled = false;
     },
   },
 };
