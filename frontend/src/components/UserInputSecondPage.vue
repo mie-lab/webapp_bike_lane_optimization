@@ -1,16 +1,19 @@
 <template>
   <div>
     <button class="close-btn" @click="toggleTabsVisibility">
-      <i class="fa-solid fa-times" style="font-size: 24px"></i>
+      <i
+        class="fa-solid fa-times"
+        style="font-size: 20px; color: var(--darkgrey-bg)"
+      ></i>
     </button>
-    
+
     <div class="user-input-container">
-      <p> You can manually change the values for car travel time weighting or lane allocation. 
-        <br /><br />
-       Click <a href="#" @click="toggleActiveTab('Help')"> here</a> for more information on the impact of these parameters.
-       
-        
-         </p>
+      <p class="info-text">
+        You can manually change the values for car travel time weighting or lane
+        allocation. <br /><br />
+        Click <a href="#" @click="toggleActiveTab('Help')"> here</a> for more
+        information on the impact of these parameters.
+      </p>
       <h2 class="text-blue">Car travel time weighting</h2>
       <div class="slide-container">
         <input
@@ -38,19 +41,13 @@
       </div>
       <p>Chosen Value in percent: {{ laneAllocation }} %</p>
       <br />
-      
+
       <br />
 
       <br />
       <button @click="toggleUserInputNextSide" class="back-button">Back</button>
 
-      <button
-        
-        @click="runConstructGraph"
-      >
-        Run
-      </button>
-
+      <button @click="runConstructGraph">Run</button>
     </div>
   </div>
 </template>
@@ -62,7 +59,6 @@ import { statusVariablesStore } from "../stores/statusVariablesStore.js";
 import { useResultsStore } from "../stores/algorithmResultsStore.js";
 
 import RingLoader from "vue-spinner/src/RingLoader.vue";
-
 
 export default {
   name: "UserInputSecondPage",
@@ -87,7 +83,6 @@ export default {
       projectName: inputStore.projectName,
       color: "#da5268",
       size: "25px",
-
     };
   },
   components: {
@@ -104,16 +99,16 @@ export default {
         statusStore.setActiveTab(tab);
       }
     },
-    toggleUserInputNextSide(){
+    toggleUserInputNextSide() {
       const statusStore = statusVariablesStore();
       statusStore.changeUserInputSide();
     },
-    
+
     toggleTabsVisibility() {
       const statusStore = statusVariablesStore();
       statusStore.toggleTabsVisibility();
     },
-    
+
     setTimeWeight(value) {
       const inputStore = userInputStore();
       inputStore.setTimeWeighting(value);
@@ -132,11 +127,13 @@ export default {
           inputStore.boundingBox,
           inputStore.projectName
         );
+
+        inputStore.setProjectID(response.project_id);
+
         const result = {
           expected_runtime: response.expected_runtime,
-          project_name: inputStore.projectName,
+          project_id: inputStore.projectID,
           variables: response.variables,
-          internal_project_name: JSON.stringify(inputStore.boundingBox),
           runs: [],
         };
         resultsStore.addResult(result);
@@ -164,7 +161,7 @@ export default {
     async callOptimization() {
       const inputStore = userInputStore();
       const resultsStore = useResultsStore();
-      const project_name = inputStore.projectName;
+      const project_id = inputStore.projectID;
       const algorithm = "betweenness_biketime";
       const bikeRatio = inputStore.laneAllocation;
       const carWeight = inputStore.timeWeighting;
@@ -172,7 +169,7 @@ export default {
       const optimizeFrequency = 30;
       try {
         const response = await runOptimization(
-          project_name,
+          project_id,
           algorithm,
           bikeRatio,
           optimizeFrequency,
@@ -199,7 +196,11 @@ export default {
 @import "../styles/SideBarStyle.css";
 
 .back-button {
-  background-color: #ccc; 
-  color: #666; 
+  background-color: #ccc;
+  color: #666;
+}
+
+.fa-solid fa-times {
+  color: lightgrey;
 }
 </style>

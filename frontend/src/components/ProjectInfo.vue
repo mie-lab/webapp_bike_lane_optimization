@@ -1,31 +1,33 @@
 <template>
-    <div>
-        <button class="close-btn" @click="toggleTabsVisibility">
-             <i class="fa-solid fa-times" style="font-size: 24px"></i>
-        </button>
-        <h1 class="text-pink">Project Info</h1>
-        <p class="text-blue">Project info goes here</p>
-        <!-- Your HTML template code goes here -->
-    </div>
+  <div>
+    <button class="close-btn" @click="toggleTabsVisibility">
+      <i
+        class="fa-solid fa-times"
+        style="font-size: 20px; color: var(--darkgrey-bg)"
+      ></i>
+    </button>
+    <h1 class="text-pink">Project Info</h1>
+    <p class="text-blue">Project info goes here</p>
+    <!-- Your HTML template code goes here -->
+  </div>
 </template>
 
 <script>
-import { statusVariablesStore } from '../stores/statusVariablesStore.js';
+import { statusVariablesStore } from "../stores/statusVariablesStore.js";
 
 export default {
-    name: 'ProjectInfo',
-    data() {
-        return {
-            // Your data properties go here
-        };
+  name: "ProjectInfo",
+  data() {
+    return {
+      // Your data properties go here
+    };
+  },
+  methods: {
+    toggleTabsVisibility() {
+      const statusStore = statusVariablesStore();
+      statusStore.toggleTabsVisibility(); // Toggle the visibility of the tabs using the Pinia store
     },
-    methods: {
-        toggleTabsVisibility() {
-            const statusStore = statusVariablesStore();
-            statusStore.toggleTabsVisibility(); // Toggle the visibility of the tabs using the Pinia store
-        }
-    },
-   
+  },
 };
 </script>
 

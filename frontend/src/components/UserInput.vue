@@ -1,12 +1,17 @@
 <template>
   <div>
     <button class="close-btn" @click="toggleTabsVisibility">
-      <i class="fa-solid fa-times" style="font-size: 24px"></i>
+      <i
+        class="fa-solid fa-times"
+        style="font-size: 20px; color: var(--darkgrey-bg)"
+      ></i>
     </button>
     <h1 class="text-pink">User Input</h1>
     <div v-show="!statusStore.userInputSide" class="user-input-container">
-     
-      <p> Create your own project and run the optimization algorithm for an area of your choice. </p>
+      <p class="info-text">
+        Create your own project and run the optimization algorithm for an area
+        of your choice.
+      </p>
 
       <h2 class="text-blue">Project name</h2>
       <input
@@ -44,7 +49,6 @@
         </button>
       </div>
       <br />
-      
 
       <br />
       <button
@@ -53,12 +57,10 @@
       >
         Continue
       </button>
-
     </div>
-    <div v-show="statusStore.userInputSide"> 
+    <div v-show="statusStore.userInputSide">
       <UserInputSecondPageVue />
     </div>
-
   </div>
 </template>
 
@@ -73,7 +75,7 @@ import {
 import { statusVariablesStore } from "../stores/statusVariablesStore.js";
 import { mapStore } from "../stores/mapStore.js";
 import { useResultsStore } from "../stores/algorithmResultsStore.js";
-import UserInputSecondPageVue from './UserInputSecondPage.vue';
+import UserInputSecondPageVue from "./UserInputSecondPage.vue";
 
 export default {
   name: "UserInput",
@@ -95,20 +97,18 @@ export default {
   },
   data() {
     const inputStore = userInputStore();
-    const statusStore = statusVariablesStore(); 
+    const statusStore = statusVariablesStore();
     return {
       isButtonDisabled: true,
       projectName: inputStore.projectName,
       color: "#da5268",
       size: "25px",
       continue: statusStore.userInputSide,
-      
     };
   },
 
   methods: {
-    
-    toggleUserInputNextSide(){
+    toggleUserInputNextSide() {
       const statusStore = statusVariablesStore();
       statusStore.changeUserInputSide();
     },
@@ -124,8 +124,6 @@ export default {
       drawPolygon();
       this.isButtonDisabled = false;
     },
-   
-
   },
 };
 </script>
@@ -135,8 +133,8 @@ export default {
 @import "../styles/SideBarStyle.css";
 
 .disabled-button {
-  background-color: #ccc; 
-  color: #666; 
-  cursor: not-allowed; 
+  background-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
 }
 </style>
