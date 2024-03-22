@@ -59,3 +59,24 @@ export async function runOptimization(
     throw error; // Rethrow error for handling in the Vue component
   }
 }
+
+export async function getProjectList() {
+  const url = `http://localhost:8989/get_projects`;
+  const params = {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+  try {
+    const response = await fetch(url, params);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json(); // Parse and return JSON response
+  } catch (error) {
+    console.error("Error:", error);
+    throw error; // Rethrow error for handling in the Vue component
+  }
+}
