@@ -5,17 +5,26 @@ export const statusVariablesStore = defineStore("statusVariables", {
     activeTab: "UserInput",
     drawingPolygonEnabled: false,
     drawingRectangleEnabled: false,
-    userInputSide: false,
+    createPage: false,
+    loadPage: false,
+    runPage: false,
   }),
   actions: {
-    changeUserInputSide() {
-      this.userInputSide = !this.userInputSide;
+    toggleCreatePage() {
+      this.createPage = !this.createPage;
+    },
+    toggleLoadPage() {
+      this.loadPage = !this.loadPage;
+    },
+
+    toggleRunPage() {
+      this.runPage = !this.runPage;
     },
     setActiveTab(tab) {
       this.activeTab = tab;
     },
     toggleTabsVisibility() {
-      this.activeTab = 'None';
+      this.activeTab = "None";
     },
     toggleDrawingPolygonEnabled() {
       this.drawingPolygonEnabled = !this.drawingPolygonEnabled;

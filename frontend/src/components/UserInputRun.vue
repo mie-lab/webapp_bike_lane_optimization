@@ -61,7 +61,7 @@ import { useResultsStore } from "../stores/algorithmResultsStore.js";
 import RingLoader from "vue-spinner/src/RingLoader.vue";
 
 export default {
-  name: "UserInputSecondPage",
+  name: "UserInputRun",
   setup() {
     const statusStore = statusVariablesStore();
     const inputStore = userInputStore();
@@ -101,7 +101,7 @@ export default {
     },
     toggleUserInputNextSide() {
       const statusStore = statusVariablesStore();
-      statusStore.changeUserInputSide();
+      statusStore.toggleRunPage();
     },
 
     toggleTabsVisibility() {

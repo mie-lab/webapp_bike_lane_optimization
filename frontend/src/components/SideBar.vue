@@ -44,7 +44,8 @@
 
 <script>
 import ProjectInfo from "./ProjectInfo.vue";
-import UserInput from "./UserInput.vue";
+import UserInput from "./UserInputCreate.vue";
+import UserInputStart from "./UserInputStart.vue";
 import BikeInfo from "./BikeInfo.vue";
 import Help from "./Help.vue";
 import { statusVariablesStore } from "../stores/statusVariablesStore.js";
@@ -72,7 +73,7 @@ export default {
         case "Info":
           return ProjectInfo;
         case "UserInput":
-          return UserInput;
+          return UserInputStart;
         case "Bike":
           return BikeInfo;
         case "Help":
