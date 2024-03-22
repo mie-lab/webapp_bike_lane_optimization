@@ -64,10 +64,11 @@ export default {
       this.map.addSource("wms-layer", {
         type: "raster",
         tiles: [
-          "https://baug-ikg-gis-01.ethz.ch:8443/geoserver/GMP_EBC/wms?REQUEST=GetMap&SERVICE=WMS&layers=GMP_EBC:v_optimized&bbox=2485014.052451379,1074188.6943776933,2837016.9329778464,1299782.763494124&width=768&height=492&srs=EPSG:2056&styles=&format=image/png",
+          "https://baug-ikg-gis-01.ethz.ch:8443/geoserver/GMP_EBC/wms?REQUEST=GetMap&SERVICE=WMS&layers=GMP_EBC:v_optimized&bbox={bbox-epsg-3857}&transparent=true&width=256&height=256&srs=EPSG:3857&styles=&format=image/png",
         ],
         tileSize: 256,
       });
+
       this.map.addLayer({
         id: "wms-layer",
         type: "raster",
