@@ -23,20 +23,16 @@ export async function runConstructGraph(boundingBox, projectName) {
 }
 
 export async function runOptimization(
-  projectName,
+  projectID,
   algorithm,
   bikeRatio,
   optimizeFrequency,
   carWeight,
   bikeSafetyPenalty
 ) {
-  const runName = "_" + bikeRatio + "_" + carWeight;
-  const runNameFix = runName.replace(/\./g, "_");
-
   const url =
     `http://localhost:8989/optimize?` +
-    `project_name=${encodeURIComponent(projectName)}` +
-    `&run_name=${encodeURIComponent(runNameFix)}` +
+    `project_id=${encodeURIComponent(projectID)}` +
     `&algorithm=${encodeURIComponent(algorithm)}` +
     `&bike_ratio=${encodeURIComponent(bikeRatio)}` +
     `&optimize_frequency=${encodeURIComponent(optimizeFrequency)}` +
