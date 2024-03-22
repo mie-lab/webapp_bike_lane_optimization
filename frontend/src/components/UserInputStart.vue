@@ -37,6 +37,8 @@ import { mapStore } from "../stores/mapStore.js";
 import { useResultsStore } from "../stores/algorithmResultsStore.js";
 import UserInputCreate from "./UserInputCreate.vue";
 import UserInputLoad from "./UserInputLoad.vue";
+import { getProjectList } from "../scripts/api.js";
+import { projectsStore } from "../stores/projectsStore.js";
 
 export default {
   name: "UserInputStart",
@@ -71,9 +73,19 @@ export default {
       const statusStore = statusVariablesStore();
       statusStore.toggleCreatePage();
     },
-    openLoad() {
+    async openLoad() {
       const statusStore = statusVariablesStore();
+      const prjStore = projectsStore();
       statusStore.toggleLoadPage();
+
+      try {
+        const response = await getProjectList();
+        console.log("response: ", response);
+        prjStore.setProjects(response);
+        console.log("projects: ", prjStore.projects);
+      } catch (error) {
+        console.log("error: ", error.message);
+      }
     },
     toggleTabsVisibility() {
       const statusStore = statusVariablesStore();

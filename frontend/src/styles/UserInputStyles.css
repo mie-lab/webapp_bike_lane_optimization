@@ -72,13 +72,9 @@
 }
 
 .project-name-input {
-  margin-left: 0px;
-}
-
-.project-name-input {
   width: 77%;
   display: flex;
-  margin-left: 30px;
+  margin-left: 28px;
   border: 1.5px solid var(--darkgrey-bg);
   border-radius: 8px;
   background-color: var(--lightgrey-bg);
@@ -109,4 +105,54 @@
 }
 .bg-darkgrey {
   background-color: var(--darkgrey-bg);
+}
+
+.divider {
+  height: 1px;
+  background-color: var(--darkgrey-bg);
+  border: none;
+  margin-top: 5px;
+}
+
+li:hover {
+  color: var(--pink-color);
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+li {
+  color: var(--darkgrey-2-bg);
+  margin-bottom: 5px;
+  cursor: pointer;
+  margin-left: 0%;
+  margin-right: 5%;
+}
+
+.project-list {
+  margin-left: 30px;
+}
+
+.project-list {
+  max-height: 250px;
+  overflow-y: scroll;
+}
+
+/* Customize scrollbar track */
+.project-list::-webkit-scrollbar {
+  background-color: #0000; /* Light gray background */
+  width: 8px;
+}
+
+/* Customize scrollbar thumb */
+.project-list::-webkit-scrollbar-thumb {
+  background-color: var(--darkgrey-bg); /* Gray thumb */
+  border-radius: 5px; /* Round corners */
+}
+
+/* Handle on hover */
+.project-list::-webkit-scrollbar-thumb:hover {
+  background: var(--pink-color); /* Darker gray thumb on hover */
 }
