@@ -60,23 +60,6 @@ export default {
     const mapStoreInstance = mapStore();
     mapStoreInstance.setMap(this.map);
 
-    this.map.on("load", () => {
-      this.map.addSource("wms-layer", {
-        type: "raster",
-        tiles: [
-          "https://baug-ikg-gis-01.ethz.ch:8443/geoserver/GMP_EBC/wms?REQUEST=GetMap&SERVICE=WMS&layers=GMP_EBC:v_optimized&bbox={bbox-epsg-3857}&transparent=true&width=256&height=256&srs=EPSG:3857&styles=&format=image/png",
-        ],
-        tileSize: 256,
-      });
-
-      this.map.addLayer({
-        id: "wms-layer",
-        type: "raster",
-        source: "wms-layer",
-        paint: {},
-      });
-    });
-
     this.map.on("draw.create", (event) => {
       onDrawCreate(event, this);
       if (statusStore.drawingRectangleEnabled) {
