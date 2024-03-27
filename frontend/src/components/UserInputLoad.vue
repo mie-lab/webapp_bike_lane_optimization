@@ -28,7 +28,7 @@
           <li
             v-for="project in filteredProjects"
             :key="project.id"
-            @click="setProjectName(project)"
+            @click="openProject(project)"
           >
             {{ project.prj_name }}
             <hr class="divider" />
@@ -52,7 +52,6 @@
     </div>
   </div>
 </template>
-
 <script>
 import { userInputStore } from "../stores/userInputStore.js";
 import { statusVariablesStore } from "../stores/statusVariablesStore.js";
@@ -60,6 +59,8 @@ import { useResultsStore } from "../stores/algorithmResultsStore.js";
 import UserInputRun from "./UserInputRun.vue";
 import { projectsStore } from "../stores/projectsStore.js";
 import { computed, ref } from "vue";
+import { loadLayer } from "../scripts/map.js";
+import { createView, getRunList } from "../scripts/api.js";
 
 export default {
   name: "UserInputLoad",
@@ -71,7 +72,7 @@ export default {
     const inputStore = userInputStore();
     const resultsStore = useResultsStore();
     const prjStore = projectsStore();
-    const searchQuery = ref(""); // Create a reactive variable for search query
+    const searchQuery = ref("");
 
     const filteredProjects = computed(() => {
       const prjArray = prjStore.projects.projects;
@@ -82,14 +83,13 @@ export default {
             .includes(searchQuery.value.toLowerCase())
         );
       }
-      return []; // Return an empty array if prjArray is not available
+      return [];
     });
 
     return {
       statusStore,
       resultsStore,
       projectName: inputStore.projectName,
-      setProjectName: inputStore.setProjectName,
       continue: statusStore.runPage,
       searchQuery,
       filteredProjects,
@@ -108,6 +108,27 @@ export default {
   },
 
   methods: {
+    async openProject(project) {
+      const prjStore = projectsStore();
+      const inputStore = userInputStore();
+      const statusStore = statusVariablesStore();
+
+      try {
+        const response = await getRunList(project.id);
+        prjStore.setRuns(response);
+      } catch (error) {
+        console.log("error: ", error.message);
+      }
+
+      inputStore.setProjectName(project.prj_name);
+      inputStore.setProjectID(project.id);
+
+      const response = await createView(inputStore.projectID, 1, "v_bound");
+
+      loadLayer("v_bound", "wms_bound");
+
+      statusStore.toggleRunPage();
+    },
     toggleUserInputNextSide() {
       const statusStore = statusVariablesStore();
       statusStore.toggleLoadPage();

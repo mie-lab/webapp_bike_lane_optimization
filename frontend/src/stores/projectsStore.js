@@ -5,10 +5,14 @@ import { defineStore } from "pinia";
 export const projectsStore = defineStore("projects", {
   state: () => ({
     projects: [],
+    runs: [],
   }),
   actions: {
     setProjects(projects) {
       this.projects = projects;
+    },
+    setRuns(runs) {
+      this.runs = runs;
     },
   },
 });

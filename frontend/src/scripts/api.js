@@ -1,4 +1,6 @@
 // api.js
+import { userInputStore } from "../stores/userInputStore.js";
+
 export async function runConstructGraph(boundingBox, projectName) {
   const url = `http://localhost:8989/construct_graph?project_name=${projectName}`;
   const params = {
@@ -78,5 +80,64 @@ export async function getProjectList() {
   } catch (error) {
     console.error("Error:", error);
     throw error; // Rethrow error for handling in the Vue component
+  }
+}
+
+export async function getRunList(projectID) {
+  const url =
+    `http://localhost:8989/get_runs?` +
+    `project_id=${encodeURIComponent(projectID)}`;
+  const params = {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+  try {
+    const response = await fetch(url, params);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
+  } catch (error) {
+    console.error("Error:", error);
+    throw error;
+  }
+}
+
+export async function createView(projectID, runID, layerName) {
+  console.log("call 2");
+  const url =
+    `http://localhost:8989/create_view?` +
+    `project_id=${encodeURIComponent(projectID)}` +
+    `&run_id=${encodeURIComponent(runID)}` +
+    `&layer=${encodeURIComponent(layerName)}`;
+
+  const params = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  try {
+    const response = await fetch(url, params);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const responseData = await response.json();
+
+    // Store bounding box in userInputStore if layer is "v_bound"
+    if (layerName === "v_bound" && responseData.bounding_box) {
+      const userInput = userInputStore();
+      userInput.setBoundingBox(responseData.bounding_box);
+      console.log("bounding box set in store", userInput.boundingBox);
+    }
+
+    return responseData;
+  } catch (error) {
+    console.error("Error:", error);
+    throw error;
   }
 }

@@ -43,11 +43,22 @@
       <br />
 
       <br />
-
-      <br />
       <button @click="toggleUserInputNextSide" class="back-button">Back</button>
 
       <button @click="runConstructGraph">Run</button>
+
+      <!-- Run list -->
+      <br />
+      <br />
+      <h2 class="text-blue">Runs</h2>
+      <div class="project-list">
+        <ul>
+          <li v-for="run in filteredRuns" :key="run.id" @click="loadRun(run)">
+            {{ run.id }}
+            <hr class="divider" />
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </template>
@@ -57,8 +68,11 @@ import { runConstructGraph, runOptimization } from "../scripts/api.js";
 import { userInputStore } from "../stores/userInputStore.js";
 import { statusVariablesStore } from "../stores/statusVariablesStore.js";
 import { useResultsStore } from "../stores/algorithmResultsStore.js";
-
+import { projectsStore } from "../stores/projectsStore.js";
 import RingLoader from "vue-spinner/src/RingLoader.vue";
+import { ref } from "vue";
+import { createView } from "../scripts/api.js";
+import { loadLayer } from "../scripts/map.js";
 
 export default {
   name: "UserInputRun",
@@ -66,12 +80,29 @@ export default {
     const statusStore = statusVariablesStore();
     const inputStore = userInputStore();
     const resultsStore = useResultsStore();
+    const prjStore = projectsStore();
+
+    const filteredRuns = prjStore.runs.runs;
+    console.log("Runs array:", filteredRuns);
+
+    const runs = ref([]);
+
+    // Update runs whenever the component is mounted
+    const updateRuns = () => {
+      runs.value = prjStore.runs.runs;
+    };
+
+    // Call updateRuns when the component is mounted
+    updateRuns();
 
     return {
       statusStore,
       resultsStore,
       projectName: inputStore.projectName,
       setProjectName: inputStore.setProjectName,
+      filteredRuns,
+      runs,
+      updateRuns,
     };
   },
   data() {
@@ -89,6 +120,21 @@ export default {
     RingLoader,
   },
   methods: {
+    async loadRun(run) {
+      const prjStore = projectsStore();
+      const inputStore = userInputStore();
+
+      inputStore.setRunID(run.run_id);
+
+      const response = await createView(
+        inputStore.projectID,
+        run.run_id,
+        "v_optimized"
+      );
+
+      loadLayer("v_optimized", "wms_optimized");
+    },
+
     toggleActiveTab(tab) {
       // Toggle the active tab using the Pinia store
       const statusStore = statusVariablesStore();

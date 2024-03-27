@@ -8,6 +8,7 @@ export const userInputStore = defineStore("variableStore", {
     boundingBox: null,
     projectName: "",
     projectID: null,
+    runID: null,
   }),
   actions: {
     setBoundingBox(boundingBox) {
@@ -24,6 +25,9 @@ export const userInputStore = defineStore("variableStore", {
     },
     setProjectID(projectID) {
       this.projectID = projectID;
+    },
+    setRunID(runID) {
+      this.runID = runID;
     },
   },
 });
