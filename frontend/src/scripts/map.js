@@ -16,7 +16,7 @@ export function loadLayer(layerID, layerSource) {
   }
 
   const tile =
-    "https://baug-ikg-gis-01.ethz.ch:8443/geoserver/GMP_EBC/wms?REQUEST=GetMap&SERVICE=WMS&layers=GMP_EBC:layername&bbox={bbox-epsg-3857}&transparent=true&width=256&height=256&srs=EPSG:3857&styles=&format=image/png".replace(
+    "https://baug-ikg-gis-01.ethz.ch:8443/geoserver/GMP_EBC/wms?REQUEST=GetMap&SERVICE=WMS&layers=GMP_EBC:layername&bbox={bbox-N}&transparent=true&width=256&height=256&srs=EPSG:3857&styles=&format=image/png".replace(
       "layername",
       layerID
     );
