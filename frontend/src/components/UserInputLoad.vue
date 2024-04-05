@@ -12,7 +12,7 @@
         of your choice.
       </p>
 
-      <h2 class="text-blue">Project name</h2>
+      <h3 class="text-blue">Project name</h3>
 
       <!-- Search input -->
       <input
@@ -48,7 +48,7 @@
       </button>
     </div>
     <div v-show="statusStore.runPage">
-      <UserInputRun />
+      <component :is="activeComponent" :key="componentKey" />
     </div>
   </div>
 </template>
@@ -73,6 +73,12 @@ export default {
     const resultsStore = useResultsStore();
     const prjStore = projectsStore();
     const searchQuery = ref("");
+    const componentKey = ref(0);
+
+    const activeComponent = computed(() => {
+      // Determine which component to show based on status
+      return statusStore.runPage ? UserInputRun : null;
+    });
 
     const filteredProjects = computed(() => {
       const prjArray = prjStore.projects.projects;
@@ -93,8 +99,11 @@ export default {
       continue: statusStore.runPage,
       searchQuery,
       filteredProjects,
+      activeComponent,
+      componentKey,
     };
   },
+
   data() {
     const inputStore = userInputStore();
     const statusStore = statusVariablesStore();
@@ -128,6 +137,7 @@ export default {
       loadLayer("v_bound", "wms_bound");
 
       statusStore.toggleRunPage();
+      componentKey.value++;
     },
     toggleUserInputNextSide() {
       const statusStore = statusVariablesStore();

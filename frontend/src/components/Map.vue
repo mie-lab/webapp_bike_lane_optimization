@@ -11,10 +11,6 @@ import { enableDrawRectangle, onDrawCreate } from "../scripts/draw.js";
 import { userInputStore } from "../stores/userInputStore.js";
 import { statusVariablesStore } from "../stores/statusVariablesStore.js";
 import { mapStore } from "../stores/mapStore.js";
-import TileLayer from "ol/layer/Tile";
-import OSM from "ol/source/OSM";
-import TileWMS from "ol/source/TileWMS";
-import WMS from "ol/source/ImageWMS";
 
 // Define projection definitions
 proj4.defs("EPSG:4326", "+proj=longlat +datum=WGS84 +no_defs"); // WGS84

@@ -1,0 +1,84 @@
+.back-button {
+  background-color: #ccc;
+  color: #666;
+}
+
+.fa-solid fa-times {
+  color: lightgrey;
+}
+.list-header {
+  display: grid;
+  grid-template-columns: 6fr 1.5fr 1.2fr;
+  font-weight: bold;
+  padding: 8px;
+  margin-top: 20px;
+  margin-left: 5px;
+}
+.run-details {
+  display: grid;
+  grid-template-columns: 6fr 1.5fr 1fr;
+}
+
+.header-item-left {
+  text-align: left;
+  color: #30332d;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.header-item {
+  text-align: center;
+}
+
+.header-item {
+  text-align: left;
+  color: #30332d;
+  margin-left: 5%;
+}
+
+.run_list_name {
+  color: var(--darkgrey-2-bg);
+  margin: 0;
+  margin-left: 20px;
+}
+
+.h2_override {
+  margin-top: 5px;
+  margin-bottom: 30px;
+}
+
+.h4_override {
+  font-weight: 300;
+  margin-bottom: 2px;
+}
+.runs-header {
+  display: flex;
+  align-items: center;
+}
+
+.runs-text {
+  margin-right: 10px;
+}
+
+.refresh-container {
+  position: relative;
+}
+
+.refresh-button {
+  position: absolute;
+  top: -5px;
+  left: 0;
+}
+
+.refresh-button {
+  cursor: pointer;
+}
+
+.ring-loader-container {
+  position: relative;
+}
+
+.ring-loader {
+  position: absolute;
+  top: -5px;
+  left: 0;
+}

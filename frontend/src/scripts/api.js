@@ -30,7 +30,8 @@ export async function runOptimization(
   bikeRatio,
   optimizeFrequency,
   carWeight,
-  bikeSafetyPenalty
+  bikeSafetyPenalty,
+  runName
 ) {
   const url =
     `http://localhost:8989/optimize?` +
@@ -39,7 +40,8 @@ export async function runOptimization(
     `&bike_ratio=${encodeURIComponent(bikeRatio)}` +
     `&optimize_frequency=${encodeURIComponent(optimizeFrequency)}` +
     `&car_weight=${encodeURIComponent(carWeight)}` +
-    `&bike_safety_penalty=${encodeURIComponent(bikeSafetyPenalty)}`;
+    `&bike_safety_penalty=${encodeURIComponent(bikeSafetyPenalty)}` +
+    `&run_name=${encodeURIComponent(runName)}`;
 
   const params = {
     method: "GET",

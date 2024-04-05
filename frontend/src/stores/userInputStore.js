@@ -9,6 +9,7 @@ export const userInputStore = defineStore("variableStore", {
     projectName: "",
     projectID: null,
     runID: null,
+    runName: "",
   }),
   actions: {
     setBoundingBox(boundingBox) {
@@ -18,7 +19,7 @@ export const userInputStore = defineStore("variableStore", {
       this.projectName = projectName;
     },
     setLaneAllocation(laneAllocation) {
-      this.laneAllocation = laneAllocation;
+      this.laneAllocation = laneAllocation / 100;
     },
     setTimeWeighting(timeWeighting) {
       this.timeWeighting = timeWeighting;
@@ -28,6 +29,9 @@ export const userInputStore = defineStore("variableStore", {
     },
     setRunID(runID) {
       this.runID = runID;
+    },
+    setRunName(runName) {
+      this.runName = runName;
     },
   },
 });

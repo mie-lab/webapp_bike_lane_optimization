@@ -132,10 +132,8 @@ li {
 }
 
 .project-list {
-  margin-left: 30px;
-}
-
-.project-list {
+  margin-left: 35px;
+  padding: 0;
   max-height: 250px;
   overflow-y: scroll;
 }

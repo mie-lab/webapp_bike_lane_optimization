@@ -12,7 +12,7 @@
         of your choice.
       </p>
 
-      <h2 class="text-blue">Project name</h2>
+      <h3 class="text-blue">Project name</h3>
       <input
         class="project-name-input"
         type="text"
@@ -20,7 +20,7 @@
         @input="setProjectName($event.target.value)"
       />
 
-      <h2 class="text-blue">Area of interest</h2>
+      <h3 class="text-blue">Area of interest</h3>
       <div class="button-container">
         <button
           :class="{
@@ -50,10 +50,12 @@
       <br />
 
       <br />
-      <button @click="toggleUserInputNextSide" class="back-button">Back</button>
+      <button @click="toggleUserInputPreviousSide" class="back-button">
+        Back
+      </button>
       <button
         :class="{ 'disabled-button': isButtonDisabled || !projectName }"
-        @click="toggleUserInputPreviousSide"
+        @click="createProject"
       >
         Continue
       </button>
@@ -71,11 +73,15 @@ import {
   enableDrawPolygon,
   drawRectangle,
   drawPolygon,
+  removeDrawFromMap,
 } from "../scripts/draw.js";
 import { statusVariablesStore } from "../stores/statusVariablesStore.js";
 import { mapStore } from "../stores/mapStore.js";
 import { useResultsStore } from "../stores/algorithmResultsStore.js";
 import UserInputRun from "./UserInputRun.vue";
+import { create } from "ol/transform";
+import { loadLayer } from "../scripts/map.js";
+import { createView, runConstructGraph } from "../scripts/api.js";
 
 export default {
   name: "UserInputCreate",
@@ -108,13 +114,44 @@ export default {
   },
 
   methods: {
+    async createProject() {
+      const mapStoreInstance = mapStore();
+      const drawObjectRectangle = mapStoreInstance.drawRectangleObject;
+      const drawObjectPolygon = mapStoreInstance.drawPolygonObject;
+      const mapObject = mapStoreInstance.map;
+      removeDrawFromMap(mapObject, drawObjectRectangle);
+
+      this.toggleUserInputNextSide();
+      const inputStore = userInputStore();
+
+      try {
+        const response = await runConstructGraph(
+          inputStore.boundingBox,
+          inputStore.projectName
+        );
+        console.log("Construct Graph respose: ", response);
+
+        inputStore.setProjectID(response.project_id);
+      } catch (error) {
+        console.error(error);
+      }
+
+      try {
+        const response = await createView(inputStore.projectID, 1, "v_bound");
+
+        loadLayer("v_bound", "wms_bound");
+      } catch (error) {
+        console.error(error);
+      }
+    },
+
     toggleUserInputNextSide() {
       const statusStore = statusVariablesStore();
-      statusStore.toggleCreatePage();
+      statusStore.toggleRunPage();
     },
     toggleUserInputPreviousSide() {
       const statusStore = statusVariablesStore();
-      statusStore.toggleRunPage();
+      statusStore.toggleCreatePage();
     },
     toggleTabsVisibility() {
       const statusStore = statusVariablesStore();
