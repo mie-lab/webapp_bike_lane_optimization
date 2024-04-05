@@ -165,21 +165,23 @@ export default {
   },
   methods: {
     async loadRun(run) {
-      console.log("Loading run: ", run.run_name, run.id);
+      console.log("Loading run: ", run.run_name, run.id_run);
       console.log("Run: ", run);
       const inputStore = userInputStore();
 
-      inputStore.setRunID(run.id);
+      inputStore.setRunID(run.id_run);
       this.runName = run.run_name;
       inputStore.setRunName(this.runName);
 
       const response = await createView(
         inputStore.projectID,
-        run.id,
+        run.id_run,
         "v_optimized"
       );
+      console.log("Create View Response: ", response);
 
       loadLayer("v_optimized", "wms_optimized");
+      console.log("Layyer loaded");
       //loadLayer("v_point_direction", "wms_point_direction");
     },
 
