@@ -9,7 +9,8 @@
 
     <div class="user-input-container">
       <h4 class="h4_override">Project:</h4>
-      <h2 class="h2_override">{{ inputStore.projectName }}</h2>
+      <h2 class="h2_override">{{ inputStore.projectName }} | {{ runName }}</h2>
+
       <p class="info-text">
         You can manually change the values for car travel time weighting or lane
         allocation. <br /><br />
@@ -24,21 +25,23 @@
         @input="setRunName($event.target.value)"
       />
       <br />
-      <h4 class="text-blue">Car travel time weighting</h4>
+      <h4 class="text-blue">
+        What should be the importance of the car travel time
+      </h4>
       <div class="slide-container">
         <input
           class="slider"
           type="range"
           min="0"
-          max="1"
-          step="0.01"
+          max="10"
+          step="0.1"
           v-model="timeWeighting"
           @click="setTimeWeight(timeWeighting)"
         />
       </div>
       <p>Chosen weighting: {{ timeWeighting }}</p>
       <br />
-      <h4 class="text-blue">Allocation of lanes</h4>
+      <h4 class="text-blue">How many lanes should become bike lanes?</h4>
       <div class="slide-container">
         <input
           class="slider"
@@ -49,7 +52,7 @@
           @click="setLaneAllocation(laneAllocation)"
         />
       </div>
-      <p>Chosen Value in percent: {{ laneAllocation }} %</p>
+      <p>Chosen value in percent: {{ laneAllocation }} %</p>
       <br />
 
       <br />
