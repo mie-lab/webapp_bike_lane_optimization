@@ -31,10 +31,7 @@
 
 <script>
 import { userInputStore } from "../stores/userInputStore.js";
-import { drawRectangle, drawPolygon } from "../scripts/draw.js";
 import { statusVariablesStore } from "../stores/statusVariablesStore.js";
-import { mapStore } from "../stores/mapStore.js";
-import { useResultsStore } from "../stores/algorithmResultsStore.js";
 import UserInputCreate from "./UserInputCreate.vue";
 import UserInputLoad from "./UserInputLoad.vue";
 import { getProjectList } from "../scripts/api.js";
@@ -49,11 +46,9 @@ export default {
   setup() {
     const statusStore = statusVariablesStore();
     const inputStore = userInputStore();
-    const resultsStore = useResultsStore();
 
     return {
       statusStore,
-      resultsStore,
       projectName: inputStore.projectName,
     };
   },

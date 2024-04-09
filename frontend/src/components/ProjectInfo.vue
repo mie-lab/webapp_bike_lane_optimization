@@ -8,7 +8,7 @@
     </button>
     <h1 class="text-pink">Project Info</h1>
     <p class="text-blue">Project info goes here</p>
-    <!-- Your HTML template code goes here -->
+   
   </div>
 </template>
 
@@ -25,7 +25,7 @@ export default {
   methods: {
     toggleTabsVisibility() {
       const statusStore = statusVariablesStore();
-      statusStore.toggleTabsVisibility(); // Toggle the visibility of the tabs using the Pinia store
+      statusStore.toggleTabsVisibility();
     },
   },
 };

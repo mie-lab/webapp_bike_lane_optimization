@@ -55,7 +55,6 @@
 <script>
 import { userInputStore } from "../stores/userInputStore.js";
 import { statusVariablesStore } from "../stores/statusVariablesStore.js";
-import { useResultsStore } from "../stores/algorithmResultsStore.js";
 import UserInputRun from "./UserInputRun.vue";
 import { projectsStore } from "../stores/projectsStore.js";
 import { computed, ref } from "vue";
@@ -70,7 +69,6 @@ export default {
   setup() {
     const statusStore = statusVariablesStore();
     const inputStore = userInputStore();
-    const resultsStore = useResultsStore();
     const prjStore = projectsStore();
     const searchQuery = ref("");
     const componentKey = ref(0);
@@ -94,7 +92,6 @@ export default {
 
     return {
       statusStore,
-      resultsStore,
       projectName: inputStore.projectName,
       continue: statusStore.runPage,
       searchQuery,

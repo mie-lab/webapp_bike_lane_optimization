@@ -77,7 +77,6 @@ import {
 } from "../scripts/draw.js";
 import { statusVariablesStore } from "../stores/statusVariablesStore.js";
 import { mapStore } from "../stores/mapStore.js";
-import { useResultsStore } from "../stores/algorithmResultsStore.js";
 import UserInputRun from "./UserInputRun.vue";
 import { create } from "ol/transform";
 import { loadLayer } from "../scripts/map.js";
@@ -91,11 +90,9 @@ export default {
   setup() {
     const statusStore = statusVariablesStore();
     const inputStore = userInputStore();
-    const resultsStore = useResultsStore();
 
     return {
       statusStore,
-      resultsStore,
       projectName: inputStore.projectName,
       setProjectName: inputStore.setProjectName,
       continue: statusStore.runPage,
