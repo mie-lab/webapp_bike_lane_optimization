@@ -1,60 +1,6 @@
 <template>
-  <div>
-    <!-- Run list -->
-
-    <div class="user-input-container">
-      <h4 class="h4_override">Project:</h4>
-      <h2 class="h2_override">{{ inputStore.projectName }} | {{ runName }}</h2>
-
-       <p class="info-text">
-        This is your project overview. <br />
-        Make multiple runs with different paramters for the chosen area. <br /> <br />
-        Create a new Run for the project, or click on already existing runs to see their results.
-      </p>
-    </div>
-    <br />
-    <br />
-    <h3 class="runs-header">
-      <span class="runs-text">Runs</span>
-      <span class="refresh-container">
-        <i
-          v-if="!isLoading"
-          class="fa-solid fa-rotate-right refresh-button"
-          @click="reloadRuns"
-        >
-        </i>
-      </span>
-      <span class="ring-loader-container">
-        <div class="ring-loader">
-          <RingLoader v-if="isLoading" :size="'80'" :color="'#123abc'" />
-        </div>
-      </span>
-    </h3>
-
-    <div class="list-header">
-      <div class="header-item-left"><p class="run_list_name">Name</p></div>
-      <div class="header-item"><i class="far fa-clock"></i></div>
-      <div class="header-item">
-        <i class="fa-solid fa-lines-leaning"></i>
-      </div>
-    </div>
-    <div class="project-list">
-      <ul>
-        <li
-          v-for="run in filteredRuns"
-          :key="run.run_name"
-          @click="loadRun(run)"
-          :class="{ 'selected': run === selectedRun }"
-        >
-          <div class="run-details">
-            <div class="run_name">{{ run.run_name }}</div>
-            <div class="run_tt_weight">{{ run.bike_ratio }}</div>
-            <div class="run_alloc">{{ run.optimize_frequency }}%</div>
-          </div>
-          <hr class="divider" />
-        </li>
-      </ul>
-    </div>
+  <div  >
+    
 
     <!-- User input container -->
     <button class="close-btn" @click="toggleTabsVisibility">
@@ -64,14 +10,59 @@
       ></i>
     </button>
 
-    <button @click="toggleUserInputPreviousSide" class="back-button">
-        Back
-      </button>
-    <button @click="openCreate">Create new Run</button>
-    <div v-if="statusStore.createNewRunPage">
-      <UserInputNewRunVue />
+    <div class="user-input-container" v-show="!statusStore.creatNewRunPage">
+      <h4 class="h4_override">Project:</h4>
+      <h2 class="h2_override">{{ inputStore.projectName }} | {{ runName }}</h2>
+
+      <p class="info-text">
+        You can manually change the values for car travel time weighting or lane
+        allocation. <br /><br />
+        Click <a href="#" @click="toggleActiveTab('Help')"> here</a> for more
+        information on the impact of these parameters.
+      </p>
+      <h4 class="text-blue">Run name</h4>
+      <input
+        class="project-name-input"
+        type="text"
+        v-model="runName"
+        @input="setRunName($event.target.value)"
+      />
+      <br />
+      <h4 class="text-blue">
+        What should be the importance of the car travel time
+      </h4>
+      <div class="slide-container">
+        <input
+          class="slider"
+          type="range"
+          min="0"
+          max="10"
+          step="0.1"
+          v-model="timeWeighting"
+          @click="setTimeWeight(timeWeighting)"
+        />
+      </div>
+      <p>Chosen weighting: {{ timeWeighting }}</p>
+      <br />
+      <h4 class="text-blue">How many lanes should become bike lanes?</h4>
+      <div class="slide-container">
+        <input
+          class="slider"
+          type="range"
+          min="0"
+          max="100"
+          v-model="laneAllocation"
+          @click="setLaneAllocation(laneAllocation)"
+        />
+      </div>
+      <p>Chosen value in percent: {{ laneAllocation }} %</p>
+      <br />
+
+      <br />
+      <button @click="toggleUserInputNextSide" class="back-button">Back</button>
+
+      <button @click="callOptimization">Run</button>
     </div>
-   
   </div>
 </template>
 
@@ -86,13 +77,10 @@ import { ref } from "vue";
 import { createView, getRunList,evalTravelTime } from "../scripts/api.js";
 import { loadLayer } from "../scripts/map.js";
 
-import UserInputNewRunVue from './UserInputNewRun.vue';
-
 export default {
   name: "UserInputRun",
   components: {
     RingLoader,
-    UserInputNewRunVue,
   },
   setup() {
     const statusStore = statusVariablesStore();
@@ -132,28 +120,15 @@ export default {
       color: "#da5268",
       size: "25px",
       isLoading: false,
-      selectedRun: null,
     };
   },
   components: {
     RingLoader,
   },
   methods: {
-    toggleUserInputNextSide() {
-      const statusStore = statusVariablesStore();
-      statusStore.toggleLoadPage();
-    },
-    openCreate() {
-      const statusStore = statusVariablesStore();
-      statusStore.toggleCreateNewRunPage();
-      console.log("Create new Run");
-    },
     async loadRun(run) {
       console.log("Loading run: ", run.run_name, run.id_run);
       console.log("Run: ", run);
-
-      this.selectedRun = run;
-
       const inputStore = userInputStore();
 
       inputStore.setRunID(run.id_run);
@@ -268,9 +243,4 @@ export default {
 @import "../styles/UserInputStyles.css";
 @import "../styles/SideBarStyle.css";
 @import "../styles/UserInputRunStyle.css";
-.selected {
-  background-color: #e0e0e0; /* Set the background color for the selected item */
-  font-weight: bold; /* Make the text bold for the selected item */
-  /* Add any other styles you want to apply to the selected item */
-}
 </style>

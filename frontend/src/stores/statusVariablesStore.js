@@ -8,8 +8,19 @@ export const statusVariablesStore = defineStore("statusVariables", {
     createPage: false,
     loadPage: false,
     runPage: false,
+    dashboard: false,
+    creatNewRunPage: false,
   }),
   actions: {
+    toggleCreateNewRunPage() {  
+      this.creatNewRunPage = !this.creatNewRunPage;
+    },
+    toggleDashboard() { 
+      this.dashboard = !this.dashboard;
+    },
+    openDashboard() {
+      this.dashboard = true;
+    },
     toggleCreatePage() {
       this.createPage = !this.createPage;
     },
