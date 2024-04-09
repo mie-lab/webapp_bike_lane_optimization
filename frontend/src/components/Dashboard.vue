@@ -3,50 +3,50 @@
     <div class="dashboard-navigation bg-darkgrey" @click="toggleDashboard">
       <i
         :class="
-          dashboardStatus ? 'fa-solid fa-angle-right' : 'fa-solid fa-angle-left'
+          statusStore.dashboard ? 'fa-solid fa-angle-right' : 'fa-solid fa-angle-left'
         "
       ></i>
     </div>
-    <div v-show="dashboardStatus" class="dashboard-content bg-lightgrey">
+    <div v-show="statusStore.dashboard" class="dashboard-content bg-lightgrey">
       <h1 class="text-pink">Dashboard</h1>
-      <p class="text-blue">Dashboard content goes here</p>
-
-      <!-- Display all results -->
-      <div v-for="(result, index) in results" :key="index">
-        <p>Project Name: {{ result.project_name }}</p>
-        <p>Expected Runtime: {{ result.expected_runtime }}</p>
-      </div>
+      
+      <h2 class="h2_override">{{ inputStore.projectName }} | {{ inputStore.runName }}</h2>
+      <p >Bike Travel Time: {{ Math.round(ResultsStore.bikeTravelTime*100/100) }} min</p>
+      <p >Car Travel Time: {{ Math.round(ResultsStore.carTravelTime*100)/100 }} min</p>
+          
     </div>
   </div>
 </template>
 
 <script>
 import { useResultsStore } from '../stores/algorithmResultsStore.js';
+import {statusVariablesStore} from '../stores/statusVariablesStore.js';
+import { userInputStore } from "../stores/userInputStore.js";
 
 export default {
   name: "Dashboard",
-  data() {
-    return {
-      dashboardStatus: false,
-    };
-  },
-  computed: {
-    results() {
-      // Fetch results from the store
-      const resultsStore = useResultsStore();
-      return resultsStore.results;
-    }
-  },
+
+  setup() {
+  const ResultsStore = useResultsStore();
+  const statusStore = statusVariablesStore(); 
+  const inputStore = userInputStore();
+  return { ResultsStore, statusStore,inputStore }; 
+},
   methods: {
     toggleDashboard() {
-      this.dashboardStatus = !this.dashboardStatus;
+      this.statusStore.toggleDashboard();
     },
-    // Your methods go here
-  },
-  mounted() {
     
-    // Code to run when the component is mounted goes here
   },
+  data() {
+    const statusStore = statusVariablesStore();
+    return {
+      
+      dashboard: this.statusStore.dashboard,
+      
+    };
+  },
+  
 };
 </script>
 
