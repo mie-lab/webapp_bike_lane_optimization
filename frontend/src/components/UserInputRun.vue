@@ -83,7 +83,7 @@ import { useResultsStore } from "../stores/algorithmResultsStore.js";
 import { projectsStore } from "../stores/projectsStore.js";
 import RingLoader from "vue-spinner/src/RingLoader.vue";
 import { ref } from "vue";
-import { createView, getRunList,evalTravelTime } from "../scripts/api.js";
+import { createView, getRunList,evalTravelTime, getPareto } from "../scripts/api.js";
 import { loadLayer } from "../scripts/map.js";
 
 import UserInputNewRunVue from './UserInputNewRun.vue';
@@ -171,14 +171,27 @@ export default {
       console.log("Layyer loaded");
       //loadLayer("v_point_direction", "wms_point_direction");
 
+
+      // create evaluation for the selected run
       const ResultsStore = useResultsStore();
-      
       const responseEvaluation = await evalTravelTime(inputStore.projectID,run.id_run);
       console.log(responseEvaluation.bike_travel_time);
       ResultsStore.setEvaluation(responseEvaluation.bike_travel_time,responseEvaluation.car_travel_time);
 
+      const paretoEvaluation = await getPareto(inputStore.projectID,run.id_run);
+      console.log(paretoEvaluation);
+
+      // Extracting data from paretoEvaluation
+      const projects = paretoEvaluation.projects;
+      const bikeTimes = projects.map(project => project.bike_time);
+      const carTimes = projects.map(project => project.car_time);
+      console.log(bikeTimes);
+      ResultsStore.setTraveltimes(bikeTimes,carTimes);
+
+
       const statusStore = statusVariablesStore();
       statusStore.openDashboard();
+      
 
     },
 
