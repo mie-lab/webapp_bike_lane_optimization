@@ -80,7 +80,6 @@
 </template>
 
 <script>
-import { runOptimization } from "../scripts/api.js";
 import { userInputStore } from "../stores/userInputStore.js";
 import { statusVariablesStore } from "../stores/statusVariablesStore.js";
 import { useResultsStore } from "../stores/algorithmResultsStore.js";
@@ -217,14 +216,6 @@ export default {
       statusStore.toggleTabsVisibility();
     },
 
-    setTimeWeight(value) {
-      const inputStore = userInputStore();
-      inputStore.setTimeWeighting(value);
-    },
-    setLaneAllocation(value) {
-      const inputStore = userInputStore();
-      inputStore.setLaneAllocation(value);
-    },
 
     async reloadRuns() {
       this.isLoading = true;
@@ -242,39 +233,6 @@ export default {
       }
     },
 
-    async callOptimization() {
-      const inputStore = userInputStore();
-      const project_id = inputStore.projectID;
-      const algorithm = "betweenness_biketime";
-      const bikeRatio = inputStore.laneAllocation;
-      const carWeight = inputStore.timeWeighting;
-      const project_name = inputStore.projectName;
-      const bikeSafetyPenatly = 2;
-      const optimizeFrequency = 30;
-
-      try {
-        const response = await runOptimization(
-          project_id,
-          algorithm,
-          bikeRatio,
-          optimizeFrequency,
-          carWeight,
-          bikeSafetyPenatly,
-          this.runName
-        );
-
-        const result = {
-          bikeEdges: response.bike_edges,
-          variables: response.run_name,
-        };
-        
-
-        // Load the newly created run
-        await this.loadRun(response);
-      } catch (error) {
-        console.error("Error:", error.message);
-      }
-    },
   },
 };
 </script>
@@ -284,8 +242,7 @@ export default {
 @import "../styles/SideBarStyle.css";
 @import "../styles/UserInputRunStyle.css";
 .selected {
-  background-color: #e0e0e0; /* Set the background color for the selected item */
-  font-weight: bold; /* Make the text bold for the selected item */
-  /* Add any other styles you want to apply to the selected item */
+  background-color: #e0e0e0; 
+  font-weight: bold; 
 }
 </style>
