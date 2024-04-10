@@ -19,6 +19,8 @@
     "@fortawesome/free-solid-svg-icons": "^6.5.1",
     "@fortawesome/vue-fontawesome": "^3.0.6",
     "@mapbox/mapbox-gl-draw": "^1.4.3",
+    "chart": "^0.1.2",
+    "chart.js": "^4.4.2",
     "d3": "^7.8.5",
     "mapbox-gl": "^3.2.0",
     "mapbox-gl-draw-rectangle-mode": "^1.0.4",
