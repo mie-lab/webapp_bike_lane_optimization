@@ -46,9 +46,9 @@ export default {
       const ResultsStore = useResultsStore();
       const ctx = this.$refs.scatterPlotCanvas.getContext('2d');
       
-      // Example data (replace with actual data)
-      const bikeTimes = ResultsStore.paretoBikeTTArray; // Example array of bike times
-      const carTimes = ResultsStore.paretoCarTTArray; // Example array of car times
+     // TODO, always update the plot when the data in the pinia store changes
+      const bikeTimes = ResultsStore.paretoBikeTTArray; 
+      const carTimes = ResultsStore.paretoCarTTArray; 
       console.log(bikeTimes);
 
       new Chart(ctx, {

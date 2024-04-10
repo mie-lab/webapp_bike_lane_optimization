@@ -1,6 +1,5 @@
 <template>
   <div  >
-    
 
     <!-- User input container -->
     <button class="close-btn" @click="toggleTabsVisibility">
@@ -10,7 +9,7 @@
       ></i>
     </button>
 
-    <div class="user-input-container" v-show="!statusStore.creatNewRunPage">
+    <div class="user-input-container" >
       <h4 class="h4_override">Project:</h4>
       <h2 class="h2_override">{{ inputStore.projectName }} | {{ runName }}</h2>
 
@@ -55,7 +54,7 @@
           @click="setLaneAllocation(laneAllocation)"
         />
       </div>
-      <p>Chosen value in percent: {{ laneAllocation }} %</p>
+      <p>{{ laneAllocation }} % of the lanes</p>
       <br />
 
       <br />
@@ -78,7 +77,7 @@ import { createView, getRunList,evalTravelTime } from "../scripts/api.js";
 import { loadLayer } from "../scripts/map.js";
 
 export default {
-  name: "UserInputRun",
+  name: "UserInputNewRun",
   components: {
     RingLoader,
   },

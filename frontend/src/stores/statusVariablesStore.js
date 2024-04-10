@@ -9,11 +9,11 @@ export const statusVariablesStore = defineStore("statusVariables", {
     loadPage: false,
     runPage: false,
     dashboard: false,
-    creatNewRunPage: false,
+    createNewRunPage: false,
   }),
   actions: {
     toggleCreateNewRunPage() {  
-      this.creatNewRunPage = !this.creatNewRunPage;
+      this.createNewRunPage = !this.createNewRunPage;
     },
     toggleDashboard() { 
       this.dashboard = !this.dashboard;

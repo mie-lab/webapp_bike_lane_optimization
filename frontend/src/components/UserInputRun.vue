@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Run list -->
-
+    <div v-if="!statusStore.createNewRunPage">
     <div class="user-input-container">
       <h4 class="h4_override">Project:</h4>
       <h2 class="h2_override">{{ inputStore.projectName }} | {{ runName }}</h2>
@@ -55,6 +55,7 @@
         </li>
       </ul>
     </div>
+     
 
     <!-- User input container -->
     <button class="close-btn" @click="toggleTabsVisibility">
@@ -68,8 +69,11 @@
         Back
       </button>
     <button @click="openCreate">Create new Run</button>
+    </div> 
+
+
     <div v-if="statusStore.createNewRunPage">
-      <UserInputNewRunVue />
+      <UserInputNewRun />
     </div>
    
   </div>
@@ -86,13 +90,13 @@ import { ref } from "vue";
 import { createView, getRunList,evalTravelTime, getPareto } from "../scripts/api.js";
 import { loadLayer } from "../scripts/map.js";
 
-import UserInputNewRunVue from './UserInputNewRun.vue';
+import UserInputNewRun from './UserInputNewRun.vue';
 
 export default {
   name: "UserInputRun",
   components: {
     RingLoader,
-    UserInputNewRunVue,
+    UserInputNewRun,
   },
   setup() {
     const statusStore = statusVariablesStore();
@@ -135,9 +139,7 @@ export default {
       selectedRun: null,
     };
   },
-  components: {
-    RingLoader,
-  },
+  
   methods: {
     toggleUserInputNextSide() {
       const statusStore = statusVariablesStore();
@@ -185,7 +187,7 @@ export default {
       const projects = paretoEvaluation.projects;
       const bikeTimes = projects.map(project => project.bike_time);
       const carTimes = projects.map(project => project.car_time);
-      console.log(bikeTimes);
+      
       ResultsStore.setTraveltimes(bikeTimes,carTimes);
 
 
