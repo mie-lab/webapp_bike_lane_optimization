@@ -48,7 +48,7 @@
       </button>
     </div>
     <div v-show="statusStore.runPage">
-      <component :is="activeComponent" :key="componentKey" />
+      <UserInputRun />
     </div>
   </div>
 </template>
@@ -71,7 +71,6 @@ export default {
     const inputStore = userInputStore();
     const prjStore = projectsStore();
     const searchQuery = ref("");
-    const componentKey = ref(0);
 
     const activeComponent = computed(() => {
       // Determine which component to show based on status
@@ -97,7 +96,6 @@ export default {
       searchQuery,
       filteredProjects,
       activeComponent,
-      componentKey,
     };
   },
 
@@ -134,7 +132,6 @@ export default {
       loadLayer("v_bound", "wms_bound");
 
       statusStore.toggleRunPage();
-      componentKey.value++;
     },
     toggleUserInputNextSide() {
       const statusStore = statusVariablesStore();
