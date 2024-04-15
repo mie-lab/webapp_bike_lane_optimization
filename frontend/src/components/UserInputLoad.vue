@@ -54,13 +54,8 @@
       <br />
 
       <br />
-      <button @click="toggleUserInputNextSide" class="back-button">Back</button>
-      <button
-        :class="{ 'disabled-button': isButtonDisabled || !projectName }"
-        @click="toggleUserInputPreviousSide"
-      >
-        Continue
-      </button>
+      
+      <button @click="openCreate">Create new Project</button>
     </div>
     <div v-show="statusStore.runPage">
       <UserInputRun />
@@ -131,6 +126,11 @@ export default {
   },
 
   methods: {
+    openCreate() {
+      const statusStore = statusVariablesStore();
+      statusStore.toggleCreatePage();
+      statusStore.toggleLoadPage();
+    },
     async openProject(project) {
       this.isLoading = true;
       const prjStore = projectsStore();

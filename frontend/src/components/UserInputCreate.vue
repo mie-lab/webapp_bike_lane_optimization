@@ -69,8 +69,6 @@
 <script>
 import { userInputStore } from "../stores/userInputStore.js";
 import {
-  enableDrawRectangle,
-  enableDrawPolygon,
   drawRectangle,
   drawPolygon,
   removeDrawFromMap,
@@ -149,6 +147,7 @@ export default {
     toggleUserInputPreviousSide() {
       const statusStore = statusVariablesStore();
       statusStore.toggleCreatePage();
+      statusStore.toggleLoadPage();
     },
     toggleTabsVisibility() {
       const statusStore = statusVariablesStore();
