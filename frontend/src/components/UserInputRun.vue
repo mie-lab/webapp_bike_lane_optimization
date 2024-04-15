@@ -84,7 +84,6 @@
 </template>
 
 <script>
-import { runOptimization } from "../scripts/api.js";
 import { userInputStore } from "../stores/userInputStore.js";
 import { statusVariablesStore } from "../stores/statusVariablesStore.js";
 import { useResultsStore } from "../stores/algorithmResultsStore.js";
@@ -235,15 +234,6 @@ export default {
       statusStore.toggleTabsVisibility();
     },
 
-    setTimeWeight(value) {
-      const inputStore = userInputStore();
-      inputStore.setTimeWeighting(value);
-    },
-    setLaneAllocation(value) {
-      const inputStore = userInputStore();
-      inputStore.setLaneAllocation(value);
-    },
-
     async reloadRuns() {
       this.isLoading = true;
       const inputStore = userInputStore();
@@ -301,9 +291,8 @@ export default {
 @import "../styles/SideBarStyle.css";
 @import "../styles/UserInputRunStyle.css";
 .selected {
-  background-color: #e0e0e0; /* Set the background color for the selected item */
-  font-weight: bold; /* Make the text bold for the selected item */
-  /* Add any other styles you want to apply to the selected item */
+  background-color: #e0e0e0;
+  font-weight: bold;
 }
 
 .buttons {
