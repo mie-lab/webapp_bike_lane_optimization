@@ -212,7 +212,7 @@ export default {
     },
 
     async callOptimization() {
-      toggleUserInputPreviousSide();
+      this.toggleUserInputPreviousSide();
 
       const inputStore = userInputStore();
       const project_id = inputStore.projectID;
