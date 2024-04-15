@@ -49,8 +49,6 @@ export default {
       () => runningProcessesStore.runningProcesses,
       (newProcesses, oldProcesses) => {
         console.log("Running processes updated:", newProcesses);
-        // You can update any local state or computed property here
-        // For example:
         this.runningProcesses = newProcesses;
       }
     );

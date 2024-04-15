@@ -89,7 +89,7 @@ import { statusVariablesStore } from "../stores/statusVariablesStore.js";
 import { useResultsStore } from "../stores/algorithmResultsStore.js";
 import { projectsStore } from "../stores/projectsStore.js";
 import RingLoader from "vue-spinner/src/RingLoader.vue";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import {
   createView,
   getRunList,
@@ -111,25 +111,22 @@ export default {
     const inputStore = userInputStore();
     const resultsStore = useResultsStore();
     const prjStore = projectsStore();
+    const filteredRuns = ref(null);
 
-    var filteredRuns = prjStore.runs.runs;
-    const runs = ref([]);
-
-    // Update runs whenever the component is mounted
-    const updateRuns = () => {
-      runs.value = prjStore.runs.runs;
-    };
-
-    updateRuns();
+    watch(
+      () => prjStore.runs.runs,
+      (newValue, oldValue) => {
+        //console.log("Filtered runs updated:", newValue);
+        filteredRuns.value = newValue;
+      }
+    );
 
     return {
       statusStore,
       resultsStore,
       inputStore,
       projectName: inputStore.projectName,
-      runs,
       filteredRuns,
-      updateRuns,
     };
   },
   data() {
@@ -160,11 +157,11 @@ export default {
     openCreate() {
       const statusStore = statusVariablesStore();
       statusStore.toggleCreateNewRunPage();
-      console.log("Create new Run");
+      //console.log("Create new Run");
     },
     async loadRun(run) {
-      console.log("Loading run: ", run.run_name, run.id_run);
-      console.log("Run: ", run);
+      //console.log("Loading run: ", run.run_name, run.id_run);
+      //console.log("Run: ", run);
 
       this.selectedRun = run;
 
@@ -179,10 +176,10 @@ export default {
         run.id_run,
         "v_optimized"
       );
-      console.log("Create View Response: ", response);
+      //console.log("Create View Response: ", response);
 
       loadLayer("v_optimized", "wms_optimized");
-      console.log("Layyer loaded");
+      //console.log("Layyer loaded");
       //loadLayer("v_point_direction", "wms_point_direction");
 
       // create evaluation for the selected run
@@ -191,7 +188,7 @@ export default {
         inputStore.projectID,
         run.id_run
       );
-      console.log(responseEvaluation.bike_travel_time);
+      //console.log(responseEvaluation.bike_travel_time);
       ResultsStore.setEvaluation(
         responseEvaluation.bike_travel_time,
         responseEvaluation.car_travel_time
@@ -201,7 +198,7 @@ export default {
         inputStore.projectID,
         run.id_run
       );
-      console.log(paretoEvaluation);
+      //console.log(paretoEvaluation);
 
       // Extracting data from paretoEvaluation
       const projects = paretoEvaluation.projects;
@@ -241,7 +238,6 @@ export default {
       try {
         const response = await getRunList(inputStore.projectID);
         prjStore.setRuns(response);
-        this.updateRuns();
         this.filteredRuns = prjStore.runs.runs;
       } catch (error) {
         console.log("error: ", error.message);

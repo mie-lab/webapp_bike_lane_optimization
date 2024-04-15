@@ -63,6 +63,9 @@
 
       <button @click="callOptimization">Run</button>
     </div>
+    <div class="process_list">
+      <ProcessList />
+    </div>
   </div>
 </template>
 
@@ -72,21 +75,30 @@ import { userInputStore } from "../stores/userInputStore.js";
 import { statusVariablesStore } from "../stores/statusVariablesStore.js";
 import { useResultsStore } from "../stores/algorithmResultsStore.js";
 import { projectsStore } from "../stores/projectsStore.js";
+import { runningProcessStore } from "../stores/processListStore.js";
 import RingLoader from "vue-spinner/src/RingLoader.vue";
 import { ref } from "vue";
-import { createView, getRunList, evalTravelTime } from "../scripts/api.js";
+import {
+  createView,
+  getRunList,
+  evalTravelTime,
+  getNewRunID,
+} from "../scripts/api.js";
 import { loadLayer } from "../scripts/map.js";
+import ProcessList from "./ProcessList.vue";
 
 export default {
   name: "UserInputNewRun",
   components: {
     RingLoader,
+    ProcessList,
   },
   setup() {
     const statusStore = statusVariablesStore();
     const inputStore = userInputStore();
     const resultsStore = useResultsStore();
     const prjStore = projectsStore();
+    const processStore = runningProcessStore();
 
     var filteredRuns = prjStore.runs.runs;
     const runs = ref([]);
@@ -106,6 +118,7 @@ export default {
       runs,
       filteredRuns,
       updateRuns,
+      processStore,
     };
   },
   data() {
@@ -122,28 +135,27 @@ export default {
       isLoading: false,
     };
   },
-  components: {
-    RingLoader,
-  },
   methods: {
     async loadRun(run) {
-      console.log("Loading run: ", run.run_name, run.id_run);
-      console.log("Run: ", run);
+      //console.log("Loading run: ", run.run_name, run.id_run);
+      //console.log("Run: ", run);
       const inputStore = userInputStore();
+      this.isLoading = true;
 
       inputStore.setRunID(run.id_run);
       this.runName = run.run_name;
       inputStore.setRunName(this.runName);
 
+      /*
       const response = await createView(
         inputStore.projectID,
         run.id_run,
         "v_optimized"
-      );
-      console.log("Create View Response: ", response);
+      );*/
+      //console.log("Create View Response: ", response);
 
       loadLayer("v_optimized", "wms_optimized");
-      console.log("Layyer loaded");
+      //console.log("Layyer loaded");
       //loadLayer("v_point_direction", "wms_point_direction");
 
       const ResultsStore = useResultsStore();
@@ -160,6 +172,7 @@ export default {
 
       const statusStore = statusVariablesStore();
       statusStore.openDashboard();
+      this.isLoading = false;
     },
 
     toggleActiveTab(tab) {
@@ -212,8 +225,6 @@ export default {
     },
 
     async callOptimization() {
-      this.toggleUserInputPreviousSide();
-
       const inputStore = userInputStore();
       const project_id = inputStore.projectID;
       const algorithm = "betweenness_biketime";
@@ -222,6 +233,17 @@ export default {
       const project_name = inputStore.projectName;
       const bikeSafetyPenatly = 2;
       const optimizeFrequency = 30;
+
+      const responseRunID = await getNewRunID(project_id);
+
+      this.processStore.addProcess({
+        id: responseRunID.run_id,
+        name: this.runName,
+        bike_ratio: bikeRatio,
+        optimize_frequency: optimizeFrequency,
+        status: "pending",
+      });
+      //this.toggleUserInputPreviousSide();
 
       try {
         const response = await runOptimization(
@@ -243,6 +265,8 @@ export default {
         await this.loadRun(response);
       } catch (error) {
         console.error("Error:", error.message);
+      } finally {
+        this.processStore.markProcessAsDone(responseRunID.run_id);
       }
     },
   },
@@ -253,4 +277,8 @@ export default {
 @import "../styles/UserInputStyles.css";
 @import "../styles/SideBarStyle.css";
 @import "../styles/UserInputRunStyle.css";
+
+.process_list {
+  margin-top: 40px;
+}
 </style>

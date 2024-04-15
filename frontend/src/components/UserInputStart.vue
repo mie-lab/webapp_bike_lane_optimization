@@ -75,9 +75,9 @@ export default {
 
       try {
         const response = await getProjectList();
-        console.log("response: ", response);
+        //console.log("response: ", response);
         prjStore.setProjects(response);
-        console.log("projects: ", prjStore.projects);
+        //console.log("projects: ", prjStore.projects);
       } catch (error) {
         console.log("error: ", error.message);
       }

@@ -58,7 +58,6 @@ export default {
       // TODO, always update the plot when the data in the pinia store changes
       const bikeTimes = ResultsStore.paretoBikeTTArray;
       const carTimes = ResultsStore.paretoCarTTArray;
-      console.log(carTimes);
 
       new Chart(ctx, {
         type: "scatter",

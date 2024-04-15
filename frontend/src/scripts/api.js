@@ -10,7 +10,7 @@ export async function runConstructGraph(boundingBox, projectName) {
     },
     body: JSON.stringify(boundingBox),
   };
-  console.log("params", params);
+  //console.log("params", params);
 
   try {
     const response = await fetch(url, params);
@@ -50,7 +50,7 @@ export async function runOptimization(
     },
   };
 
-  console.log("params optimize", params);
+  //console.log("params optimize", params);
 
   try {
     const response = await fetch(url, params);
@@ -108,8 +108,30 @@ export async function getRunList(projectID) {
   }
 }
 
+export async function getNewRunID(projectID) {
+  const url =
+    `http://localhost:8989/get_new_run_id?` +
+    `project_id=${encodeURIComponent(projectID)}`;
+  const params = {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+  try {
+    const response = await fetch(url, params);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
+  } catch (error) {
+    console.error("Error:", error);
+    throw error;
+  }
+}
+
 export async function createView(projectID, runID, layerName) {
-  console.log("call 2");
   const url =
     `http://localhost:8989/create_view?` +
     `project_id=${encodeURIComponent(projectID)}` +
@@ -134,7 +156,6 @@ export async function createView(projectID, runID, layerName) {
     if (layerName === "v_bound" && responseData.bounding_box) {
       const userInput = userInputStore();
       userInput.setBoundingBox(responseData.bounding_box);
-      console.log("bounding box set in store", userInput.boundingBox);
     }
 
     return responseData;
@@ -144,10 +165,10 @@ export async function createView(projectID, runID, layerName) {
   }
 }
 
-export async function evalTravelTime(projectID,runID) {
+export async function evalTravelTime(projectID, runID) {
   const url =
     `http://localhost:8989/eval_travel_time?` +
-    `project_id=${encodeURIComponent(projectID)}`+
+    `project_id=${encodeURIComponent(projectID)}` +
     `&run_name=${encodeURIComponent(runID)}`;
   const params = {
     method: "GET",
@@ -168,10 +189,10 @@ export async function evalTravelTime(projectID,runID) {
   }
 }
 
-export async function getPareto(projectID,runID) {
+export async function getPareto(projectID, runID) {
   const url =
     `http://localhost:8989/get_pareto?` +
-    `project_id=${encodeURIComponent(projectID)}`+
+    `project_id=${encodeURIComponent(projectID)}` +
     `&run_name=${encodeURIComponent(runID)}`;
   const params = {
     method: "GET",

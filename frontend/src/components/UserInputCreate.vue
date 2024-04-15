@@ -126,7 +126,7 @@ export default {
           inputStore.boundingBox,
           inputStore.projectName
         );
-        console.log("Construct Graph respose: ", response);
+        //console.log("Construct Graph respose: ", response);
 
         inputStore.setProjectID(response.project_id);
       } catch (error) {

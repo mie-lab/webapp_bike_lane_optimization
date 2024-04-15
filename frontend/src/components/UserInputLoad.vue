@@ -12,7 +12,22 @@
         of your choice.
       </p>
 
-      <h3 class="text-blue">Project name</h3>
+      <h3 class="text-blue">
+        <span class="project_name_text">Project name</span>
+        <span class="refresh-container">
+          <i
+            v-if="!isLoading"
+            class="fa-solid fa-rotate-right refresh-button"
+            @click="reloadRuns"
+          >
+          </i>
+        </span>
+        <span class="ring-loader-container">
+          <div class="ring-loader">
+            <RingLoader v-if="isLoading" :size="'80'" :color="'#123abc'" />
+          </div>
+        </span>
+      </h3>
 
       <!-- Search input -->
       <input
@@ -61,11 +76,13 @@ import { computed, ref } from "vue";
 import { loadLayer } from "../scripts/map.js";
 import { createView, getRunList } from "../scripts/api.js";
 import { storeToRefs } from "pinia";
+import RingLoader from "vue-spinner/src/RingLoader.vue";
 
 export default {
   name: "UserInputLoad",
   components: {
     UserInputRun,
+    RingLoader,
   },
   setup() {
     const statusStore = statusVariablesStore();
@@ -109,28 +126,33 @@ export default {
       color: "#da5268",
       size: "25px",
       continue: statusStore.runPage,
+      isLoading: false,
     };
   },
 
   methods: {
     async openProject(project) {
+      this.isLoading = true;
       const prjStore = projectsStore();
       const inputStore = userInputStore();
       const statusStore = statusVariablesStore();
 
       try {
-        console.log("teset1");
-        const response = await getRunList(project.id);
-        console.log("test2", response);
-        prjStore.setRuns(response);
         const { runs } = storeToRefs(prjStore);
         prjStore.$subscribe((mutation, state) => {
-          console.log("a change happened in UserInputLoad");
-          console.log(mutation, state);
+          //console.log("a change happened in UserInputLoad");
+          //console.log(mutation, state);
+          //console.log("runs: ", runs.value);
         });
+
+        const response = await getRunList(project.id);
+        prjStore.setRuns(response);
+
         //console.log("Runs: ", runs);
       } catch (error) {
         console.log("error: ", error.message);
+      } finally {
+        this.isLoading = false;
       }
 
       inputStore.setProjectName(project.prj_name);
@@ -161,6 +183,7 @@ export default {
 <style scoped>
 @import "../styles/UserInputStyles.css";
 @import "../styles/SideBarStyle.css";
+@import "../styles/UserInputLoadStyle.css";
 
 .disabled-button {
   background-color: #ccc;
