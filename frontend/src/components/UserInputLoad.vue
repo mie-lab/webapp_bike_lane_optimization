@@ -60,6 +60,7 @@ import { projectsStore } from "../stores/projectsStore.js";
 import { computed, ref } from "vue";
 import { loadLayer } from "../scripts/map.js";
 import { createView, getRunList } from "../scripts/api.js";
+import { storeToRefs } from "pinia";
 
 export default {
   name: "UserInputLoad",
@@ -118,8 +119,16 @@ export default {
       const statusStore = statusVariablesStore();
 
       try {
+        console.log("teset1");
         const response = await getRunList(project.id);
+        console.log("test2", response);
         prjStore.setRuns(response);
+        const { runs } = storeToRefs(prjStore);
+        prjStore.$subscribe((mutation, state) => {
+          console.log("a change happened in UserInputLoad");
+          console.log(mutation, state);
+        });
+        //console.log("Runs: ", runs);
       } catch (error) {
         console.log("error: ", error.message);
       }

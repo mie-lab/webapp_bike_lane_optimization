@@ -3,28 +3,37 @@
     <div class="dashboard-navigation bg-darkgrey" @click="toggleDashboard">
       <i
         :class="
-          statusStore.dashboard ? 'fa-solid fa-angle-right' : 'fa-solid fa-angle-left'
+          statusStore.dashboard
+            ? 'fa-solid fa-angle-right'
+            : 'fa-solid fa-angle-left'
         "
       ></i>
     </div>
     <div v-show="statusStore.dashboard" class="dashboard-content bg-lightgrey">
       <h1 class="text-pink">Dashboard</h1>
-      
-      <h2 class="h2_override">{{ inputStore.projectName }} | {{ inputStore.runName }}</h2>
-      <p >Bike Travel Time: {{ Math.round(ResultsStore.bikeTravelTime*100/100) }} min</p>
-      <p >Car Travel Time: {{ Math.round(ResultsStore.carTravelTime*100)/100 }} min</p>
+
+      <h2 class="h2_override">
+        {{ inputStore.projectName }} | {{ inputStore.runName }}
+      </h2>
+      <p>
+        Bike Travel Time:
+        {{ Math.round((ResultsStore.bikeTravelTime * 100) / 100) }} min
+      </p>
+      <p>
+        Car Travel Time:
+        {{ Math.round(ResultsStore.carTravelTime * 100) / 100 }} min
+      </p>
 
       <!-- Scatter plot canvas -->
       <canvas ref="scatterPlotCanvas" width="400" height="400"></canvas>
-          
     </div>
   </div>
 </template>
 
 <script>
-import Chart from 'chart.js/auto';
-import { useResultsStore } from '../stores/algorithmResultsStore.js';
-import {statusVariablesStore} from '../stores/statusVariablesStore.js';
+import Chart from "chart.js/auto";
+import { useResultsStore } from "../stores/algorithmResultsStore.js";
+import { statusVariablesStore } from "../stores/statusVariablesStore.js";
 import { userInputStore } from "../stores/userInputStore.js";
 import { getPareto } from "../scripts/api.js";
 
@@ -32,11 +41,11 @@ export default {
   name: "Dashboard",
 
   setup() {
-  const ResultsStore = useResultsStore();
-  const statusStore = statusVariablesStore(); 
-  const inputStore = userInputStore();
-  return { ResultsStore, statusStore,inputStore }; 
-},
+    const ResultsStore = useResultsStore();
+    const statusStore = statusVariablesStore();
+    const inputStore = userInputStore();
+    return { ResultsStore, statusStore, inputStore };
+  },
   methods: {
     toggleDashboard() {
       this.statusStore.toggleDashboard();
@@ -44,79 +53,81 @@ export default {
 
     createScatterPlot() {
       const ResultsStore = useResultsStore();
-      const ctx = this.$refs.scatterPlotCanvas.getContext('2d');
-      
-     // TODO, always update the plot when the data in the pinia store changes
-      const bikeTimes = ResultsStore.paretoBikeTTArray; 
-      const carTimes = ResultsStore.paretoCarTTArray; 
-      console.log(bikeTimes);
+      const ctx = this.$refs.scatterPlotCanvas.getContext("2d");
+
+      // TODO, always update the plot when the data in the pinia store changes
+      const bikeTimes = ResultsStore.paretoBikeTTArray;
+      const carTimes = ResultsStore.paretoCarTTArray;
+      console.log(carTimes);
 
       new Chart(ctx, {
-        type: 'scatter',
+        type: "scatter",
         data: {
-          datasets: [{
-            label: 'integer Pareto',
-            data: bikeTimes.map((bikeTime, index) => ({ x: bikeTime, y: carTimes[index] })),
-            backgroundColor: 'rgba(255, 99, 132, 0.5)',
-            borderColor: 'rgba(255, 99, 132, 1)',
-            borderWidth: 1
-          }]
+          datasets: [
+            {
+              label: "integer Pareto",
+              data: bikeTimes.map((bikeTime, index) => ({
+                x: bikeTime,
+                y: carTimes[index],
+              })),
+              backgroundColor: "rgba(255, 99, 132, 0.5)",
+              borderColor: "rgba(255, 99, 132, 1)",
+              borderWidth: 1,
+            },
+          ],
         },
         options: {
           scales: {
             x: {
-              type: 'linear',
-              position: 'bottom',
+              type: "linear",
+              position: "bottom",
               title: {
                 display: true,
-                text: 'Bike Time'
-              }
+                text: "Bike Time",
+              },
             },
             y: {
-              type: 'linear',
+              type: "linear",
               title: {
                 display: true,
-                text: 'Car Time'
-              }
-            }
-          }
-        }
+                text: "Car Time",
+              },
+            },
+          },
+        },
       });
-    }
+    },
   },
   mounted() {
     this.createScatterPlot();
   },
-    
+
   data() {
     const statusStore = statusVariablesStore();
     return {
-      
       dashboard: this.statusStore.dashboard,
-      
     };
   },
-  
 };
 </script>
 
 <style scoped>
 .dashboard-container {
-  display: flex; 
-  height: 100vh; 
+  display: flex;
+  height: 100vh;
   position: absolute;
   right: 0;
 }
 
 .dashboard-navigation {
   background-color: rgba(149, 149, 149, 0.5);
-  height: 100%; 
-  width: 20px; 
-  display: flex; 
-  justify-content: center; 
-  align-items: center; 
-  flex-direction: column; 
-  cursor: pointer; 
+  height: 100%;
+  width: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  cursor: pointer;
 }
 
 .dashboard-content {

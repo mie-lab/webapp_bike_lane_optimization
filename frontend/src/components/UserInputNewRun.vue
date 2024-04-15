@@ -1,6 +1,5 @@
 <template>
-  <div  >
-
+  <div>
     <!-- User input container -->
     <button class="close-btn" @click="toggleTabsVisibility">
       <i
@@ -9,7 +8,7 @@
       ></i>
     </button>
 
-    <div class="user-input-container" >
+    <div class="user-input-container">
       <h4 class="h4_override">Project:</h4>
       <h2 class="h2_override">{{ inputStore.projectName }} | {{ runName }}</h2>
 
@@ -58,7 +57,9 @@
       <br />
 
       <br />
-      <button @click="toggleUserInputNextSide" class="back-button">Back</button>
+      <button @click="toggleUserInputPreviousSide" class="back-button">
+        Back
+      </button>
 
       <button @click="callOptimization">Run</button>
     </div>
@@ -73,7 +74,7 @@ import { useResultsStore } from "../stores/algorithmResultsStore.js";
 import { projectsStore } from "../stores/projectsStore.js";
 import RingLoader from "vue-spinner/src/RingLoader.vue";
 import { ref } from "vue";
-import { createView, getRunList,evalTravelTime } from "../scripts/api.js";
+import { createView, getRunList, evalTravelTime } from "../scripts/api.js";
 import { loadLayer } from "../scripts/map.js";
 
 export default {
@@ -146,14 +147,19 @@ export default {
       //loadLayer("v_point_direction", "wms_point_direction");
 
       const ResultsStore = useResultsStore();
-      
-      const responseEvaluation = await evalTravelTime(inputStore.projectID,run.id_run);
+
+      const responseEvaluation = await evalTravelTime(
+        inputStore.projectID,
+        run.id_run
+      );
       console.log(responseEvaluation.bike_travel_time);
-      ResultsStore.setEvaluation(responseEvaluation.bike_travel_time,responseEvaluation.car_travel_time);
+      ResultsStore.setEvaluation(
+        responseEvaluation.bike_travel_time,
+        responseEvaluation.car_travel_time
+      );
 
       const statusStore = statusVariablesStore();
       statusStore.openDashboard();
-
     },
 
     toggleActiveTab(tab) {
@@ -169,6 +175,10 @@ export default {
     toggleUserInputNextSide() {
       const statusStore = statusVariablesStore();
       statusStore.toggleRunPage();
+    },
+    toggleUserInputPreviousSide() {
+      const statusStore = statusVariablesStore();
+      statusStore.toggleCreateNewRunPage();
     },
 
     toggleTabsVisibility() {
@@ -202,6 +212,8 @@ export default {
     },
 
     async callOptimization() {
+      toggleUserInputPreviousSide();
+
       const inputStore = userInputStore();
       const project_id = inputStore.projectID;
       const algorithm = "betweenness_biketime";
@@ -226,7 +238,6 @@ export default {
           bikeEdges: response.bike_edges,
           variables: response.run_name,
         };
-        
 
         // Load the newly created run
         await this.loadRun(response);

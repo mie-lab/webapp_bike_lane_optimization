@@ -2,80 +2,84 @@
   <div>
     <!-- Run list -->
     <div v-if="!statusStore.createNewRunPage">
-    <div class="user-input-container">
-      <h4 class="h4_override">Project:</h4>
-      <h2 class="h2_override">{{ inputStore.projectName }} | {{ runName }}</h2>
+      <div class="user-input-container">
+        <h4 class="h4_override">Project:</h4>
+        <h2 class="h2_override">
+          {{ inputStore.projectName }} | {{ runName }}
+        </h2>
 
-       <p class="info-text">
-        This is your project overview. <br />
-        Make multiple runs with different paramters for the chosen area. <br /> <br />
-        Create a new Run for the project, or click on already existing runs to see their results.
-      </p>
-    </div>
-    <br />
-    <br />
-    <h3 class="runs-header">
-      <span class="runs-text">Runs</span>
-      <span class="refresh-container">
-        <i
-          v-if="!isLoading"
-          class="fa-solid fa-rotate-right refresh-button"
-          @click="reloadRuns"
-        >
-        </i>
-      </span>
-      <span class="ring-loader-container">
-        <div class="ring-loader">
-          <RingLoader v-if="isLoading" :size="'80'" :color="'#123abc'" />
+        <p class="info-text">
+          This is your project overview. <br />
+          Make multiple runs with different paramters for the chosen area.
+          <br />
+          <br />
+          Create a new Run for the project, or click on already existing runs to
+          see their results.
+        </p>
+      </div>
+      <br />
+      <br />
+      <h3 class="runs-header">
+        <span class="runs-text">Runs</span>
+        <span class="refresh-container">
+          <i
+            v-if="!isLoading"
+            class="fa-solid fa-rotate-right refresh-button"
+            @click="reloadRuns"
+          >
+          </i>
+        </span>
+        <span class="ring-loader-container">
+          <div class="ring-loader">
+            <RingLoader v-if="isLoading" :size="'80'" :color="'#123abc'" />
+          </div>
+        </span>
+      </h3>
+
+      <div class="list-header">
+        <div class="header-item-left"><p class="run_list_name">Name</p></div>
+        <div class="header-item"><i class="far fa-clock"></i></div>
+        <div class="header-item">
+          <i class="fa-solid fa-lines-leaning"></i>
         </div>
-      </span>
-    </h3>
+      </div>
+      <div class="project-list">
+        <ul>
+          <li
+            v-for="run in filteredRuns"
+            :key="run.run_name"
+            @click="loadRun(run)"
+            :class="{ selected: run === selectedRun }"
+          >
+            <div class="run-details">
+              <div class="run_name">{{ run.run_name }}</div>
+              <div class="run_tt_weight">{{ run.bike_ratio }}</div>
+              <div class="run_alloc">{{ run.optimize_frequency }}%</div>
+            </div>
+            <hr class="divider" />
+          </li>
+        </ul>
+      </div>
 
-    <div class="list-header">
-      <div class="header-item-left"><p class="run_list_name">Name</p></div>
-      <div class="header-item"><i class="far fa-clock"></i></div>
-      <div class="header-item">
-        <i class="fa-solid fa-lines-leaning"></i>
+      <!-- User input container -->
+      <button class="close-btn" @click="toggleTabsVisibility">
+        <i
+          class="fa-solid fa-times"
+          style="font-size: 20px; color: var(--darkgrey-bg)"
+        ></i>
+      </button>
+
+      <div class="buttons">
+        <button @click="toggleUserInputPreviousSide" class="back-button">
+          Back
+        </button>
+        <button @click="openCreate">Create new Run</button>
       </div>
     </div>
-    <div class="project-list">
-      <ul>
-        <li
-          v-for="run in filteredRuns"
-          :key="run.run_name"
-          @click="loadRun(run)"
-          :class="{ 'selected': run === selectedRun }"
-        >
-          <div class="run-details">
-            <div class="run_name">{{ run.run_name }}</div>
-            <div class="run_tt_weight">{{ run.bike_ratio }}</div>
-            <div class="run_alloc">{{ run.optimize_frequency }}%</div>
-          </div>
-          <hr class="divider" />
-        </li>
-      </ul>
-    </div>
-     
-
-    <!-- User input container -->
-    <button class="close-btn" @click="toggleTabsVisibility">
-      <i
-        class="fa-solid fa-times"
-        style="font-size: 20px; color: var(--darkgrey-bg)"
-      ></i>
-    </button>
-
-    <button @click="toggleUserInputPreviousSide" class="back-button">
-        Back
-      </button>
-    <button @click="openCreate">Create new Run</button>
-    </div> 
-
 
     <div v-if="statusStore.createNewRunPage">
       <UserInputNewRun />
     </div>
-   
   </div>
 </template>
 
@@ -87,10 +91,15 @@ import { useResultsStore } from "../stores/algorithmResultsStore.js";
 import { projectsStore } from "../stores/projectsStore.js";
 import RingLoader from "vue-spinner/src/RingLoader.vue";
 import { ref } from "vue";
-import { createView, getRunList,evalTravelTime, getPareto } from "../scripts/api.js";
+import {
+  createView,
+  getRunList,
+  evalTravelTime,
+  getPareto,
+} from "../scripts/api.js";
 import { loadLayer } from "../scripts/map.js";
-
-import UserInputNewRun from './UserInputNewRun.vue';
+import UserInputNewRun from "./UserInputNewRun.vue";
+import { storeToRefs } from "pinia";
 
 export default {
   name: "UserInputRun",
@@ -139,11 +148,15 @@ export default {
       selectedRun: null,
     };
   },
-  
+
   methods: {
     toggleUserInputNextSide() {
       const statusStore = statusVariablesStore();
       statusStore.toggleLoadPage();
+    },
+    toggleUserInputPreviousSide() {
+      const statusStore = statusVariablesStore();
+      statusStore.toggleRunPage();
     },
     openCreate() {
       const statusStore = statusVariablesStore();
@@ -173,28 +186,33 @@ export default {
       console.log("Layyer loaded");
       //loadLayer("v_point_direction", "wms_point_direction");
 
-
       // create evaluation for the selected run
       const ResultsStore = useResultsStore();
-      const responseEvaluation = await evalTravelTime(inputStore.projectID,run.id_run);
+      const responseEvaluation = await evalTravelTime(
+        inputStore.projectID,
+        run.id_run
+      );
       console.log(responseEvaluation.bike_travel_time);
-      ResultsStore.setEvaluation(responseEvaluation.bike_travel_time,responseEvaluation.car_travel_time);
+      ResultsStore.setEvaluation(
+        responseEvaluation.bike_travel_time,
+        responseEvaluation.car_travel_time
+      );
 
-      const paretoEvaluation = await getPareto(inputStore.projectID,run.id_run);
+      const paretoEvaluation = await getPareto(
+        inputStore.projectID,
+        run.id_run
+      );
       console.log(paretoEvaluation);
 
       // Extracting data from paretoEvaluation
       const projects = paretoEvaluation.projects;
-      const bikeTimes = projects.map(project => project.bike_time);
-      const carTimes = projects.map(project => project.car_time);
-      
-      ResultsStore.setTraveltimes(bikeTimes,carTimes);
+      const bikeTimes = projects.map((project) => project.bike_time);
+      const carTimes = projects.map((project) => project.car_time);
 
+      ResultsStore.setTraveltimes(bikeTimes, carTimes);
 
       const statusStore = statusVariablesStore();
       statusStore.openDashboard();
-      
-
     },
 
     toggleActiveTab(tab) {
@@ -267,7 +285,6 @@ export default {
           bikeEdges: response.bike_edges,
           variables: response.run_name,
         };
-        
 
         // Load the newly created run
         await this.loadRun(response);
@@ -287,5 +304,9 @@ export default {
   background-color: #e0e0e0; /* Set the background color for the selected item */
   font-weight: bold; /* Make the text bold for the selected item */
   /* Add any other styles you want to apply to the selected item */
+}
+
+.buttons {
+  margin-top: 20px;
 }
 </style>
