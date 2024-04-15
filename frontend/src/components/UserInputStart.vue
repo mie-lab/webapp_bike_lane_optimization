@@ -11,21 +11,16 @@
       v-show="!statusStore.createPage && !statusStore.loadPage"
       class="user-input-container"
     >
-      <p class="info-text">
-        Create your own project and run the optimization algorithm for an area
-        of your choice.
-      </p>
-
-      <br />
-      <button @click="openLoad">Load</button>
-      <button @click="openCreate">Create</button>
+      
     </div>
     <div v-show="statusStore.createPage">
       <UserInputCreate />
     </div>
     <div v-show="statusStore.loadPage">
       <UserInputLoad />
+      
     </div>
+    
   </div>
 </template>
 
@@ -62,12 +57,12 @@ export default {
       size: "25px",
     };
   },
+  mounted(){
+    this.openLoad();
+  },
 
   methods: {
-    openCreate() {
-      const statusStore = statusVariablesStore();
-      statusStore.toggleCreatePage();
-    },
+    
     async openLoad() {
       const statusStore = statusVariablesStore();
       const prjStore = projectsStore();
