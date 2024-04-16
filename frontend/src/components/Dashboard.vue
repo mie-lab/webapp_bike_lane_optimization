@@ -17,7 +17,7 @@
       </h2>
       <p>
         Bike Travel Time:
-        {{ Math.round((ResultsStore.bikeTravelTime * 100) / 100) }} min
+        {{ Math.round(ResultsStore.bikeTravelTime * 100) / 100 }} min
       </p>
       <p>
         Car Travel Time:
@@ -27,6 +27,7 @@
       <!-- Scatter plot canvas -->
       <canvas ref="scatterPlotCanvas" width="400" height="400"></canvas>
     </div>
+    
   </div>
 </template>
 
@@ -35,7 +36,7 @@ import Chart from "chart.js/auto";
 import { useResultsStore } from "../stores/algorithmResultsStore.js";
 import { statusVariablesStore } from "../stores/statusVariablesStore.js";
 import { userInputStore } from "../stores/userInputStore.js";
-import { getPareto } from "../scripts/api.js";
+import { watch } from "vue";
 
 export default {
   name: "Dashboard",
@@ -44,30 +45,70 @@ export default {
     const ResultsStore = useResultsStore();
     const statusStore = statusVariablesStore();
     const inputStore = userInputStore();
-    return { ResultsStore, statusStore, inputStore };
+
+    watch(
+      [() => ResultsStore.bikeTravelTime, () => ResultsStore.carTravelTime],
+      ([newBikeTime, newCarTime], [oldBikeTime, oldCarTime]) => {
+        console.log("Bike travel time updated:", newBikeTime);
+        console.log("Car travel time updated:", newCarTime);
+      }
+    );
+    
+    return {
+      ResultsStore,
+      statusStore,
+      inputStore,
+      
+    };
   },
+  mounted(){
+    this.createScatterPlot();
+    watch(
+      () => this.ResultsStore.paretoBikeTTArray,
+      (newTime, oldTime) => {
+        console.log("pareto bike time updated:");
+        this.createScatterPlot();
+      }
+    );
+
+    watch(
+      () => this.ResultsStore.paretoCarTTArray,
+      (newTime, oldTime) => {
+        console.log("pareto car time updated:");
+          
+      }
+    );
+
+    
+
+
+  },
+
   methods: {
+
     toggleDashboard() {
       this.statusStore.toggleDashboard();
     },
 
     createScatterPlot() {
-      const ResultsStore = useResultsStore();
-      const ctx = this.$refs.scatterPlotCanvas.getContext("2d");
+      
+      const canvas = this.$refs.scatterPlotCanvas;
+      const ctx = canvas.getContext("2d");
 
-      // TODO, always update the plot when the data in the pinia store changes
-      const bikeTimes = ResultsStore.paretoBikeTTArray;
-      const carTimes = ResultsStore.paretoCarTTArray;
+      // Check if there's already a Chart instance on this canvas
+      if (canvas.chart) {
+        canvas.chart.destroy(); // Destroy the previous Chart instance
+      }
 
-      new Chart(ctx, {
+      canvas.chart =new Chart(ctx, {
         type: "scatter",
         data: {
           datasets: [
             {
               label: "integer Pareto",
-              data: bikeTimes.map((bikeTime, index) => ({
+              data: this.ResultsStore.paretoBikeTTArray.map((bikeTime, index) => ({
                 x: bikeTime,
-                y: carTimes[index],
+                y: this.ResultsStore.paretoCarTTArray[index],
               })),
               backgroundColor: "rgba(255, 99, 132, 0.5)",
               borderColor: "rgba(255, 99, 132, 1)",
@@ -97,9 +138,7 @@ export default {
       });
     },
   },
-  mounted() {
-    this.createScatterPlot();
-  },
+  
 
   data() {
     const statusStore = statusVariablesStore();

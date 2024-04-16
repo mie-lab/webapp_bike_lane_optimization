@@ -62,19 +62,17 @@ export default {
 
 <style scoped>
 .rotated-beat-loader {
-  transform: scale(0.4) rotate(90deg); /* Rotate the loader by 90 degrees */
-  height: 20px; /* Adjust the size as needed */
+  transform: scale(0.4) rotate(90deg); 
+  height: 20px; 
 }
 
-.running-requests-list {
-  /* Your existing styles */
-}
+
 
 .list-header {
   margin-left: 30px;
   display: grid;
-  grid-template-columns: 3fr 1fr 1fr 1fr; /* Adjusted grid template columns */
-  align-items: center; /* Center items vertically */
+  grid-template-columns: 3fr 1fr 1fr 1fr;
+  align-items: center; 
   margin-bottom: 10px;
   border-bottom: 1px solid #ccc;
   margin-right: 20px;
@@ -93,14 +91,14 @@ export default {
 
 .header-item {
   padding: 5px;
-  text-align: right; /* Center the icons horizontally */
+  text-align: right; 
 }
 
 .header-item:first-child {
-  text-align: left; /* Align the text to the left in the first column */
+  text-align: left; 
 }
 
 .header-item:last-child {
-  text-align: right; /* Align the text to the right in the last column */
+  text-align: right; 
 }
 </style>
