@@ -230,7 +230,7 @@ export default {
       const bikeSafetyPenatly = 2;
       const optimizeFrequency = 30;
 
-      const responseRunID = await getNewRunID(project_id); // not really needed --> also get run ID in respone from runOptimization
+      const responseRunID = await getNewRunID(project_id); 
 
       this.processStore.addProcess({
         id: responseRunID.run_id,
@@ -251,7 +251,7 @@ export default {
           bikeSafetyPenatly,
           this.runName
         );
-
+        console.log("Response: ", response);
         // Load the newly created run
         await this.loadRun(response);
       } catch (error) {

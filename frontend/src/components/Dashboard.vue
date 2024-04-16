@@ -15,17 +15,25 @@
       <h2 class="h2_override">
         {{ inputStore.projectName }} | {{ inputStore.runName }}
       </h2>
-      <p>
-        Bike Travel Time:
-        {{ Math.round(ResultsStore.bikeTravelTime * 100) / 100 }} min
-      </p>
-      <p>
-        Car Travel Time:
-        {{ Math.round(ResultsStore.carTravelTime * 100) / 100 }} min
-      </p>
+      <div>
+        <h3>Travel Times</h3>
+        <p>This are the average travel times for all trips within the target area. Intersections and traffic is not considered here.</p>
+        <p>
+          Bike Travel Time:
+          {{ Math.round(ResultsStore.bikeTravelTime * 100) / 100 }} min
+        </p>
+        <p>
+          Car Travel Time:
+          {{ Math.round(ResultsStore.carTravelTime * 100) / 100 }} min
+        </p>
+      </div>
 
       <!-- Scatter plot canvas -->
-      <canvas ref="scatterPlotCanvas" width="400" height="400"></canvas>
+      <div>
+        <h3>Pareto</h3>
+        <canvas ref="scatterPlotCanvas" width="400" height="400"></canvas>
+        <p>This plot shows the pareto frontier from the chosen linear formulation.</p>
+      </div>
     </div>
     
   </div>
@@ -123,14 +131,14 @@ export default {
               position: "bottom",
               title: {
                 display: true,
-                text: "Bike Time",
+                text: "Change in bike travel time [%]",
               },
             },
             y: {
               type: "linear",
               title: {
                 display: true,
-                text: "Car Time",
+                text: "Increase in car travel time [%]",
               },
             },
           },

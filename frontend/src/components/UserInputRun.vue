@@ -15,6 +15,7 @@
           <br />
           Create a new Run for the project, or click on already existing runs to
           see their results.
+          
         </p>
       </div>
       <br />
@@ -190,11 +191,10 @@ export default {
         inputStore.projectID,
         run.id_run
       );
-
       // Extracting data from paretoEvaluation
       const projects = paretoEvaluation.projects;
-      const bikeTimes = projects.map((project) => project.bike_time);
-      const carTimes = projects.map((project) => project.car_time);
+      const bikeTimes = projects.map((project) => project.bike_time_change);
+      const carTimes = projects.map((project) => project.car_time_change);
 
       ResultsStore.setTraveltimes(bikeTimes, carTimes);
 
