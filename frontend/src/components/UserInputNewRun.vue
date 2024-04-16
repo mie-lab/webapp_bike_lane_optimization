@@ -137,12 +137,10 @@ export default {
   },
   methods: {
     async loadRun(run) {
-      //console.log("Loading run: ", run.run_name, run.id_run);
-      //console.log("Run: ", run);
       const inputStore = userInputStore();
       this.isLoading = true;
 
-      inputStore.setRunID(run.id_run);
+      inputStore.setRunID(run.run_id);
       this.runName = run.run_name;
       inputStore.setRunName(this.runName);
 
@@ -155,16 +153,14 @@ export default {
       //console.log("Create View Response: ", response);
 
       loadLayer("v_optimized", "wms_optimized");
-      //console.log("Layyer loaded");
-      //loadLayer("v_point_direction", "wms_point_direction");
 
       const ResultsStore = useResultsStore();
-
+ 
       const responseEvaluation = await evalTravelTime(
-        inputStore.projectID,
-        run.id_run
+        run.project_id,
+        run.run_id
       );
-      console.log(responseEvaluation.bike_travel_time);
+      console.log(responseEvaluation);
       ResultsStore.setEvaluation(
         responseEvaluation.bike_travel_time,
         responseEvaluation.car_travel_time
@@ -208,7 +204,7 @@ export default {
       inputStore.setLaneAllocation(value);
     },
 
-    async reloadRuns() {
+    async reloadRuns() { // not used
       this.isLoading = true;
       const inputStore = userInputStore();
       const prjStore = projectsStore();
@@ -234,7 +230,7 @@ export default {
       const bikeSafetyPenatly = 2;
       const optimizeFrequency = 30;
 
-      const responseRunID = await getNewRunID(project_id);
+      const responseRunID = await getNewRunID(project_id); // not really needed --> also get run ID in respone from runOptimization
 
       this.processStore.addProcess({
         id: responseRunID.run_id,
@@ -255,11 +251,6 @@ export default {
           bikeSafetyPenatly,
           this.runName
         );
-
-        const result = {
-          bikeEdges: response.bike_edges,
-          variables: response.run_name,
-        };
 
         // Load the newly created run
         await this.loadRun(response);
