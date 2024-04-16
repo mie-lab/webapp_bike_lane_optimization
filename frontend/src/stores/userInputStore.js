@@ -3,8 +3,8 @@ import { defineStore } from "pinia";
 export const userInputStore = defineStore("variableStore", {
   id: "variableStore",
   state: () => ({
-    timeWeighting: 0.5,
-    laneAllocation: 0.5,
+    timeWeighting: 0.7,
+    laneAllocation: 0.1,
     boundingBox: null,
     projectName: "",
     projectID: null,

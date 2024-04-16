@@ -236,7 +236,7 @@ export default {
         id: responseRunID.run_id,
         name: this.runName,
         bike_ratio: bikeRatio,
-        optimize_frequency: optimizeFrequency,
+        car_weight: carWeight,
         status: "pending",
       });
       //this.toggleUserInputPreviousSide();

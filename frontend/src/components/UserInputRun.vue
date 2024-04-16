@@ -53,8 +53,8 @@
           >
             <div class="run-details">
               <div class="run_name">{{ run.run_name }}</div>
-              <div class="run_tt_weight">{{ run.bike_ratio }}</div>
-              <div class="run_alloc">{{ run.optimize_frequency }}%</div>
+              <div class="run_tt_weight">{{ run.car_weight}}</div>
+              <div class="run_alloc">{{ run.bike_ratio*100 }}%</div>
             </div>
             <hr class="divider" />
           </li>
@@ -98,7 +98,7 @@ import {
 } from "../scripts/api.js";
 import { loadLayer } from "../scripts/map.js";
 import UserInputNewRun from "./UserInputNewRun.vue";
-import { storeToRefs } from "pinia";
+
 
 export default {
   name: "UserInputRun",
@@ -132,8 +132,6 @@ export default {
   data() {
     const inputStore = userInputStore();
     return {
-      timeWeighting: 0.7,
-      laneAllocation: 10,
       isButtonDisabled: true,
       projectName: inputStore.projectName,
       setRunName: inputStore.setRunName,
@@ -157,11 +155,8 @@ export default {
     openCreate() {
       const statusStore = statusVariablesStore();
       statusStore.toggleCreateNewRunPage();
-      //console.log("Create new Run");
     },
     async loadRun(run) {
-      //console.log("Loading run: ", run.run_name, run.id_run);
-      //console.log("Run: ", run);
 
       this.selectedRun = run;
 
@@ -176,11 +171,8 @@ export default {
         run.id_run,
         "v_optimized"
       );
-      //console.log("Create View Response: ", response);
 
       loadLayer("v_optimized", "wms_optimized");
-      //console.log("Layyer loaded");
-      //loadLayer("v_point_direction", "wms_point_direction");
 
       // create evaluation for the selected run
       const ResultsStore = useResultsStore();
@@ -198,7 +190,6 @@ export default {
         inputStore.projectID,
         run.id_run
       );
-      //console.log(paretoEvaluation);
 
       // Extracting data from paretoEvaluation
       const projects = paretoEvaluation.projects;
@@ -211,16 +202,6 @@ export default {
       statusStore.openDashboard();
     },
 
-    toggleActiveTab(tab) {
-      // Toggle the active tab using the Pinia store
-      const statusStore = statusVariablesStore();
-      const storedTab = this.activeTab;
-      if (tab == storedTab) {
-        statusStore.setActiveTab("None");
-      } else {
-        statusStore.setActiveTab(tab);
-      }
-    },
     toggleUserInputNextSide() {
       const statusStore = statusVariablesStore();
       statusStore.toggleRunPage();
@@ -245,39 +226,7 @@ export default {
         this.isLoading = false;
       }
     },
-
-    async callOptimization() {
-      const inputStore = userInputStore();
-      const project_id = inputStore.projectID;
-      const algorithm = "betweenness_biketime";
-      const bikeRatio = inputStore.laneAllocation;
-      const carWeight = inputStore.timeWeighting;
-      const project_name = inputStore.projectName;
-      const bikeSafetyPenatly = 2;
-      const optimizeFrequency = 30;
-
-      try {
-        const response = await runOptimization(
-          project_id,
-          algorithm,
-          bikeRatio,
-          optimizeFrequency,
-          carWeight,
-          bikeSafetyPenatly,
-          this.runName
-        );
-
-        const result = {
-          bikeEdges: response.bike_edges,
-          variables: response.run_name,
-        };
-
-        // Load the newly created run
-        await this.loadRun(response);
-      } catch (error) {
-        console.error("Error:", error.message);
-      }
-    },
+ 
   },
 };
 </script>

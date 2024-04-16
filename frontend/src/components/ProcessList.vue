@@ -11,9 +11,9 @@
       <li v-for="process in runningProcesses" :key="process.id">
         <div class="process-details">
           <div class="process-name">{{ process.name }}</div>
-          <div class="process-bike-ratio">{{ process.bike_ratio }}</div>
+          <div class="process-bike-ratio">{{ process.car_weight}}</div>
           <div class="process-optimize-frequency">
-            {{ process.optimize_frequency }}
+            {{ process.bike_ratio*100 }} %
           </div>
           <div class="process-status">
             <template v-if="process.status === 'pending'">
