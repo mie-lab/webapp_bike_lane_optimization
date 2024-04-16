@@ -189,6 +189,30 @@ export async function evalTravelTime(projectID, runID) {
   }
 }
 
+export async function getKmDistancePerLaneType(projectID, runID) {
+  const url =
+    `http://localhost:8989/get_distance_per_lane_type?` +
+    `project_id=${encodeURIComponent(projectID)}` +
+    `&run_name=${encodeURIComponent(runID)}`;
+  const params = {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+  try {
+    const response = await fetch(url, params);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
+  } catch (error) {
+    console.error("Error:", error);
+    throw error;
+  }
+}
+
 export async function getPareto(projectID, runID) {
   const url =
     `http://localhost:8989/get_pareto?` +
