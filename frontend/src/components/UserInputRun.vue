@@ -96,6 +96,7 @@ import {
   getRunList,
   evalTravelTime,
   getPareto,
+  getKmDistancePerLaneType,
 } from "../scripts/api.js";
 import { loadLayer } from "../scripts/map.js";
 import UserInputNewRun from "./UserInputNewRun.vue";
@@ -198,6 +199,10 @@ export default {
 
       ResultsStore.setTraveltimes(bikeTimes, carTimes);
 
+      // get km per bike / car lane
+      const distanceEvaluation = await getKmDistancePerLaneType(inputStore.projectID,run.id_run);
+      //console.log(distanceEvaluation.distance_car[0].total_car_lane_distance);
+      ResultsStore.setDistancesKM(distanceEvaluation.distance_bike[0].total_bike_lane_distance,distanceEvaluation.distance_car[0].total_car_lane_distance)
       const statusStore = statusVariablesStore();
       statusStore.openDashboard();
     },

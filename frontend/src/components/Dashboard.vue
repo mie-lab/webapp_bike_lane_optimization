@@ -44,6 +44,15 @@
           formulation.
         </p>
       </div>
+
+      <div>
+        <h3>Distances per lane type</h3>
+        <p>Km Bike lanes: 
+          {{ Math.round(ResultsStore.kmBike * 100) / 100 }} km</p>
+          <p>Km Car lanes: 
+          {{ Math.round(ResultsStore.kmCar * 100) / 100 }} km </p>
+      </div>
+
     </div>
   </div>
 </template>
@@ -66,8 +75,16 @@ export default {
     watch(
       [() => ResultsStore.bikeTravelTime, () => ResultsStore.carTravelTime],
       ([newBikeTime, newCarTime], [oldBikeTime, oldCarTime]) => {
-        console.log("Bike travel time updated:", newBikeTime);
-        console.log("Car travel time updated:", newCarTime);
+        //console.log("Bike travel time updated:", newBikeTime);
+        //console.log("Car travel time updated:", newCarTime);
+      }
+    );
+
+    watch(
+      [() => ResultsStore.kmBike, () => ResultsStore.kmCar],
+      ([newBikeTime, newCarTime], [oldBikeTime, oldCarTime]) => {
+        //console.log("Bike travel time updated:", newBikeTime);
+        //console.log("Car travel time updated:", newCarTime);
       }
     );
 
