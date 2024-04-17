@@ -45,7 +45,12 @@
             :key="project.id"
             @click="openProject(project)"
           >
-            {{ project.prj_name }}
+            <div class="project-info">
+              <span>{{ project.prj_name }}</span>
+              <span class="created-date">{{
+                formatDate(project.created)
+              }}</span>
+            </div>
             <hr class="divider" />
           </li>
         </ul>
@@ -54,7 +59,7 @@
       <br />
 
       <br />
-      
+
       <button @click="openCreate">Create new Project</button>
     </div>
     <div v-show="statusStore.runPage">
@@ -93,11 +98,17 @@ export default {
     const filteredProjects = computed(() => {
       const prjArray = prjStore.projects.projects;
       if (prjArray) {
-        return prjArray.filter((project) =>
-          project.prj_name
-            .toLowerCase()
-            .includes(searchQuery.value.toLowerCase())
-        );
+        // Sort projects by "created" timestamp in descending order
+        return prjArray
+          .slice() // Create a shallow copy to avoid mutating the original array
+          .sort((a, b) => {
+            return new Date(b.created) - new Date(a.created);
+          })
+          .filter((project) =>
+            project.prj_name
+              .toLowerCase()
+              .includes(searchQuery.value.toLowerCase())
+          );
       }
       return [];
     });
@@ -126,6 +137,11 @@ export default {
   },
 
   methods: {
+    formatDate(timestamp) {
+      const date = new Date(timestamp);
+      return date.toLocaleDateString();
+    },
+
     openCreate() {
       const statusStore = statusVariablesStore();
       statusStore.toggleCreatePage();
@@ -189,5 +205,18 @@ export default {
   background-color: #ccc;
   color: #666;
   cursor: not-allowed;
+}
+
+.project-info {
+  display: flex;
+  justify-content: space-between;
+}
+
+.created-date {
+  margin-left: 20px; /* Adjust as needed */
+}
+
+.project-list {
+  margin-right: 20px;
 }
 </style>
