@@ -7,6 +7,8 @@ export const useResultsStore = defineStore("evaluation",{
     bikeTravelTime: null,
     paretoBikeTTArray: [],
     paretoCarTTArray: [],
+    kmBike: null,
+    kmCar: null,
   }),
   actions: {
     setEvaluation(bikeTT,carTT) {
@@ -16,6 +18,10 @@ export const useResultsStore = defineStore("evaluation",{
     setTraveltimes(bikeTT,carTT) {
       this.paretoBikeTTArray = bikeTT;
       this.paretoCarTTArray = carTT;
+    },
+    setDistancesKM(kmBike,kmCar){
+      this.kmBike = kmBike;
+      this.kmCar = kmCar;
     }
   },
 });
