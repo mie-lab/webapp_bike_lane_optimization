@@ -6,17 +6,20 @@ export const statusVariablesStore = defineStore("statusVariables", {
     drawingPolygonEnabled: false,
     drawingRectangleEnabled: false,
     createPage: false,
-    loadPage: false,
+    loadPage: true,
     runPage: false,
     dashboard: false,
     createNewRunPage: false,
   }),
   actions: {
-    toggleCreateNewRunPage() {  
+    toggleCreateNewRunPage() {
       this.createNewRunPage = !this.createNewRunPage;
     },
-    toggleDashboard() { 
+    toggleDashboard() {
       this.dashboard = !this.dashboard;
+    },
+    closeDashboard() {
+      this.dashboard = false;
     },
     openDashboard() {
       this.dashboard = true;
@@ -26,6 +29,10 @@ export const statusVariablesStore = defineStore("statusVariables", {
     },
     toggleLoadPage() {
       this.loadPage = !this.loadPage;
+    },
+
+    activateLoadPage() {
+      this.loadPage = true;
     },
 
     toggleRunPage() {

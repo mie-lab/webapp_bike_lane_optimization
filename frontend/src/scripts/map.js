@@ -3,7 +3,19 @@ import mapboxgl from "mapbox-gl";
 import { userInputStore } from "../stores/userInputStore.js";
 import proj4 from "proj4";
 
-export function loadLayer(layerID, layerSource) {
+export async function removeLayer(layerID, layerSource) {
+  const mapStoreInstance = mapStore();
+  const map = mapStoreInstance.map;
+  if (map.getLayer(layerID)) {
+    map.removeLayer(layerID);
+  }
+
+  if (map.getSource(layerSource)) {
+    map.removeSource(layerSource);
+  }
+}
+
+export async function loadLayer(layerID, layerSource) {
   const mapStoreInstance = mapStore();
   const map = mapStoreInstance.map;
 
@@ -15,6 +27,161 @@ export function loadLayer(layerID, layerSource) {
     map.removeSource(layerSource);
   }
 
+  const wfsURL =
+    "https://baug-ikg-gis-01.ethz.ch:8443/geoserver/GMP_EBC/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=GMP_EBC:layername&outputFormat=application/json".replace(
+      "layername",
+      layerID
+    );
+
+  // Define projection definitions for LV95 and WGS84
+  proj4.defs(
+    "EPSG:2056",
+    "+proj=somerc +lat_0=46.95240555555556 +lon_0=7.439583333333333 +k_0=1 +x_0=2600000 +y_0=1200000 +ellps=bessel +towgs84=674.374,15.056,405.346,0,0,0,0 +units=m +no_defs"
+  );
+  proj4.defs("EPSG:4326", "+proj=longlat +datum=WGS84 +no_defs");
+
+  try {
+    const response = await (async () => {
+      return await fetch(wfsURL);
+    })();
+
+    console.log(response);
+    const data = await response.json();
+    console.log(data.features);
+
+    // Convert GeoJSON coordinates from LV95 to WGS84
+    const features = data.features.map((feature) => {
+      const geometry = feature.geometry;
+      const coordinates = geometry.coordinates;
+      var convertedCoordinates = [];
+      if (layerID == "v_bound") {
+        convertedCoordinates = coordinates.map((ring) =>
+          ring.map((point) => proj4("EPSG:2056", "EPSG:4326", point))
+        );
+      }
+      if (layerID == "v_optimized") {
+        convertedCoordinates = coordinates.map((point) =>
+          proj4("EPSG:2056", "EPSG:4326", point)
+        );
+      }
+
+      geometry.coordinates = convertedCoordinates;
+      return feature;
+    });
+
+    // Update the original GeoJSON data with converted coordinates
+    data.features = features;
+
+    map.addSource(layerSource, {
+      type: "geojson",
+      data: data,
+      generateId: true,
+    });
+
+    if (layerID == "v_bound") {
+      map.addLayer({
+        id: layerID,
+        type: "line",
+        source: layerSource,
+        paint: {
+          "line-color": "#FFA500",
+          "line-width": 2,
+        },
+      });
+    }
+
+    if (layerID == "v_optimized") {
+      map.addLayer({
+        id: layerID,
+        type: "line",
+        source: layerSource,
+        paint: {
+          "line-color": "#FFA500",
+          "line-width": 2,
+        },
+      });
+    }
+  } catch (error) {
+    console.error("Error loading WFS data:", error);
+  }
+
+  //----------------------TOOLTIP----------------------//
+
+  let tooltip = new mapboxgl.Popup({
+    closeButton: false,
+    closeOnClick: false,
+  });
+
+  // Highlighted feature style
+  const highlightedStyle = {
+    "line-color": "#FFFF00", // Bright yellow color
+    "line-width": 4, // Increased line width
+  };
+
+  // Original feature style
+  let originalStyle;
+
+  // Tooltip handler for v_bound layer
+  if (layerID === "v_bound") {
+    map.on("mouseenter", layerID, (e) => {
+      const feature = e.features[0];
+      originalStyle = map.getPaintProperty(layerID, "line-color");
+      const coordinates = e.lngLat;
+
+      tooltip
+        .setLngLat(coordinates)
+        .setHTML(`<h3>Feature Info</h3><p>ID: ${feature.properties.id}</p>`)
+        .addTo(map);
+    });
+
+    map.on("mousemove", (e) => {
+      if (tooltip.isOpen()) {
+        tooltip.setLngLat(e.lngLat);
+      }
+    });
+
+    map.on("mouseleave", layerID, () => {
+      tooltip.remove();
+    });
+  }
+
+  // Tooltip handler for v_optimized layer
+  if (layerID === "v_optimized") {
+    map.on("mouseenter", layerID, (e) => {
+      const feature = e.features[0];
+      console.log("Feature:", feature);
+      const featureId = feature.id;
+
+      // Highlight the feature
+      map.setFeatureState(
+        { source: layerSource, id: featureId },
+        { hover: true }
+      );
+      const coordinates = e.lngLat;
+
+      tooltip
+        .setLngLat(coordinates)
+        .setHTML(
+          `<h3>Optimized Feature Info</h3><p>ID: ${feature.properties.lanetype}</p>`
+        )
+        .addTo(map);
+    });
+
+    map.on("mousemove", (e) => {
+      if (tooltip.isOpen()) {
+        tooltip.setLngLat(e.lngLat);
+      }
+    });
+
+    map.on("mouseleave", layerID, () => {
+      // Remove the feature state to unhighlight the feature
+      map.removeFeatureState({ source: layerSource });
+
+      tooltip.remove();
+    });
+  }
+
+  /*
   const tile =
     "https://baug-ikg-gis-01.ethz.ch:8443/geoserver/GMP_EBC/wms?REQUEST=GetMap&SERVICE=WMS&layers=GMP_EBC:layername&bbox={bbox-epsg-3857}&transparent=true&width=256&height=256&srs=EPSG:3857&styles=&format=image/png".replace(
       "layername",
@@ -33,6 +200,7 @@ export function loadLayer(layerID, layerSource) {
     source: layerSource,
     paint: {},
   });
+  */
 
   const userInput = userInputStore();
 

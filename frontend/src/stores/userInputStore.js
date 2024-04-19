@@ -33,5 +33,9 @@ export const userInputStore = defineStore("variableStore", {
     setRunName(runName) {
       this.runName = runName;
     },
+    resetRuns() {
+      this.runID = null;
+      this.runName = "";
+    },
   },
 });

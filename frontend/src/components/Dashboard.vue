@@ -9,7 +9,7 @@
         "
       ></i>
     </div>
-    <div v-show="statusStore.dashboard" class="dashboard-content bg-lightgrey">
+    <div v-show="dashboard" class="dashboard-content bg-lightgrey">
       <h1 class="text-pink">Dashboard</h1>
 
       <h2 class="h2_override">
@@ -47,12 +47,11 @@
 
       <div>
         <h3>Distances per lane type</h3>
-        <p>Km Bike lanes: 
-          {{ Math.round(ResultsStore.kmBike * 100) / 100 }} km</p>
-          <p>Km Car lanes: 
-          {{ Math.round(ResultsStore.kmCar * 100) / 100 }} km </p>
+        <p>
+          Km Bike lanes: {{ Math.round(ResultsStore.kmBike * 100) / 100 }} km
+        </p>
+        <p>Km Car lanes: {{ Math.round(ResultsStore.kmCar * 100) / 100 }} km</p>
       </div>
-
     </div>
   </div>
 </template>
@@ -62,7 +61,7 @@ import Chart from "chart.js/auto";
 import { useResultsStore } from "../stores/algorithmResultsStore.js";
 import { statusVariablesStore } from "../stores/statusVariablesStore.js";
 import { userInputStore } from "../stores/userInputStore.js";
-import { watch } from "vue";
+import { watch, ref } from "vue";
 
 export default {
   name: "Dashboard",
@@ -71,6 +70,15 @@ export default {
     const ResultsStore = useResultsStore();
     const statusStore = statusVariablesStore();
     const inputStore = userInputStore();
+    const dashboard = ref(statusStore.dashboard);
+
+    watch(
+      () => statusStore.dashboard,
+      (newValue, oldValue) => {
+        console.log("Dashboard status updated:", newValue);
+        dashboard.value = newValue;
+      }
+    );
 
     watch(
       [() => ResultsStore.bikeTravelTime, () => ResultsStore.carTravelTime],
@@ -92,6 +100,7 @@ export default {
       ResultsStore,
       statusStore,
       inputStore,
+      dashboard,
     };
   },
   mounted() {
@@ -165,13 +174,6 @@ export default {
         },
       });
     },
-  },
-
-  data() {
-    const statusStore = statusVariablesStore();
-    return {
-      dashboard: this.statusStore.dashboard,
-    };
   },
 };
 </script>

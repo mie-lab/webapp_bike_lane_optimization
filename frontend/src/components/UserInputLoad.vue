@@ -73,10 +73,11 @@ import { statusVariablesStore } from "../stores/statusVariablesStore.js";
 import UserInputRun from "./UserInputRun.vue";
 import { projectsStore } from "../stores/projectsStore.js";
 import { computed, ref } from "vue";
-import { loadLayer } from "../scripts/map.js";
+import { loadLayer, removeLayer } from "../scripts/map.js";
 import { createView, getRunList } from "../scripts/api.js";
 import { storeToRefs } from "pinia";
 import RingLoader from "vue-spinner/src/RingLoader.vue";
+import { remove } from "ol/array";
 
 export default {
   name: "UserInputLoad",
@@ -148,49 +149,43 @@ export default {
       statusStore.toggleLoadPage();
     },
     async openProject(project) {
+      this.resetProject();
       this.isLoading = true;
       const prjStore = projectsStore();
       const inputStore = userInputStore();
       const statusStore = statusVariablesStore();
 
       try {
-        const { runs } = storeToRefs(prjStore);
-        prjStore.$subscribe((mutation, state) => {
-          //console.log("a change happened in UserInputLoad");
-          //console.log(mutation, state);
-          //console.log("runs: ", runs.value);
-        });
-
         const response = await getRunList(project.id);
         prjStore.setRuns(response);
+        inputStore.setProjectName(project.prj_name);
+        inputStore.setProjectID(project.id);
 
-        //console.log("Runs: ", runs);
+        const responseCreateView = await createView(
+          inputStore.projectID,
+          1,
+          "v_bound"
+        );
+
+        loadLayer("v_bound", "wms_bound");
+        //statusStore.toggleLoadPage();
       } catch (error) {
         console.log("error: ", error.message);
       } finally {
         this.isLoading = false;
+        statusStore.toggleRunPage();
       }
-
-      inputStore.setProjectName(project.prj_name);
-      inputStore.setProjectID(project.id);
-
-      const response = await createView(inputStore.projectID, 1, "v_bound");
-
-      loadLayer("v_bound", "wms_bound");
-
-      statusStore.toggleRunPage();
-    },
-    toggleUserInputNextSide() {
-      const statusStore = statusVariablesStore();
-      statusStore.toggleLoadPage();
-    },
-    toggleUserInputPreviousSide() {
-      const statusStore = statusVariablesStore();
-      statusStore.toggleRunPage();
     },
     toggleTabsVisibility() {
       const statusStore = statusVariablesStore();
       statusStore.toggleTabsVisibility();
+    },
+    resetProject() {
+      const statusStore = statusVariablesStore();
+      const inputStore = userInputStore();
+      inputStore.resetRuns();
+      statusStore.closeDashboard();
+      removeLayer("v_optimized", "wms_optimized");
     },
   },
 };

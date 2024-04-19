@@ -10,17 +10,13 @@
     <div
       v-show="!statusStore.createPage && !statusStore.loadPage"
       class="user-input-container"
-    >
-      
-    </div>
+    ></div>
     <div v-show="statusStore.createPage">
       <UserInputCreate />
     </div>
     <div v-show="statusStore.loadPage">
       <UserInputLoad />
-      
     </div>
-    
   </div>
 </template>
 
@@ -57,16 +53,14 @@ export default {
       size: "25px",
     };
   },
-  mounted(){
+  mounted() {
     this.openLoad();
   },
 
   methods: {
-    
     async openLoad() {
-      const statusStore = statusVariablesStore();
       const prjStore = projectsStore();
-      statusStore.toggleLoadPage();
+      //statusStore.toggleLoadPage();
 
       try {
         const response = await getProjectList();
