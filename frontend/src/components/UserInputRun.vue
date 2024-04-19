@@ -15,7 +15,6 @@
           <br />
           Create a new Run for the project, or click on already existing runs to
           see their results.
-          
         </p>
       </div>
       <br />
@@ -54,8 +53,8 @@
           >
             <div class="run-details">
               <div class="run_name">{{ run.run_name }}</div>
-              <div class="run_tt_weight">{{ run.car_weight}}</div>
-              <div class="run_alloc">{{ run.bike_ratio*100 }}%</div>
+              <div class="run_tt_weight">{{ run.car_weight }}</div>
+              <div class="run_alloc">{{ run.bike_ratio * 100 }}%</div>
             </div>
             <hr class="divider" />
           </li>
@@ -98,9 +97,8 @@ import {
   getPareto,
   getKmDistancePerLaneType,
 } from "../scripts/api.js";
-import { loadLayer } from "../scripts/map.js";
+import { loadWFS, loadWMS } from "../scripts/map.js";
 import UserInputNewRun from "./UserInputNewRun.vue";
-
 
 export default {
   name: "UserInputRun",
@@ -159,7 +157,6 @@ export default {
       statusStore.toggleCreateNewRunPage();
     },
     async loadRun(run) {
-
       this.selectedRun = run;
 
       const inputStore = userInputStore();
@@ -174,7 +171,8 @@ export default {
         "v_optimized"
       );
 
-      loadLayer("v_optimized", "wms_optimized");
+      loadWMS("v_optimized", "wms_optimized");
+      loadWFS("v_optimized_wfs", "wfs_optimized");
 
       // create evaluation for the selected run
       const ResultsStore = useResultsStore();
@@ -199,8 +197,14 @@ export default {
       ResultsStore.setTraveltimes(bikeTimes, carTimes);
 
       // get km per bike / car lane
-      const distanceEvaluation = await getKmDistancePerLaneType(inputStore.projectID,run.id_run);
-      ResultsStore.setDistancesKM(distanceEvaluation.distance_bike[0].total_bike_lane_distance,distanceEvaluation.distance_car[0].total_car_lane_distance)
+      const distanceEvaluation = await getKmDistancePerLaneType(
+        inputStore.projectID,
+        run.id_run
+      );
+      ResultsStore.setDistancesKM(
+        distanceEvaluation.distance_bike[0].total_bike_lane_distance,
+        distanceEvaluation.distance_car[0].total_car_lane_distance
+      );
       const statusStore = statusVariablesStore();
       statusStore.openDashboard();
     },
@@ -229,7 +233,6 @@ export default {
         this.isLoading = false;
       }
     },
- 
   },
 };
 </script>

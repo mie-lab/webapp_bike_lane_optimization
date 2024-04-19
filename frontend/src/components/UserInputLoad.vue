@@ -73,7 +73,7 @@ import { statusVariablesStore } from "../stores/statusVariablesStore.js";
 import UserInputRun from "./UserInputRun.vue";
 import { projectsStore } from "../stores/projectsStore.js";
 import { computed, ref } from "vue";
-import { loadLayer, removeLayer } from "../scripts/map.js";
+import { loadWMS, removeLayer } from "../scripts/map.js";
 import { createView, getRunList, getProjectList } from "../scripts/api.js";
 import { storeToRefs } from "pinia";
 import RingLoader from "vue-spinner/src/RingLoader.vue";
@@ -167,7 +167,7 @@ export default {
           "v_bound"
         );
 
-        loadLayer("v_bound", "wms_bound");
+        loadWMS("v_bound", "wms_bound");
         //statusStore.toggleLoadPage();
       } catch (error) {
         console.log("error: ", error.message);

@@ -84,7 +84,7 @@ import {
   evalTravelTime,
   getNewRunID,
 } from "../scripts/api.js";
-import { loadLayer } from "../scripts/map.js";
+import { loadWMS } from "../scripts/map.js";
 import ProcessList from "./ProcessList.vue";
 
 export default {
@@ -152,10 +152,10 @@ export default {
       );*/
       //console.log("Create View Response: ", response);
 
-      loadLayer("v_optimized", "wms_optimized");
+      loadWMS("v_optimized", "wms_optimized");
 
       const ResultsStore = useResultsStore();
- 
+
       const responseEvaluation = await evalTravelTime(
         run.project_id,
         run.run_id
@@ -204,7 +204,8 @@ export default {
       inputStore.setLaneAllocation(value);
     },
 
-    async reloadRuns() { // not used
+    async reloadRuns() {
+      // not used
       this.isLoading = true;
       const inputStore = userInputStore();
       const prjStore = projectsStore();
@@ -230,7 +231,7 @@ export default {
       const bikeSafetyPenatly = 2;
       const optimizeFrequency = 30;
 
-      const responseRunID = await getNewRunID(project_id); 
+      const responseRunID = await getNewRunID(project_id);
 
       this.processStore.addProcess({
         id: responseRunID.run_id,

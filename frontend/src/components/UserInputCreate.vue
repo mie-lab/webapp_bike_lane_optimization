@@ -85,7 +85,7 @@ import { statusVariablesStore } from "../stores/statusVariablesStore.js";
 import { mapStore } from "../stores/mapStore.js";
 import UserInputRun from "./UserInputRun.vue";
 import { create } from "ol/transform";
-import { loadLayer } from "../scripts/map.js";
+import { loadWMS } from "../scripts/map.js";
 import { createView, runConstructGraph } from "../scripts/api.js";
 import { watch, ref } from "vue";
 import RingLoader from "vue-spinner/src/RingLoader.vue";
@@ -168,7 +168,7 @@ export default {
           removeDrawFromMap(mapObject, drawObjectPolygon);
         }
 
-        loadLayer("v_bound", "wms_bound");
+        loadWMS("v_bound", "wms_bound");
       } catch (error) {
         console.error(error);
       } finally {
