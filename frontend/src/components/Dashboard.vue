@@ -140,14 +140,14 @@ export default {
       filteredRuns,
       prjStore,
       compareRunStore,
+
+      dashboard,
     };
   },
   data() {
     return {
-      dashboard: this.statusStore.dashboard,
       showDropdown: false,
       compare: false,
-      dashboard,
     };
   },
 
