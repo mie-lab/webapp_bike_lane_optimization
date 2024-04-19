@@ -18,7 +18,7 @@
           <i
             v-if="!isLoading"
             class="fa-solid fa-rotate-right refresh-button"
-            @click="reloadRuns"
+            @click="reloadProjects"
           >
           </i>
         </span>
@@ -74,7 +74,7 @@ import UserInputRun from "./UserInputRun.vue";
 import { projectsStore } from "../stores/projectsStore.js";
 import { computed, ref } from "vue";
 import { loadLayer, removeLayer } from "../scripts/map.js";
-import { createView, getRunList } from "../scripts/api.js";
+import { createView, getRunList, getProjectList } from "../scripts/api.js";
 import { storeToRefs } from "pinia";
 import RingLoader from "vue-spinner/src/RingLoader.vue";
 import { remove } from "ol/array";
@@ -186,6 +186,14 @@ export default {
       inputStore.resetRuns();
       statusStore.closeDashboard();
       removeLayer("v_optimized", "wms_optimized");
+    },
+
+    async reloadProjects() {
+      this.isLoading = true;
+      const response = await getProjectList();
+      const prjStore = projectsStore();
+      prjStore.setProjects(response);
+      this.isLoading = false;
     },
   },
 };

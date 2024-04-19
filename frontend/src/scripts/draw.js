@@ -58,8 +58,6 @@ export function addDrawToMap(map, draw) {
   const mapStoreInstance = mapStore();
   const mapControl = map.addControl(draw, "top-left");
   mapStoreInstance.setMapControl(mapControl);
-
-  console.log("--> ", mapControl);
 }
 
 export function removeDrawFromMap(map, draw) {
@@ -92,36 +90,53 @@ export function drawRectangle() {
 
   if (drawObjectRectangle) {
     if (drawObjectPolygon) {
-      console.log("check 0");
       removeDrawFromMap(mapObject, drawObjectPolygon);
-      console.log("check 0.1");
       mapStoreInstance.setDrawPolygon(null);
     }
 
-    console.log(
-      "drawRectangle | drawObjectRectangle: ",
-      mapStoreInstance.drawRectangleObject
-    );
-    console.log(
-      "drawRectangle | drawObjectPolyong: ",
-      mapStoreInstance.drawPolygonObject
-    );
-
-    console.log("lastControl: ", mapStoreInstance.lastControl);
     if (mapStoreInstance.lastControl !== "draw-rectangle") {
-      console.log("check 1");
-      //removeLayersAndSource();
-      //checkSources();
       addDrawToMap(mapObject, drawObjectRectangle);
-      console.log("check 2");
       mapStoreInstance.setLastControl("draw-rectangle");
     }
-    console.log("check 3");
     drawObjectRectangle.deleteAll();
-    console.log("check 4");
     enableDrawRectangle(drawObjectRectangle);
-    console.log("check 5");
     statusStore.toggleDrawingRectangleEnabled();
+  } else {
+    console.error("Draw object not found in Pinia store.");
+  }
+}
+
+export function drawPolygon() {
+  const userInput = userInputStore();
+  const statusStore = statusVariablesStore();
+  const mapStoreInstance = mapStore();
+
+  statusStore.setDrawingRectangle(false);
+
+  // Draw-Polygon Object
+  if (!mapStoreInstance.drawPolygonObject) {
+    const drawPolygonObject = createDrawPolygonObject();
+    mapStoreInstance.setDrawPolygon(drawPolygonObject);
+  }
+
+  const drawObjectPolygon = mapStoreInstance.drawPolygonObject;
+  const drawObjectRectangle = mapStoreInstance.drawRectangleObject;
+  const mapObject = mapStoreInstance.map;
+
+  if (drawObjectPolygon) {
+    if (drawObjectRectangle) {
+      removeDrawFromMap(mapObject, drawObjectRectangle);
+      mapStoreInstance.setDrawRectangle(null);
+    }
+
+    if (mapStoreInstance.lastControl !== "draw-polygon") {
+      addDrawToMap(mapObject, drawObjectPolygon);
+
+      mapStoreInstance.setLastControl("draw-polygon");
+    }
+    drawObjectPolygon.deleteAll();
+    enableDrawPolygon(drawObjectPolygon);
+    statusStore.toggleDrawingPolygonEnabled();
   } else {
     console.error("Draw object not found in Pinia store.");
   }
@@ -191,50 +206,5 @@ function removeLayersAndSource() {
     console.log("Source mapbox-gl-draw-hot removed from the map");
   } else {
     console.log("Source does not exist on the map");
-  }
-}
-
-export function drawPolygon() {
-  const userInput = userInputStore();
-  const statusStore = statusVariablesStore();
-  const mapStoreInstance = mapStore();
-
-  statusStore.setDrawingRectangle(false);
-
-  // Draw-Polygon Object
-  if (!mapStoreInstance.drawPolygonObject) {
-    const drawPolygonObject = createDrawPolygonObject();
-    mapStoreInstance.setDrawPolygon(drawPolygonObject);
-  }
-
-  const drawObjectPolygon = mapStoreInstance.drawPolygonObject;
-  const drawObjectRectangle = mapStoreInstance.drawRectangleObject;
-  const mapObject = mapStoreInstance.map;
-
-  if (drawObjectPolygon) {
-    if (drawObjectRectangle) {
-      removeDrawFromMap(mapObject, drawObjectRectangle);
-      mapStoreInstance.setDrawRectangle(null);
-    }
-
-    console.log(
-      "drawPolygon | drawObjectRectangle: ",
-      mapStoreInstance.drawRectangleObject
-    );
-    console.log(
-      "drawPolygon | drawObjectPolyong: ",
-      mapStoreInstance.drawPolygonObject
-    );
-
-    if (mapStoreInstance.lastControl !== "draw-polygon") {
-      addDrawToMap(mapObject, drawObjectPolygon);
-
-      mapStoreInstance.setLastControl("draw-polygon");
-    }
-    drawObjectPolygon.deleteAll();
-    enableDrawPolygon(drawObjectPolygon);
-    statusStore.toggleDrawingPolygonEnabled();
-  } else {
-    console.error("Draw object not found in Pinia store.");
   }
 }
