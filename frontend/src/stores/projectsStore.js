@@ -6,6 +6,7 @@ export const projectsStore = defineStore("projects", {
   state: () => ({
     projects: [],
     runs: [],
+    selectedRun:null,
   }),
   actions: {
     setProjects(projects) {
@@ -13,6 +14,9 @@ export const projectsStore = defineStore("projects", {
     },
     setRuns(runs) {
       this.runs = runs;
+    },
+    setSelectedRun(run) {
+      this.selectedRun = run;
     },
   },
 });

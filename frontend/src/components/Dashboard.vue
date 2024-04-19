@@ -11,38 +11,28 @@
     </div>
     <div v-show="dashboard" class="dashboard-content bg-lightgrey">
       <h1 class="text-pink">Dashboard</h1>
-
-      <h2 class="h2_override">
-        {{ inputStore.projectName }} | {{ inputStore.runName }}
-      </h2>
-
+      <div class="titel-inkl-button">
+        <h2 class="h2_override">
+          {{ inputStore.projectName }} | {{ inputStore.runName }}
+        </h2>
+        <div class="dropdown">
+          <button class="dropbtn" @click="toggleDropdown">Compare</button>
+          <div class="dropdown-content">
+            <a
+              v-for="run in filteredRuns"
+              :key="run.id_run"
+              @click="compareRun(run)"
+              >{{ run.run_name }}</a
+            >
+          </div>
+        </div>
+      </div>
       <!-- Travel times -->
       <div>
         <h3>Travel Times Changes</h3>
         <p>This is the relative change of travel times for the chosen run.</p>
-        <p>
-          Bike Travel Time:
-          {{
-            Math.round(
-              ResultsStore.paretoBikeTTArray[
-                ResultsStore.paretoBikeTTArray.length - 1
-              ] * 100
-            ) / 100
-          }}
-          %
-        </p>
-        <p>
-          Car Travel Time:
-          {{
-            Math.round(
-              ResultsStore.paretoCarTTArray[
-                ResultsStore.paretoCarTTArray.length - 1
-              ] * 100
-            ) / 100
-          }}
-          %
-        </p>
-        <canvas class="barChart" ref="barChart" height="150"></canvas>
+
+        <canvas class="barChart" ref="barChart" height="100"></canvas>
       </div>
 
       <!-- Pareto -->
@@ -61,12 +51,19 @@
 
       <div>
         <h3>Distances per lane type</h3>
-        <p>
-          Km Bike lanes: {{ Math.round(ResultsStore.kmBike * 100) / 100 }} km
-        </p>
-        <p>Km Car lanes: {{ Math.round(ResultsStore.kmCar * 100) / 100 }} km</p>
-        <div class="pieChartContainer">
+
+        <div
+          class="pieChartContainer"
+          :style="{ width: compare ? '50%' : '70%' }"
+        >
           <canvas class="pieChart" ref="pieChart" height="50"></canvas>
+
+          <canvas
+            v-show="compare"
+            class="pieChart"
+            ref="pieChart2"
+            height="50"
+          ></canvas>
         </div>
       </div>
     </div>
@@ -79,7 +76,10 @@ import "chartjs-plugin-datalabels";
 import { useResultsStore } from "../stores/algorithmResultsStore.js";
 import { statusVariablesStore } from "../stores/statusVariablesStore.js";
 import { userInputStore } from "../stores/userInputStore.js";
-import { watch, ref } from "vue";
+import { projectsStore } from "../stores/projectsStore.js";
+import { useCompareRunEvaluation } from "../stores/compareRunStore.js";
+import { ref, watch } from "vue";
+import { getPareto, getKmDistancePerLaneType } from "../scripts/api.js";
 
 export default {
   name: "Dashboard",
@@ -113,11 +113,40 @@ export default {
         //console.log("Car travel time updated:", newCarTime);
       }
     );
+    const prjStore = projectsStore();
+    const filteredRuns = ref(null);
+    const compareRunStore = useCompareRunEvaluation();
+
+    watch(
+      () => prjStore.runs.runs,
+      (newValue, oldValue) => {
+        //console.log("Filtered runs updated:", newValue);
+
+        if (newValue !== null) {
+          filteredRuns.value = newValue.filter(
+            (run) => run !== prjStore.selectedRun
+          ); // TODO: filtering out the selcted run does not work
+        } else {
+          console.log("no selected run");
+          filteredRuns.value = newValue;
+        }
+      }
+    );
 
     return {
       ResultsStore,
       statusStore,
       inputStore,
+      filteredRuns,
+      prjStore,
+      compareRunStore,
+    };
+  },
+  data() {
+    return {
+      dashboard: this.statusStore.dashboard,
+      showDropdown: false,
+      compare: false,
       dashboard,
     };
   },
@@ -151,10 +180,55 @@ export default {
     toggleDashboard() {
       this.statusStore.toggleDashboard();
     },
+    toggleDropdown() {
+      this.showDropdown = !this.showDropdown;
+    },
+
+    async compareRun(run) {
+      this.compare = true;
+      const inputStore = userInputStore();
+
+      // create evaluation for the selected run
+      const ResultsStore = useCompareRunEvaluation();
+      ResultsStore.setRunName(run.run_name);
+
+      const paretoEvaluation = await getPareto(run.id_prj, run.id_run);
+      // Extracting data from paretoEvaluation
+      const projects = paretoEvaluation.projects;
+      const bikeTimes = projects.map((project) => project.bike_time_change);
+      const carTimes = projects.map((project) => project.car_time_change);
+
+      ResultsStore.setTraveltimes(bikeTimes, carTimes);
+
+      // get km per bike / car lane
+      const distanceEvaluation = await getKmDistancePerLaneType(
+        inputStore.projectID,
+        run.id_run
+      );
+      ResultsStore.setDistancesKM(
+        distanceEvaluation.distance_bike[0].total_bike_lane_distance,
+        distanceEvaluation.distance_car[0].total_car_lane_distance
+      );
+
+      this.createBarChart();
+      this.createScatterPlot();
+      this.createPieChart();
+    },
 
     createPieChart() {
-      const canvas = this.$refs.pieChart;
-      const ctx = canvas.getContext("2d");
+      let canvas = this.$refs.pieChart;
+      let ctx = canvas.getContext("2d");
+
+      let dataset = [this.ResultsStore.kmBike, this.ResultsStore.kmCar];
+
+      if (this.compare) {
+        // create second pie chart when comparing
+        canvas = this.$refs.pieChart2;
+        ctx = canvas.getContext("2d");
+
+        dataset = [this.compareRunStore.kmBike, this.compareRunStore.kmCar];
+        console.log("compare", dataset);
+      }
 
       // Check if there's already a Chart instance on this canvas
       if (canvas.chart) {
@@ -177,9 +251,9 @@ export default {
           labels: ["Bike", "Car"],
           datasets: [
             {
-              label: "Distances per lane type [km]",
+              label: "Distances in km",
               backgroundColor: [pinkColor, blueColor],
-              data: [this.ResultsStore.kmBike, this.ResultsStore.kmCar],
+              data: dataset,
             },
           ],
         },
@@ -223,28 +297,51 @@ export default {
           ] * 100
         ) / 100;
 
+      let dataValues = [relativeBikeTTChange, relativeCarTTChange];
+      let labels = ["Bike", "Car"];
+      let colors = [pinkColor, blueColor];
+
+      // add additional data, when in comparing mode
+      if (this.compare) {
+        dataValues.push(
+          Math.round(
+            this.compareRunStore.paretoBikeTTArray[
+              this.compareRunStore.paretoBikeTTArray.length - 1
+            ] * 100
+          ) / 100
+        );
+        dataValues.push(
+          Math.round(
+            this.compareRunStore.paretoCarTTArray[
+              this.compareRunStore.paretoCarTTArray.length - 1
+            ] * 100
+          ) / 100
+        );
+        labels.push(
+          `Bike ${this.compareRunStore.runName}`,
+          `Car ${this.compareRunStore.runName}`
+        );
+        colors.push(pinkColor, blueColor);
+      }
       canvas.chart = new Chart(ctx, {
         type: "bar",
         data: {
-          labels: ["Bike", "Car"],
+          labels: labels,
           datasets: [
             {
-              label: "Change in travel time per type [%]",
-              backgroundColor: [pinkColor, blueColor],
-              data: [
-                Math.abs(relativeBikeTTChange),
-                Math.abs(relativeCarTTChange),
-              ],
+              label: "Changes in travel time [%]",
+              backgroundColor: colors,
+              data: dataValues,
             },
           ],
         },
         options: {
           scales: {
-            x: {
+            y: {
               beginAtZero: true,
             },
           },
-          indexAxis: "x",
+          indexAxis: "y",
         },
         plugins: {
           datalabels: {
@@ -264,23 +361,38 @@ export default {
         canvas.chart.destroy(); // Destroy the previous Chart instance
       }
 
+      const datasets = [
+        {
+          label: `${this.ResultsStore.runName}`,
+          data: this.ResultsStore.paretoBikeTTArray.map((bikeTime, index) => ({
+            x: bikeTime,
+            y: this.ResultsStore.paretoCarTTArray[index],
+          })),
+          backgroundColor: "rgba(255, 99, 132, 0.5)",
+          borderColor: "rgba(255, 99, 132, 1)",
+          borderWidth: 1,
+        },
+      ];
+
+      if (this.compare) {
+        datasets.push({
+          label: `${this.compareRunStore.runName}`,
+          data: this.compareRunStore.paretoBikeTTArray.map(
+            (bikeTime, index) => ({
+              x: bikeTime,
+              y: this.compareRunStore.paretoCarTTArray[index],
+            })
+          ),
+          backgroundColor: "rgba(0, 255, 0, 0.5)", // Green color
+          borderColor: "rgba(0, 255, 0, 1)",
+          borderWidth: 1,
+        });
+      }
+
       canvas.chart = new Chart(ctx, {
         type: "scatter",
         data: {
-          datasets: [
-            {
-              label: "integer Pareto",
-              data: this.ResultsStore.paretoBikeTTArray.map(
-                (bikeTime, index) => ({
-                  x: bikeTime,
-                  y: this.ResultsStore.paretoCarTTArray[index],
-                })
-              ),
-              backgroundColor: "rgba(255, 99, 132, 0.5)",
-              borderColor: "rgba(255, 99, 132, 1)",
-              borderWidth: 1,
-            },
-          ],
+          datasets: datasets,
         },
         options: {
           scales: {
@@ -330,14 +442,6 @@ export default {
   flex-grow: 1;
   width: 400px;
 }
-.close-open {
-  background-color: #e16ece;
-}
-
-.angle-div {
-  z-index: 10;
-  background-color: red;
-}
 
 .scatterPlotCanvas,
 .barChart,
@@ -348,11 +452,51 @@ export default {
 }
 
 .pieChartContainer {
-  width: 70%;
+  width: 50%;
   margin: 0 auto;
   align-content: center;
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
+}
+.titel-inkl-button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+/* Dropdown styles */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+}
+
+.dropdown-content a:hover {
+  background-color: #ddd;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown:hover .dropbtn {
+  background-color: #dd667aea;
 }
 </style>

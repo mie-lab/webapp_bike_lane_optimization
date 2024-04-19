@@ -1,7 +1,7 @@
-
+import { set } from 'ol/transform';
 import { defineStore } from 'pinia';
 
-export const useResultsStore = defineStore("evaluation",{
+export const useCompareRunEvaluation = defineStore("compareRun",{
   state: () => ({
     paretoBikeTTArray: [],
     paretoCarTTArray: [],
@@ -20,6 +20,6 @@ export const useResultsStore = defineStore("evaluation",{
     },
     setRunName(runName){
       this.runName = runName;
-    },
+    }
   },
 });

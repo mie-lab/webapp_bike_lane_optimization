@@ -78,12 +78,7 @@ import { projectsStore } from "../stores/projectsStore.js";
 import { runningProcessStore } from "../stores/processListStore.js";
 import RingLoader from "vue-spinner/src/RingLoader.vue";
 import { ref } from "vue";
-import {
-  createView,
-  getRunList,
-  evalTravelTime,
-  getNewRunID,
-} from "../scripts/api.js";
+import { createView, getRunList, getNewRunID } from "../scripts/api.js";
 import { loadWMS } from "../scripts/map.js";
 import ProcessList from "./ProcessList.vue";
 
