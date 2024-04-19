@@ -8,6 +8,7 @@ export const mapStore = defineStore("mapStore", {
     lastControl: "",
     drawRectangleObject: null,
     drawPolygonObject: null,
+    lastDrawObject: null,
   }),
   actions: {
     setMap(map) {
@@ -24,6 +25,9 @@ export const mapStore = defineStore("mapStore", {
     },
     setDrawPolygon(drawObject) {
       this.drawPolygonObject = drawObject;
+    },
+    setLastDrawObject(drawObject) {
+      this.lastDrawObject = drawObject;
     },
   },
 });

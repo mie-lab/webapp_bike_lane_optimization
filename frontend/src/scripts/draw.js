@@ -35,6 +35,7 @@ export function onDrawCreate(event, vm) {
 
 export function createDrawPolygonObject() {
   return new MapboxDraw({
+    id: "drawPolygon",
     displayControlsDefault: false,
     controls: {
       polygon: true,
@@ -44,6 +45,7 @@ export function createDrawPolygonObject() {
 
 export function createDrawRectangleObject() {
   return new MapboxDraw({
+    id: "drawRectangle",
     displayControlsDefault: false,
     modes: {
       ...MapboxDraw.modes,
@@ -56,11 +58,18 @@ export function addDrawToMap(map, draw) {
   const mapStoreInstance = mapStore();
   const mapControl = map.addControl(draw, "top-left");
   mapStoreInstance.setMapControl(mapControl);
+
+  console.log("--> ", mapControl);
 }
 
 export function removeDrawFromMap(map, draw) {
   draw.deleteAll();
   map.removeControl(draw);
+
+  /*
+  const mapStoreInstance = mapStore();
+  mapStoreInstance.setDrawRectangle(null);
+  mapStoreInstance.setDrawPolygon(null);*/
 }
 
 export function drawRectangle() {
@@ -74,6 +83,7 @@ export function drawRectangle() {
   if (!mapStoreInstance.drawRectangleObject) {
     const drawRectangleObject = createDrawRectangleObject();
     mapStoreInstance.setDrawRectangle(drawRectangleObject);
+    //mapStoreInstance.setDrawPolygon(null);
   }
 
   const drawObjectRectangle = mapStoreInstance.drawRectangleObject;
@@ -82,18 +92,105 @@ export function drawRectangle() {
 
   if (drawObjectRectangle) {
     if (drawObjectPolygon) {
+      console.log("check 0");
       removeDrawFromMap(mapObject, drawObjectPolygon);
+      console.log("check 0.1");
       mapStoreInstance.setDrawPolygon(null);
     }
+
+    console.log(
+      "drawRectangle | drawObjectRectangle: ",
+      mapStoreInstance.drawRectangleObject
+    );
+    console.log(
+      "drawRectangle | drawObjectPolyong: ",
+      mapStoreInstance.drawPolygonObject
+    );
+
+    console.log("lastControl: ", mapStoreInstance.lastControl);
     if (mapStoreInstance.lastControl !== "draw-rectangle") {
+      console.log("check 1");
+      //removeLayersAndSource();
+      //checkSources();
       addDrawToMap(mapObject, drawObjectRectangle);
+      console.log("check 2");
+      mapStoreInstance.setLastControl("draw-rectangle");
     }
+    console.log("check 3");
     drawObjectRectangle.deleteAll();
+    console.log("check 4");
     enableDrawRectangle(drawObjectRectangle);
+    console.log("check 5");
     statusStore.toggleDrawingRectangleEnabled();
-    mapStoreInstance.setLastControl("draw-rectangle");
   } else {
     console.error("Draw object not found in Pinia store.");
+  }
+}
+
+function checkSources() {
+  const mapStoreInstance = mapStore();
+  const map = mapStoreInstance.map;
+  // Get the current style object
+  const style = map.getStyle();
+
+  // Check if the style object exists and contains sources
+  if (style && style.sources) {
+    // Get an array of source IDs
+    const sourceIds = Object.keys(style.sources);
+
+    // Log the array of source IDs
+    console.log("Available sources:", sourceIds);
+  } else {
+    console.log("No sources available in the map style.");
+  }
+}
+
+function removeLayersAndSource() {
+  const mapStoreInstance = mapStore();
+  const map = mapStoreInstance.map;
+  // Get the map's style object
+  const style = map.getStyle();
+
+  // Check if the style object exists and contains the layers
+  if (style && style.layers) {
+    // Filter out layers that start with "gl-draw-..."
+    const drawLayers = style.layers.filter((layer) =>
+      layer.id.startsWith("gl-draw-")
+    );
+
+    // Remove each draw layer
+    drawLayers.forEach((drawLayer) => {
+      const layerIndex = style.layers.findIndex(
+        (layer) => layer.id === drawLayer.id
+      );
+      if (layerIndex !== -1) {
+        style.layers.splice(layerIndex, 1);
+      }
+    });
+
+    // Set the updated style to the map
+    map.setStyle(style);
+    console.log("Draw layers removed from the map style.");
+  } else {
+    console.log("No layers available in the map style.");
+  }
+
+  // Check if the source exists on the map
+  if (map.getSource("mapbox-gl-draw-cold")) {
+    // Remove the source from the map
+    map.removeSource("mapbox-gl-draw-cold");
+    console.log("Source mapbox-gl-draw-cold removed from the map");
+  } else {
+    console.log("Source does not exist on the map");
+  }
+
+  // Check if the source exists on the map
+  if (map.getSource("mapbox-gl-draw-hot")) {
+    // Remove the source from the map
+    map.removeSource("mapbox-gl-draw-hot");
+    console.log("Source mapbox-gl-draw-hot removed from the map");
+  } else {
+    console.log("Source does not exist on the map");
   }
 }
 
@@ -119,13 +216,24 @@ export function drawPolygon() {
       removeDrawFromMap(mapObject, drawObjectRectangle);
       mapStoreInstance.setDrawRectangle(null);
     }
+
+    console.log(
+      "drawPolygon | drawObjectRectangle: ",
+      mapStoreInstance.drawRectangleObject
+    );
+    console.log(
+      "drawPolygon | drawObjectPolyong: ",
+      mapStoreInstance.drawPolygonObject
+    );
+
     if (mapStoreInstance.lastControl !== "draw-polygon") {
       addDrawToMap(mapObject, drawObjectPolygon);
+
+      mapStoreInstance.setLastControl("draw-polygon");
     }
     drawObjectPolygon.deleteAll();
     enableDrawPolygon(drawObjectPolygon);
     statusStore.toggleDrawingPolygonEnabled();
-    mapStoreInstance.setLastControl("draw-polygon");
   } else {
     console.error("Draw object not found in Pinia store.");
   }

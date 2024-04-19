@@ -79,6 +79,7 @@ import UserInputRun from "./UserInputRun.vue";
 import { create } from "ol/transform";
 import { loadLayer } from "../scripts/map.js";
 import { createView, runConstructGraph } from "../scripts/api.js";
+import { watch, ref } from "vue";
 
 export default {
   name: "UserInputCreate",
@@ -88,12 +89,22 @@ export default {
   setup() {
     const statusStore = statusVariablesStore();
     const inputStore = userInputStore();
+    const drawingEnabled = ref(statusStore.drawingRectangleEnabled);
+
+    watch(
+      () => statusStore.drawingRectangleEnabled,
+      (newValue, oldValue) => {
+        console.log("Drawing enabled:", newValue);
+        drawingEnabled.value = newValue;
+      }
+    );
 
     return {
       statusStore,
       projectName: inputStore.projectName,
       setProjectName: inputStore.setProjectName,
       continue: statusStore.runPage,
+      drawingEnabled,
     };
   },
   data() {
@@ -114,7 +125,11 @@ export default {
       const drawObjectRectangle = mapStoreInstance.drawRectangleObject;
       const drawObjectPolygon = mapStoreInstance.drawPolygonObject;
       const mapObject = mapStoreInstance.map;
-      removeDrawFromMap(mapObject, drawObjectRectangle);
+
+      mapStoreInstance.setLastControl("");
+
+      mapStoreInstance.setDrawPolygon(null);
+      mapStoreInstance.setDrawRectangle(null);
 
       this.toggleUserInputNextSide();
       const inputStore = userInputStore();
@@ -133,6 +148,14 @@ export default {
 
       try {
         const response = await createView(inputStore.projectID, 1, "v_bound");
+
+        if (drawObjectRectangle !== null) {
+          removeDrawFromMap(mapObject, drawObjectRectangle);
+        }
+
+        if (drawObjectPolygon !== null) {
+          removeDrawFromMap(mapObject, drawObjectPolygon);
+        }
 
         loadLayer("v_bound", "wms_bound");
       } catch (error) {
