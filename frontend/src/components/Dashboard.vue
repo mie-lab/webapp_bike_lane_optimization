@@ -15,34 +15,48 @@
       <h2 class="h2_override">
         {{ inputStore.projectName }} | {{ inputStore.runName }}
       </h2>
+
+      <!-- Travel times -->
       <div>
-        <h3>Travel Times</h3>
-        <p>
-          This are the average travel times for all trips within the target
-          area. Intersections and traffic is not considered here.
-        </p>
+        <h3>Travel Times Changes</h3>
+        <p>This is the relative change of travel times for the chosen run.</p>
         <p>
           Bike Travel Time:
-          {{ Math.round(ResultsStore.bikeTravelTime * 100) / 100 }} min
+          {{
+            Math.round(
+              ResultsStore.paretoBikeTTArray[
+                ResultsStore.paretoBikeTTArray.length - 1
+              ] * 100
+            ) / 100
+          }}
+          %
         </p>
         <p>
           Car Travel Time:
-          {{ Math.round(ResultsStore.carTravelTime * 100) / 100 }} min
+          {{
+            Math.round(
+              ResultsStore.paretoCarTTArray[
+                ResultsStore.paretoCarTTArray.length - 1
+              ] * 100
+            ) / 100
+          }}
+          %
         </p>
+        <canvas class="barChart" ref="barChart" height="150"></canvas>
       </div>
 
-      <!-- Scatter plot canvas -->
+      <!-- Pareto -->
       <div>
         <h3>Pareto</h3>
-        <canvas
-          class="scatterPlotCanvas"
-          ref="scatterPlotCanvas"
-          height="350"
-        ></canvas>
         <p>
           This plot shows the pareto frontier from the chosen linear
           formulation.
         </p>
+        <canvas
+          class="scatterPlotCanvas"
+          ref="scatterPlotCanvas"
+          height="200"
+        ></canvas>
       </div>
 
       <div>
@@ -51,6 +65,9 @@
           Km Bike lanes: {{ Math.round(ResultsStore.kmBike * 100) / 100 }} km
         </p>
         <p>Km Car lanes: {{ Math.round(ResultsStore.kmCar * 100) / 100 }} km</p>
+        <div class="pieChartContainer">
+          <canvas class="pieChart" ref="pieChart" height="50"></canvas>
+        </div>
       </div>
     </div>
   </div>
@@ -58,6 +75,7 @@
 
 <script>
 import Chart from "chart.js/auto";
+import "chartjs-plugin-datalabels";
 import { useResultsStore } from "../stores/algorithmResultsStore.js";
 import { statusVariablesStore } from "../stores/statusVariablesStore.js";
 import { userInputStore } from "../stores/userInputStore.js";
@@ -103,20 +121,28 @@ export default {
       dashboard,
     };
   },
+
   mounted() {
     this.createScatterPlot();
+    this.createPieChart();
+    this.createBarChart();
+
     watch(
       () => this.ResultsStore.paretoBikeTTArray,
       (newTime, oldTime) => {
-        console.log("pareto bike time updated:");
         this.createScatterPlot();
+        this.createBarChart();
       }
     );
 
     watch(
       () => this.ResultsStore.paretoCarTTArray,
-      (newTime, oldTime) => {
-        console.log("pareto car time updated:");
+      (newTime, oldTime) => {}
+    );
+    watch(
+      [() => this.ResultsStore.kmBike, () => this.ResultsStore.kmCar],
+      ([newBikeTime, newCarTime], [oldBikeTime, oldCarTime]) => {
+        this.createPieChart();
       }
     );
   },
@@ -124,6 +150,109 @@ export default {
   methods: {
     toggleDashboard() {
       this.statusStore.toggleDashboard();
+    },
+
+    createPieChart() {
+      const canvas = this.$refs.pieChart;
+      const ctx = canvas.getContext("2d");
+
+      // Check if there's already a Chart instance on this canvas
+      if (canvas.chart) {
+        canvas.chart.destroy(); // Destroy the previous Chart instance
+      }
+
+      const pinkColor = getComputedStyle(
+        document.documentElement
+      ).getPropertyValue("--pinkTransparent-color");
+      const pinkHoverColor = getComputedStyle(
+        document.documentElement
+      ).getPropertyValue("--pink-color");
+      const blueColor = getComputedStyle(
+        document.documentElement
+      ).getPropertyValue("--blue-color");
+
+      canvas.chart = new Chart(ctx, {
+        type: "doughnut",
+        data: {
+          labels: ["Bike", "Car"],
+          datasets: [
+            {
+              label: "Distances per lane type [km]",
+              backgroundColor: [pinkColor, blueColor],
+              data: [this.ResultsStore.kmBike, this.ResultsStore.kmCar],
+            },
+          ],
+        },
+        options: {
+          title: {
+            display: true,
+            rotation: -90,
+            circumference: 180,
+            cutout: "70%",
+          },
+        },
+      });
+    },
+
+    createBarChart() {
+      const canvas = this.$refs.barChart;
+      const ctx = canvas.getContext("2d");
+
+      // Check if there's already a Chart instance on this canvas
+      if (canvas.chart) {
+        canvas.chart.destroy(); // Destroy the previous Chart instance
+      }
+      // get proper colors
+      const pinkColor = getComputedStyle(
+        document.documentElement
+      ).getPropertyValue("--pinkTransparent-color");
+      const blueColor = getComputedStyle(
+        document.documentElement
+      ).getPropertyValue("--blue-color");
+
+      const relativeBikeTTChange =
+        Math.round(
+          this.ResultsStore.paretoBikeTTArray[
+            this.ResultsStore.paretoBikeTTArray.length - 1
+          ] * 100
+        ) / 100;
+      const relativeCarTTChange =
+        Math.round(
+          this.ResultsStore.paretoCarTTArray[
+            this.ResultsStore.paretoCarTTArray.length - 1
+          ] * 100
+        ) / 100;
+
+      canvas.chart = new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: ["Bike", "Car"],
+          datasets: [
+            {
+              label: "Change in travel time per type [%]",
+              backgroundColor: [pinkColor, blueColor],
+              data: [
+                Math.abs(relativeBikeTTChange),
+                Math.abs(relativeCarTTChange),
+              ],
+            },
+          ],
+        },
+        options: {
+          scales: {
+            x: {
+              beginAtZero: true,
+            },
+          },
+          indexAxis: "x",
+        },
+        plugins: {
+          datalabels: {
+            anchor: "center",
+            align: "center",
+          },
+        },
+      });
     },
 
     createScatterPlot() {
@@ -210,8 +339,20 @@ export default {
   background-color: red;
 }
 
-.scatterPlotCanvas {
+.scatterPlotCanvas,
+.barChart,
+.pieChart {
   margin-left: 30px;
-  margin-right: 20px;
+  margin-right: 30px;
+  align-content: center;
+}
+
+.pieChartContainer {
+  width: 70%;
+  margin: 0 auto;
+  align-content: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>

@@ -182,7 +182,6 @@ export default {
         inputStore.projectID,
         run.id_run
       );
-      //console.log(responseEvaluation.bike_travel_time);
       ResultsStore.setEvaluation(
         responseEvaluation.bike_travel_time,
         responseEvaluation.car_travel_time
@@ -201,7 +200,6 @@ export default {
 
       // get km per bike / car lane
       const distanceEvaluation = await getKmDistancePerLaneType(inputStore.projectID,run.id_run);
-      //console.log(distanceEvaluation.distance_car[0].total_car_lane_distance);
       ResultsStore.setDistancesKM(distanceEvaluation.distance_bike[0].total_bike_lane_distance,distanceEvaluation.distance_car[0].total_car_lane_distance)
       const statusStore = statusVariablesStore();
       statusStore.openDashboard();
