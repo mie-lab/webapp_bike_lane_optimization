@@ -12,7 +12,15 @@
         of your choice.
       </p>
 
-      <h3 class="text-blue">Project name</h3>
+      <h3 class="text-blue">
+        <span class="project_name_text">Project name</span>
+
+        <span class="ring-loader-container">
+          <div class="ring-loader">
+            <RingLoader v-if="isLoading" :size="'80'" :color="'#123abc'" />
+          </div>
+        </span>
+      </h3>
       <input
         class="project-name-input"
         type="text"
@@ -80,11 +88,13 @@ import { create } from "ol/transform";
 import { loadLayer } from "../scripts/map.js";
 import { createView, runConstructGraph } from "../scripts/api.js";
 import { watch, ref } from "vue";
+import RingLoader from "vue-spinner/src/RingLoader.vue";
 
 export default {
   name: "UserInputCreate",
   components: {
     UserInputRun,
+    RingLoader,
   },
   setup() {
     const statusStore = statusVariablesStore();
@@ -116,12 +126,16 @@ export default {
       color: "#da5268",
       size: "25px",
       continue: statusStore.runPage,
+      isLoading: false,
     };
   },
 
   methods: {
     async createProject() {
+      this.isLoading = true;
       const mapStoreInstance = mapStore();
+
+      const inputStore = userInputStore();
       const drawObjectRectangle = mapStoreInstance.drawRectangleObject;
       const drawObjectPolygon = mapStoreInstance.drawPolygonObject;
       const mapObject = mapStoreInstance.map;
@@ -130,9 +144,6 @@ export default {
 
       mapStoreInstance.setDrawPolygon(null);
       mapStoreInstance.setDrawRectangle(null);
-
-      this.toggleUserInputNextSide();
-      const inputStore = userInputStore();
 
       try {
         const response = await runConstructGraph(
@@ -160,6 +171,9 @@ export default {
         loadLayer("v_bound", "wms_bound");
       } catch (error) {
         console.error(error);
+      } finally {
+        this.isLoading = false;
+        this.toggleUserInputNextSide();
       }
     },
 
@@ -196,5 +210,15 @@ export default {
   background-color: #ccc;
   color: #666;
   cursor: not-allowed;
+}
+
+.ring-loader-container {
+  position: relative;
+}
+
+.ring-loader {
+  position: absolute;
+  top: 4px;
+  left: 8px;
 }
 </style>
