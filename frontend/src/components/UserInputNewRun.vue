@@ -81,7 +81,6 @@ import { ref } from "vue";
 import {
   createView,
   getRunList,
-  evalTravelTime,
   getNewRunID,
 } from "../scripts/api.js";
 import { loadLayer } from "../scripts/map.js";
@@ -154,17 +153,6 @@ export default {
 
       loadLayer("v_optimized", "wms_optimized");
 
-      const ResultsStore = useResultsStore();
- 
-      const responseEvaluation = await evalTravelTime(
-        run.project_id,
-        run.run_id
-      );
-      console.log(responseEvaluation);
-      ResultsStore.setEvaluation(
-        responseEvaluation.bike_travel_time,
-        responseEvaluation.car_travel_time
-      );
 
       const statusStore = statusVariablesStore();
       statusStore.openDashboard();

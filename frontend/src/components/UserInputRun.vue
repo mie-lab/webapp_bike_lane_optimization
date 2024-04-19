@@ -94,7 +94,7 @@ import { ref, watch } from "vue";
 import {
   createView,
   getRunList,
-  evalTravelTime,
+
   getPareto,
   getKmDistancePerLaneType,
 } from "../scripts/api.js";
@@ -159,7 +159,8 @@ export default {
       statusStore.toggleCreateNewRunPage();
     },
     async loadRun(run) {
-
+      const prjStore = projectsStore();
+      prjStore.setSelectedRun(run);
       this.selectedRun = run;
 
       const inputStore = userInputStore();
@@ -178,14 +179,6 @@ export default {
 
       // create evaluation for the selected run
       const ResultsStore = useResultsStore();
-      const responseEvaluation = await evalTravelTime(
-        inputStore.projectID,
-        run.id_run
-      );
-      ResultsStore.setEvaluation(
-        responseEvaluation.bike_travel_time,
-        responseEvaluation.car_travel_time
-      );
 
       const paretoEvaluation = await getPareto(
         inputStore.projectID,
@@ -201,6 +194,7 @@ export default {
       // get km per bike / car lane
       const distanceEvaluation = await getKmDistancePerLaneType(inputStore.projectID,run.id_run);
       ResultsStore.setDistancesKM(distanceEvaluation.distance_bike[0].total_bike_lane_distance,distanceEvaluation.distance_car[0].total_car_lane_distance)
+      ResultsStore.setRunName(run.run_name);
       const statusStore = statusVariablesStore();
       statusStore.openDashboard();
     },
