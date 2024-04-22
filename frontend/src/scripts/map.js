@@ -154,9 +154,11 @@ export async function loadWFS(layerID, layerSource) {
       originalStyle = map.getPaintProperty(layerID, "line-color");
       const coordinates = e.lngLat;
 
+      console.log("Feature --> ", feature);
+
       tooltip
         .setLngLat(coordinates)
-        .setHTML(`<h3>Feature Info</h3><p>ID: ${feature.properties.id}</p>`)
+        .setHTML(`<h3>Feature Test</h3><p>ID: ${feature.properties.id}</p>`)
         .addTo(map);
     });
 
@@ -185,12 +187,54 @@ export async function loadWFS(layerID, layerSource) {
       );
       const coordinates = e.lngLat;
 
-      tooltip
-        .setLngLat(coordinates)
-        .setHTML(
-          `<div style="width: 300px; margin:0; padding: 0;"><h3>Feature Info</h3><p>ID: ${feature.properties.id}</p></div>`
-        )
-        .addTo(map);
+      // Extract properties from the feature
+      const lanetype = feature.properties.lanetype;
+      const speedLimit = feature.properties.speed_limit;
+      const gradient = feature.properties.gradient;
+
+      // Process lanetype
+      let laneTypeText;
+      if (lanetype === "P") {
+        laneTypeText = "Bike";
+      } else if (lanetype === "M>") {
+        laneTypeText = "Motorized";
+      } else {
+        laneTypeText = "Unknown";
+      }
+
+      // Process gradient
+      let gradientText;
+      const roundedGradient = Math.round(gradient * 100 * 10) / 10;
+      if (isNaN(roundedGradient) || roundedGradient > 1000) {
+        gradientText = "Undefined";
+      } else {
+        gradientText = `${roundedGradient}%`;
+      }
+
+      const tableContent = `
+      <h2 style="margin: 10px;">Feature Information</h2>
+      <table style="width: 100%; table-layout: fixed; text-align: left; margin-left: 10px">
+        <colgroup>
+            <col style="width: 40%;">
+            <col style="width: 60%;">
+        </colgroup>
+        <tr>
+            <td><b>Lanetype:</b></td>
+            <td>${laneTypeText}</td>
+        </tr>
+        <tr>
+            <td><b>Speedlimit:</b></td>
+            <td>${speedLimit}</td>
+        </tr>
+        <tr>
+            <td><b>Gradient:</b></td>
+            <td>${gradientText}</td>
+        </tr>
+    </table>
+`;
+
+      // Set the HTML content with the table
+      tooltip.setLngLat(coordinates).setHTML(tableContent).addTo(map);
     });
 
     map.on("mousemove", (e) => {
