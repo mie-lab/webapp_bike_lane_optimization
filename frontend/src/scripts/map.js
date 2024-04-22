@@ -234,7 +234,7 @@ function createTooltip(map, layerID, layerSource) {
 
       tooltip
         .setLngLat(coordinates)
-        .setHTML(`<h3>Feature Test</h3><p>ID: ${feature.properties.id}</p>`)
+        .setHTML(`<h3>Feature</h3><p>ID: ${feature.properties.id}</p>`)
         .addTo(map);
     });
 
@@ -280,7 +280,7 @@ function createTooltip(map, layerID, layerSource) {
       }
 
       const tableContent = `
-      <h2 style="margin: 10px;">Feature Information</h2>
+      <h2 style="margin: 10px;">Lane Information</h2>
       <table style="width: 100%; table-layout: fixed; text-align: left; margin-left: 10px">
         <colgroup>
             <col style="width: 40%;">
