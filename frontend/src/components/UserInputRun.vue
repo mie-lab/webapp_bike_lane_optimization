@@ -9,8 +9,8 @@
         </h2>
 
         <p class="info-text">
-          This is your project overview. <br />
-          Make multiple runs with different paramters for the chosen area.
+          This is your project overview. Make multiple runs with different
+          paramters for the chosen area.
           <br />
           <br />
           Create a new Run for the project, or click on already existing runs to

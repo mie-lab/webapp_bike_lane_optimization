@@ -48,7 +48,7 @@ export default {
 
 .justified-text {
   text-align: justify;
-  max-width: 245px;
+  max-width: 285px;
   word-wrap: break-word;
   padding-top: 10px;
 }

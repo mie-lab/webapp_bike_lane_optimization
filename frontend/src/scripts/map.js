@@ -133,170 +133,19 @@ export async function loadWFS(layerID, layerSource) {
 
   //----------------------TOOLTIP----------------------//
 
-  let tooltip = new mapboxgl.Popup({
-    closeButton: false,
-    closeOnClick: false,
+  const tooltip = createTooltip(map, layerID, layerSource);
+
+  map.on("mousemove", (e) => {
+    if (tooltip.isOpen()) {
+      tooltip.setLngLat(e.lngLat);
+    }
   });
 
-  // Highlighted feature style
-  const highlightedStyle = {
-    "line-color": "#FFFF00", // Bright yellow color
-    "line-width": 4, // Increased line width
-  };
+  map.on("mouseleave", layerID, () => {
+    // Remove the feature state to unhighlight the feature
+    map.removeFeatureState({ source: layerSource });
 
-  // Original feature style
-  let originalStyle;
-
-  // Tooltip handler for v_bound layer
-  if (layerID === "v_bound") {
-    map.on("mouseenter", layerID, (e) => {
-      const feature = e.features[0];
-      originalStyle = map.getPaintProperty(layerID, "line-color");
-      const coordinates = e.lngLat;
-
-      console.log("Feature --> ", feature);
-
-      tooltip
-        .setLngLat(coordinates)
-        .setHTML(`<h3>Feature Test</h3><p>ID: ${feature.properties.id}</p>`)
-        .addTo(map);
-    });
-
-    map.on("mousemove", (e) => {
-      if (tooltip.isOpen()) {
-        tooltip.setLngLat(e.lngLat);
-      }
-    });
-
-    map.on("mouseleave", layerID, () => {
-      tooltip.remove();
-    });
-  }
-
-  // Tooltip handler for v_optimized_wfs layer
-  if (layerID === "v_optimized_wfs") {
-    map.on("mouseenter", layerID, (e) => {
-      const feature = e.features[0];
-      console.log("Feature:", feature);
-      const featureId = feature.id;
-
-      // Highlight the feature
-      map.setFeatureState(
-        { source: layerSource, id: featureId },
-        { hover: true }
-      );
-      const coordinates = e.lngLat;
-
-      // Extract properties from the feature
-      const lanetype = feature.properties.lanetype;
-      const speedLimit = feature.properties.speed_limit;
-      const gradient = feature.properties.gradient;
-
-      // Process lanetype
-      let laneTypeText;
-      if (lanetype === "P") {
-        laneTypeText = "Bike";
-      } else if (lanetype === "M>") {
-        laneTypeText = "Motorized";
-      } else {
-        laneTypeText = "Unknown";
-      }
-
-      // Process gradient
-      let gradientText;
-      const roundedGradient = Math.round(gradient * 100 * 10) / 10;
-      if (isNaN(roundedGradient) || roundedGradient > 1000) {
-        gradientText = "Undefined";
-      } else {
-        gradientText = `${roundedGradient}%`;
-      }
-
-      const tableContent = `
-      <h2 style="margin: 10px;">Feature Information</h2>
-      <table style="width: 100%; table-layout: fixed; text-align: left; margin-left: 10px">
-        <colgroup>
-            <col style="width: 40%;">
-            <col style="width: 60%;">
-        </colgroup>
-        <tr>
-            <td><b>Lanetype:</b></td>
-            <td>${laneTypeText}</td>
-        </tr>
-        <tr>
-            <td><b>Speedlimit:</b></td>
-            <td>${speedLimit}</td>
-        </tr>
-        <tr>
-            <td><b>Gradient:</b></td>
-            <td>${gradientText}</td>
-        </tr>
-    </table>
-`;
-
-      // Set the HTML content with the table
-      tooltip.setLngLat(coordinates).setHTML(tableContent).addTo(map);
-    });
-
-    map.on("mousemove", (e) => {
-      if (tooltip.isOpen()) {
-        tooltip.setLngLat(e.lngLat);
-      }
-    });
-
-    map.on("mouseleave", layerID, () => {
-      // Remove the feature state to unhighlight the feature
-      map.removeFeatureState({ source: layerSource });
-
-      tooltip.remove();
-    });
-  }
-
-  /*
-  const tile =
-    "https://baug-ikg-gis-01.ethz.ch:8443/geoserver/GMP_EBC/wms?REQUEST=GetMap&SERVICE=WMS&layers=GMP_EBC:layername&bbox={bbox-epsg-3857}&transparent=true&width=256&height=256&srs=EPSG:3857&styles=&format=image/png".replace(
-      "layername",
-      layerID
-    );
-
-  map.addSource(layerSource, {
-    type: "raster",
-    tiles: [tile],
-    tileSize: 256,
-  });
-
-  map.addLayer({
-    id: layerID,
-    type: "raster",
-    source: layerSource,
-    paint: {},
-  });
-  */
-
-  const userInput = userInputStore();
-
-  const east = userInput.boundingBox.bbox_east;
-  const west = userInput.boundingBox.bbox_west;
-  const north = userInput.boundingBox.bbox_north;
-  const south = userInput.boundingBox.bbox_south;
-  // Define EPSG:2056 and EPSG:4326 projections
-  const epsg2056 =
-    "+proj=somerc +lat_0=46.95240555555556 +lon_0=7.439583333333333 +k_0=1 +x_0=2600000 +y_0=1200000 +ellps=bessel +towgs84=674.374,15.056,405.346,0,0,0,0 +units=m +no_defs";
-  const epsg4326 = "+proj=longlat +datum=WGS84 +no_defs";
-
-  // Convert bounding box coordinates from EPSG:2056 to EPSG:4326
-  const sw = proj4(epsg2056, epsg4326, [west, south]);
-  const ne = proj4(epsg2056, epsg4326, [east, north]);
-
-  // Create MapboxGL LngLat objects for the bounding box
-  const swLngLat = new mapboxgl.LngLat(sw[0], sw[1]);
-  const neLngLat = new mapboxgl.LngLat(ne[0], ne[1]);
-
-  // Create MapboxGL Bounds object
-  const bounds = new mapboxgl.LngLatBounds(swLngLat, neLngLat);
-
-  map.fitBounds(bounds, {
-    padding: 300, // Adjust padding as needed
-    offset: [50, 0],
+    tooltip.remove();
   });
 }
 
@@ -357,4 +206,105 @@ export async function loadWMS(layerID, layerSource) {
     padding: 300, // Adjust padding as needed
     offset: [50, 0],
   });
+}
+
+function createTooltip(map, layerID, layerSource) {
+  let tooltip = new mapboxgl.Popup({
+    closeButton: false,
+    closeOnClick: false,
+  });
+
+  // Highlighted feature style
+  const highlightedStyle = {
+    "line-color": "#FFFF00", // Bright yellow color
+    "line-width": 4, // Increased line width
+  };
+
+  // Original feature style
+  let originalStyle;
+
+  // Tooltip handler for v_bound layer
+  if (layerID === "v_bound") {
+    map.on("mouseenter", layerID, (e) => {
+      const feature = e.features[0];
+      originalStyle = map.getPaintProperty(layerID, "line-color");
+      const coordinates = e.lngLat;
+
+      console.log("Feature --> ", feature);
+
+      tooltip
+        .setLngLat(coordinates)
+        .setHTML(`<h3>Feature Test</h3><p>ID: ${feature.properties.id}</p>`)
+        .addTo(map);
+    });
+
+    return tooltip;
+  }
+
+  // Tooltip handler for v_optimized_wfs layer
+  if (layerID === "v_optimized_wfs") {
+    map.on("mouseenter", layerID, (e) => {
+      const feature = e.features[0];
+      console.log("Feature:", feature);
+      const featureId = feature.id;
+
+      // Highlight the feature
+      map.setFeatureState(
+        { source: layerSource, id: featureId },
+        { hover: true }
+      );
+      const coordinates = e.lngLat;
+
+      // Extract properties from the feature
+      const lanetype = feature.properties.lanetype;
+      const speedLimit = feature.properties.speed_limit;
+      const gradient = feature.properties.gradient;
+
+      // Process lanetype
+      let laneTypeText;
+      if (lanetype === "P") {
+        laneTypeText = "Bike";
+      } else if (lanetype === "M>") {
+        laneTypeText = "Motorized";
+      } else {
+        laneTypeText = "Unknown";
+      }
+
+      // Process gradient
+      let gradientText;
+      const roundedGradient = Math.round(gradient * 100 * 10) / 10;
+      if (isNaN(roundedGradient) || roundedGradient > 1000) {
+        gradientText = "Undefined";
+      } else {
+        gradientText = `${roundedGradient}%`;
+      }
+
+      const tableContent = `
+      <h2 style="margin: 10px;">Feature Information</h2>
+      <table style="width: 100%; table-layout: fixed; text-align: left; margin-left: 10px">
+        <colgroup>
+            <col style="width: 40%;">
+            <col style="width: 60%;">
+        </colgroup>
+        <tr>
+            <td><b>Lanetype:</b></td>
+            <td>${laneTypeText}</td>
+        </tr>
+        <tr>
+            <td><b>Speedlimit:</b></td>
+            <td>${speedLimit}</td>
+        </tr>
+        <tr>
+            <td><b>Gradient:</b></td>
+            <td>${gradientText}</td>
+        </tr>
+    </table>
+    `;
+
+      // Set the HTML content with the table
+      tooltip.setLngLat(coordinates).setHTML(tableContent).addTo(map);
+    });
+
+    return tooltip;
+  }
 }
