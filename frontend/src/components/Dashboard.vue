@@ -22,7 +22,13 @@
 
         <!-- Dropdown for Comparison -->
         <div class="dropdown">
-          <button class="dropbtn" @mouseover="toggleDropdown" @mouseleave="toggleDropdown">
+          <button 
+            class="dropbtn" 
+            @mouseover="toggleDropdown" 
+            @mouseleave="toggleDropdown" 
+            :class="{ 'compare-button-active': compareRunStore.compare }"
+            :style="{ borderColor: compareRunStore.compare ? getColors()[3] : '' }"
+          >
             {{ compareRunStore && compareRunStore.runName ? compareRunStore.runName : 'Compare' }}
            <!-- <i :class="showDropdown ? 'fa-solid fa-angle-up' : 'fa-solid fa-angle-down'"></i> -->
           </button>
@@ -43,7 +49,12 @@
       </div>
       <!-- Travel times -->
       <div>
-        <h3>Travel Times Changes</h3>
+        <h3>Travel Times Changes
+          <i class="fa-solid fa-info-circle small-icon" @mouseover="showInfoBoxTravelTimes = true" @mouseleave="showInfoBoxTravelTimes = false"></i>
+          <div v-show="showInfoBoxTravelTimes" class="info-box">
+            Travel Time Info text; And other additional Information ...
+          </div>
+        </h3>
         <p>This is the relative change of travel times for the chosen run.</p>
 
         <canvas class="barChart" ref="barChart" height="125"></canvas>
@@ -54,7 +65,7 @@
         <h3>Pareto
           <i class="fa-solid fa-info-circle small-icon" @mouseover="showInfoBox = true" @mouseleave="showInfoBox = false"></i>
           <div v-show="showInfoBox" class="info-box">
-            This plot shows the Pareto frontier from the chosen linear formulation. And other additional Information ...
+              Pareto Info Text
           </div>
         </h3>
         <p>
@@ -69,11 +80,19 @@
       </div>
 
       <div>
-        <h3>Distances per lane type</h3>
-
+        <h3>Distances per lane type
+          <i class="fa-solid fa-info-circle small-icon" @mouseover="showInfoBoxDistances = true" @mouseleave="showInfoBoxDistances = false"></i>
+          <div v-show="showInfoBoxDistances" class="info-box">
+            Distance per lane type; And other additional Information ...
+          </div>
+        </h3>
+        <p>
+          Your optimizations contains {{Math.round(ResultsStore.kmBike*100)/100}} km of bike lanes and
+          {{Math.round(ResultsStore.kmCar*100)/100}} km of car lanes.
+        </p>
         <div
           class="pieChartContainer"
-          :style="{ width: compareRunStore.compare ? '50%' : '70%' }"
+          :style="{ width: compareRunStore.compare ? '50%' : '50%' }"
         >
           <canvas class="pieChart" ref="pieChart" height="50"></canvas>
 
@@ -99,6 +118,7 @@ import { projectsStore } from "../stores/projectsStore.js";
 import { useCompareRunEvaluation } from "../stores/compareRunStore.js";
 import { ref, watch } from "vue";
 import { getPareto, getKmDistancePerLaneType } from "../scripts/api.js";
+import { create } from "ol/transform.js";
 
 export default {
   name: "Dashboard",
@@ -119,6 +139,7 @@ export default {
         dashboard.value = newValue;
       }
     );
+    
 
  
     watch(
@@ -132,8 +153,6 @@ export default {
         }
       }
     );
-
-
 
     return {
       ResultsStore,
@@ -150,19 +169,21 @@ export default {
     return {
       showDropdown: false,
       showInfoBox: false,
+      showInfoBoxTravelTimes:false,
+      showInfoBoxDistances:false,
     };
   },
 
   mounted() {
-    //this.createScatterPlot();
-    //this.createPieChart();
-    //this.createBarChart();
+    this.createScatterPlot();
+    this.createPieChart();
+    this.createBarChart();
 
     watch(
       () => this.ResultsStore.paretoBikeTTArray,
       (newTime, oldTime) => {
-        this.createScatterPlot();
-        this.createBarChart();
+        //this.createScatterPlot();
+        //this.createBarChart();
       }
     );
 
@@ -176,16 +197,20 @@ export default {
     watch(
       [() => this.ResultsStore.kmBike, () => this.ResultsStore.kmCar],
       ([newBikeTime, newCarTime], [oldBikeTime, oldCarTime]) => {
-        this.createPieChart();
+        //this.createPieChart();
       }
     );
-
     watch(
       () => this.ResultsStore.runName,
       (newRunName, oldRunName) => {
-        this.createBarChart(); // TODO also update the Names for the legends
+        this.createScatterPlot();
+        this.createBarChart();
+        this.createPieChart();
+       
       }
     );
+
+    
 
 
   },
@@ -240,7 +265,11 @@ export default {
       let canvas = this.$refs.pieChart;
       let ctx = canvas.getContext("2d");
 
+      const colorsDefined = this.getColors(); // get the standart colors 
+
       let dataset = [this.ResultsStore.kmBike, this.ResultsStore.kmCar];
+      let colors = [colorsDefined[0], colorsDefined[1]];
+      let labels =  [`Bike_${this.ResultsStore.runName}`, `Car_${this.ResultsStore.runName}`];
 
       if (this.compareRunStore.compare) {
         // create second pie chart when comparing
@@ -248,6 +277,8 @@ export default {
         ctx = canvas.getContext("2d");
 
         dataset = [this.compareRunStore.kmBike, this.compareRunStore.kmCar];
+        labels =[`Bike_${this.compareRunStore.runName}`, `Car_${this.compareRunStore.runName}`];
+        colors= [colorsDefined[2], colorsDefined[3]];
 
       }
 
@@ -256,24 +287,15 @@ export default {
         canvas.chart.destroy(); // Destroy the previous Chart instance
       }
 
-      const pinkColor = getComputedStyle(
-        document.documentElement
-      ).getPropertyValue("--pinkTransparent-color");
-      const pinkHoverColor = getComputedStyle(
-        document.documentElement
-      ).getPropertyValue("--pink-color");
-      const blueColor = getComputedStyle(
-        document.documentElement
-      ).getPropertyValue("--blue-color");
-
+      // create the pie chart
       canvas.chart = new Chart(ctx, {
         type: "doughnut",
         data: {
-          labels: ["Bike", "Car"],
+          labels: labels,
           datasets: [
             {
               label: "Distances in km",
-              backgroundColor: [pinkColor, blueColor],
+              backgroundColor: colors,
               data: dataset,
             },
           ],
@@ -285,8 +307,41 @@ export default {
             circumference: 180,
             cutout: "70%",
           },
+          plugins: {
+        datalabels: {
+          formatter: (value, context) => {
+            // Show the value as label only if it's greater than 0
+            if (value > 0) {
+              return value;
+            } else {
+              return ''; // Hide the label
+            }
+          },
+          color: '#000', // Font color
+          anchor: 'end', // Position the labels at the end of the arcs
+          align: 'start', // Align the labels at the start of the arcs
+          offset: 6, // Padding between the labels and the arcs
         },
-      });
+      },
+    },
+  });
+    },
+
+    getColors(){
+      // function to get the colors saved in colors.css
+      const pinkColor = getComputedStyle(
+        document.documentElement
+      ).getPropertyValue("--pinkTransparent-color");
+      const pinkCompareColor = getComputedStyle(
+        document.documentElement
+      ).getPropertyValue("--pink-compare");
+      const blueColor = getComputedStyle(
+        document.documentElement
+      ).getPropertyValue("--blue-color");
+      const blueCompareColor = getComputedStyle(
+        document.documentElement
+      ).getPropertyValue("--blue-compare");
+      return [pinkColor,blueColor,pinkCompareColor,blueCompareColor]
     },
 
     createBarChart() {
@@ -298,12 +353,7 @@ export default {
         canvas.chart.destroy(); // Destroy the previous Chart instance
       }
       // get proper colors
-      const pinkColor = getComputedStyle(
-        document.documentElement
-      ).getPropertyValue("--pinkTransparent-color");
-      const blueColor = getComputedStyle(
-        document.documentElement
-      ).getPropertyValue("--blue-color");
+      const colorsDefined = this.getColors();
 
       const relativeBikeTTChange =
         Math.round(
@@ -319,8 +369,8 @@ export default {
         ) / 100;
 
       let dataValues = [relativeBikeTTChange, relativeCarTTChange];
-      let labels = [`Bike_ ${this.ResultsStore.runName}`, `Car ${this.ResultsStore.runName}`];
-      let colors = [pinkColor, blueColor];
+      let labels = [`Bike_${this.ResultsStore.runName}`, `Car_${this.ResultsStore.runName}`];
+      let colors = [colorsDefined[0], colorsDefined[1]];
 
       // add additional data, when in comparing mode
       if (this.compareRunStore.compare) {
@@ -339,10 +389,10 @@ export default {
           ) / 100
         );
         labels.push(
-          `Bike ${this.compareRunStore.runName}`,
-          `Car ${this.compareRunStore.runName}`
+          `Bike_${this.compareRunStore.runName}`,
+          `Car_${this.compareRunStore.runName}`
         );
-        colors.push(pinkColor, blueColor);
+        colors.push(colorsDefined[2], colorsDefined[3]);
       }
       // creating the bar chart
       canvas.chart = new Chart(ctx, {
@@ -403,12 +453,13 @@ export default {
             x: bikeTime,
             y: this.ResultsStore.paretoCarTTArray[index],
           })),
-          backgroundColor: "rgba(255, 99, 132, 0.5)",
-          borderColor: "rgba(255, 99, 132, 1)",
+          backgroundColor: "rgba(255, 99, 132, 0.3)", // TODO: maybe change colors
+          borderColor: "rgba(255, 99, 132, 0.8)",
           borderWidth: 1,
         },
       ];
 
+      // add additional data, when in comparing mode
       if (this.compareRunStore.compare) {
         datasets.push({
           label: `${this.compareRunStore.runName}`,
@@ -418,12 +469,12 @@ export default {
               y: this.compareRunStore.paretoCarTTArray[index],
             })
           ),
-          backgroundColor: "rgba(0, 255, 0, 0.5)", // Green color
-          borderColor: "rgba(0, 255, 0, 1)",
+          backgroundColor: this.getColors()[3], 
+          borderColor: this.getColors()[2],
           borderWidth: 1,
         });
       }
-
+      // create scatter Plot
       canvas.chart = new Chart(ctx, {
         type: "scatter",
         data: {
@@ -557,7 +608,8 @@ export default {
   max-width: 200px;
   z-index: 9999;
   font-size: 11px;
-
+  color: #333;
+  font-weight: normal;
 }
 
 .fa-info-circle {
@@ -565,6 +617,23 @@ export default {
 }
 .small-icon {
   font-size: 11px; 
+  
 }
+.compare-button-active {
+  background-color: var(--pink-compare);
+  color: var(--blue-compared);
+}
+
+.compare-button-active:hover {
+  background-color: var(--pink-compare);
+  color: var(--blue-compared);
+}
+
+.compare-button-active:focus {
+  outline-color: var(--blue-compared);
+  border-width: 2px; 
+  color: var(--blue-compared);
+}
+
 
 </style>

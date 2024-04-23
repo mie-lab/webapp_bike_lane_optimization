@@ -1,6 +1,8 @@
 :root {
   --pink-color: #da5268;
   --pinkTransparent-color: #dd667aea;
+  --pink-compare: #bd7364ea;
+  --blue-compare: #314377;
   --blue-color: #0d00a3;
   --blueTransparent-color: #0e00a3bf;
   --lightgrey-bg: #e0e0e0;
