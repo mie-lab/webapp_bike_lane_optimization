@@ -20,6 +20,13 @@ export const useCompareRunEvaluation = defineStore("compareRun",{
     },
     setRunName(runName){
       this.runName = runName;
+    },
+    reset(){
+      this.paretoBikeTTArray = [];
+      this.paretoCarTTArray = [];
+      this.kmBike = null;
+      this.kmCar = null;
+      this.runName = null;
     }
   },
 });

@@ -1,5 +1,6 @@
 <template>
   <div class="dashboard-container">
+    <!-- Dashboard Navigation -->
     <div class="dashboard-navigation bg-darkgrey" @click="toggleDashboard">
       <i
         :class="
@@ -11,12 +12,22 @@
     </div>
     <div v-show="dashboard" class="dashboard-content bg-lightgrey">
       <h1 class="text-pink">Dashboard</h1>
+
+       <!-- Title and Compare Button -->
       <div class="titel-inkl-button">
         <h2 class="h2_override">
-          {{ inputStore.projectName }} | {{ inputStore.runName }}
+        {{ inputStore.runName }}
         </h2>
+        <span v-if="compare">&nbsp;<i class="fa-solid fa-arrows-alt-h"></i>&nbsp;</span>
+
+        <!-- Dropdown for Comparison -->
         <div class="dropdown">
-          <button class="dropbtn" @click="toggleDropdown">Compare</button>
+          <button class="dropbtn" @click="toggleDropdown">
+            {{ compareRunStore && compareRunStore.runName ? compareRunStore.runName : 'Compare' }}
+          </button>
+         
+
+
           <div class="dropdown-content">
             <a
               v-for="run in filteredRuns"
@@ -26,13 +37,17 @@
             >
           </div>
         </div>
+         <!-- Stop Comparing Button -->
+         <button v-if="compare" class="stop-compare-btn" @click="stopComparing">
+          <i class="fa-solid fa-times"></i>
+        </button>
       </div>
       <!-- Travel times -->
       <div>
         <h3>Travel Times Changes</h3>
         <p>This is the relative change of travel times for the chosen run.</p>
 
-        <canvas class="barChart" ref="barChart" height="100"></canvas>
+        <canvas class="barChart" ref="barChart" height="120"></canvas>
       </div>
 
       <!-- Pareto -->
@@ -101,16 +116,14 @@ export default {
     watch(
       [() => ResultsStore.bikeTravelTime, () => ResultsStore.carTravelTime],
       ([newBikeTime, newCarTime], [oldBikeTime, oldCarTime]) => {
-        //console.log("Bike travel time updated:", newBikeTime);
-        //console.log("Car travel time updated:", newCarTime);
+
       }
     );
 
     watch(
       [() => ResultsStore.kmBike, () => ResultsStore.kmCar],
       ([newBikeTime, newCarTime], [oldBikeTime, oldCarTime]) => {
-        //console.log("Bike travel time updated:", newBikeTime);
-        //console.log("Car travel time updated:", newCarTime);
+
       }
     );
     const prjStore = projectsStore();
@@ -118,20 +131,20 @@ export default {
     const compareRunStore = useCompareRunEvaluation();
 
     watch(
-      () => prjStore.runs.runs,
+      () => prjStore.selectedRun,
       (newValue, oldValue) => {
-        //console.log("Filtered runs updated:", newValue);
+        console.log("Selected run updated:", newValue);
+        console.log("Previous selected run:", oldValue);
 
+        // Filter that the selected Run is not shown in the dropdown for comparison
         if (newValue !== null) {
-          filteredRuns.value = newValue.filter(
-            (run) => run !== prjStore.selectedRun
-          ); // TODO: filtering out the selcted run does not work
+          filteredRuns.value = prjStore.runs.runs.filter(run => run !== newValue);
         } else {
-          console.log("no selected run");
-          filteredRuns.value = newValue;
+          filteredRuns.value = prjStore.runs.runs;
         }
       }
     );
+
 
     return {
       ResultsStore,
@@ -177,6 +190,14 @@ export default {
   },
 
   methods: {
+    stopComparing(){
+      this.compare = false;
+      this.compareRunStore.reset();
+      this.createBarChart();
+      this.createScatterPlot();
+      this.createPieChart();
+    },
+    
     toggleDashboard() {
       this.statusStore.toggleDashboard();
     },
@@ -189,8 +210,7 @@ export default {
       const inputStore = userInputStore();
 
       // create evaluation for the selected run
-      const ResultsStore = useCompareRunEvaluation();
-      ResultsStore.setRunName(run.run_name);
+      this.compareRunStore.setRunName(run.run_name); 
 
       const paretoEvaluation = await getPareto(run.id_prj, run.id_run);
       // Extracting data from paretoEvaluation
@@ -198,14 +218,14 @@ export default {
       const bikeTimes = projects.map((project) => project.bike_time_change);
       const carTimes = projects.map((project) => project.car_time_change);
 
-      ResultsStore.setTraveltimes(bikeTimes, carTimes);
+      this.compareRunStore.setTraveltimes(bikeTimes, carTimes);
 
       // get km per bike / car lane
       const distanceEvaluation = await getKmDistancePerLaneType(
         inputStore.projectID,
         run.id_run
       );
-      ResultsStore.setDistancesKM(
+      this.compareRunStore.setDistancesKM(
         distanceEvaluation.distance_bike[0].total_bike_lane_distance,
         distanceEvaluation.distance_car[0].total_car_lane_distance
       );
@@ -227,7 +247,7 @@ export default {
         ctx = canvas.getContext("2d");
 
         dataset = [this.compareRunStore.kmBike, this.compareRunStore.kmCar];
-        console.log("compare", dataset);
+
       }
 
       // Check if there's already a Chart instance on this canvas
@@ -323,33 +343,46 @@ export default {
         );
         colors.push(pinkColor, blueColor);
       }
+      // creating the bar chart
       canvas.chart = new Chart(ctx, {
         type: "bar",
         data: {
-          labels: labels,
-          datasets: [
-            {
-              label: "Changes in travel time [%]",
-              backgroundColor: colors,
-              data: dataValues,
-            },
-          ],
+            labels: labels,
+            datasets: [{
+              label:"",
+                backgroundColor: colors,
+                data: dataValues,
+            }],
         },
         options: {
-          scales: {
-            y: {
-              beginAtZero: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                },
+                x: { 
+                    display: true, 
+                    title: { 
+                        display: true,
+                        text: "Changes in travel time [%]",
+                        font: {
+                            size: 12, 
+                        },
+                    },
+                },
             },
-          },
-          indexAxis: "y",
+            indexAxis: "y",
+            plugins: {
+                datalabels: {
+                    anchor: "center",
+                    align: "center",
+                },
+            },
+            legend: { 
+                display: false, 
+            },
         },
-        plugins: {
-          datalabels: {
-            anchor: "center",
-            align: "center",
-          },
-        },
-      });
+    });
+
     },
 
     createScatterPlot() {
