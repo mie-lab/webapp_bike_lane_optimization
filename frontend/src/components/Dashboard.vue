@@ -18,17 +18,16 @@
         <h2 class="h2_override">
         {{ inputStore.runName }}
         </h2>
-        <span v-if="compare">&nbsp;<i class="fa-solid fa-arrows-alt-h"></i>&nbsp;</span>
+        <span v-if="compareRunStore.compare">&nbsp;<i class="fa-solid fa-arrows-alt-h"></i>&nbsp;</span>
 
         <!-- Dropdown for Comparison -->
         <div class="dropdown">
-          <button class="dropbtn" @click="toggleDropdown">
+          <button class="dropbtn" @mouseover="toggleDropdown" @mouseleave="toggleDropdown">
             {{ compareRunStore && compareRunStore.runName ? compareRunStore.runName : 'Compare' }}
+           <!-- <i :class="showDropdown ? 'fa-solid fa-angle-up' : 'fa-solid fa-angle-down'"></i> -->
           </button>
-         
 
-
-          <div class="dropdown-content">
+          <div class="dropdown-content" >
             <a
               v-for="run in filteredRuns"
               :key="run.id_run"
@@ -38,7 +37,7 @@
           </div>
         </div>
          <!-- Stop Comparing Button -->
-         <button v-if="compare" class="stop-compare-btn" @click="stopComparing">
+         <button v-if="compareRunStore.compare" class="close-btn" @click="stopComparing">
           <i class="fa-solid fa-times"></i>
         </button>
       </div>
@@ -47,12 +46,17 @@
         <h3>Travel Times Changes</h3>
         <p>This is the relative change of travel times for the chosen run.</p>
 
-        <canvas class="barChart" ref="barChart" height="120"></canvas>
+        <canvas class="barChart" ref="barChart" height="125"></canvas>
       </div>
 
       <!-- Pareto -->
       <div>
-        <h3>Pareto</h3>
+        <h3>Pareto
+          <i class="fa-solid fa-info-circle small-icon" @mouseover="showInfoBox = true" @mouseleave="showInfoBox = false"></i>
+          <div v-show="showInfoBox" class="info-box">
+            This plot shows the Pareto frontier from the chosen linear formulation. And other additional Information ...
+          </div>
+        </h3>
         <p>
           This plot shows the pareto frontier from the chosen linear
           formulation.
@@ -69,12 +73,12 @@
 
         <div
           class="pieChartContainer"
-          :style="{ width: compare ? '50%' : '70%' }"
+          :style="{ width: compareRunStore.compare ? '50%' : '70%' }"
         >
           <canvas class="pieChart" ref="pieChart" height="50"></canvas>
 
           <canvas
-            v-show="compare"
+            v-show="compareRunStore.compare"
             class="pieChart"
             ref="pieChart2"
             height="50"
@@ -104,46 +108,31 @@ export default {
     const statusStore = statusVariablesStore();
     const inputStore = userInputStore();
     const dashboard = ref(statusStore.dashboard);
-
-    watch(
-      () => statusStore.dashboard,
-      (newValue, oldValue) => {
-        console.log("Dashboard status updated:", newValue);
-        dashboard.value = newValue;
-      }
-    );
-
-    watch(
-      [() => ResultsStore.bikeTravelTime, () => ResultsStore.carTravelTime],
-      ([newBikeTime, newCarTime], [oldBikeTime, oldCarTime]) => {
-
-      }
-    );
-
-    watch(
-      [() => ResultsStore.kmBike, () => ResultsStore.kmCar],
-      ([newBikeTime, newCarTime], [oldBikeTime, oldCarTime]) => {
-
-      }
-    );
     const prjStore = projectsStore();
     const filteredRuns = ref(null);
     const compareRunStore = useCompareRunEvaluation();
 
-    watch(
-      () => prjStore.selectedRun,
-      (newValue, oldValue) => {
-        console.log("Selected run updated:", newValue);
-        console.log("Previous selected run:", oldValue);
 
-        // Filter that the selected Run is not shown in the dropdown for comparison
-        if (newValue !== null) {
-          filteredRuns.value = prjStore.runs.runs.filter(run => run !== newValue);
+    watch(
+      () => statusStore.dashboard,
+      (newValue, oldValue) => {
+        dashboard.value = newValue;
+      }
+    );
+
+ 
+    watch(
+      () => [prjStore.selectedRun, compareRunStore.runName],
+      ([selectedRun, compareRunName], [oldSelectedRun, oldCompareRunName]) => {
+        // Filter out the selected Run and the compareRunStore.runName from the dropdown options
+        if (selectedRun !== null) {
+          filteredRuns.value = prjStore.runs.runs.filter(run => run !== selectedRun && run.run_name !== compareRunName);
         } else {
-          filteredRuns.value = prjStore.runs.runs;
+          filteredRuns.value = prjStore.runs.runs.filter(run => run.run_name !== compareRunName);
         }
       }
     );
+
 
 
     return {
@@ -160,14 +149,14 @@ export default {
   data() {
     return {
       showDropdown: false,
-      compare: false,
+      showInfoBox: false,
     };
   },
 
   mounted() {
-    this.createScatterPlot();
-    this.createPieChart();
-    this.createBarChart();
+    //this.createScatterPlot();
+    //this.createPieChart();
+    //this.createBarChart();
 
     watch(
       () => this.ResultsStore.paretoBikeTTArray,
@@ -179,19 +168,30 @@ export default {
 
     watch(
       () => this.ResultsStore.paretoCarTTArray,
-      (newTime, oldTime) => {}
+      (newTime, oldTime) => {
+
+      }
     );
+
     watch(
       [() => this.ResultsStore.kmBike, () => this.ResultsStore.kmCar],
       ([newBikeTime, newCarTime], [oldBikeTime, oldCarTime]) => {
         this.createPieChart();
       }
     );
+
+    watch(
+      () => this.ResultsStore.runName,
+      (newRunName, oldRunName) => {
+        this.createBarChart(); // TODO also update the Names for the legends
+      }
+    );
+
+
   },
 
   methods: {
     stopComparing(){
-      this.compare = false;
       this.compareRunStore.reset();
       this.createBarChart();
       this.createScatterPlot();
@@ -206,11 +206,12 @@ export default {
     },
 
     async compareRun(run) {
-      this.compare = true;
+      this.compareRunStore.setCompareTrue();
       const inputStore = userInputStore();
 
       // create evaluation for the selected run
       this.compareRunStore.setRunName(run.run_name); 
+
 
       const paretoEvaluation = await getPareto(run.id_prj, run.id_run);
       // Extracting data from paretoEvaluation
@@ -241,7 +242,7 @@ export default {
 
       let dataset = [this.ResultsStore.kmBike, this.ResultsStore.kmCar];
 
-      if (this.compare) {
+      if (this.compareRunStore.compare) {
         // create second pie chart when comparing
         canvas = this.$refs.pieChart2;
         ctx = canvas.getContext("2d");
@@ -318,11 +319,11 @@ export default {
         ) / 100;
 
       let dataValues = [relativeBikeTTChange, relativeCarTTChange];
-      let labels = ["Bike", "Car"];
+      let labels = [`Bike_ ${this.ResultsStore.runName}`, `Car ${this.ResultsStore.runName}`];
       let colors = [pinkColor, blueColor];
 
       // add additional data, when in comparing mode
-      if (this.compare) {
+      if (this.compareRunStore.compare) {
         dataValues.push(
           Math.round(
             this.compareRunStore.paretoBikeTTArray[
@@ -349,7 +350,7 @@ export default {
         data: {
             labels: labels,
             datasets: [{
-              label:"",
+              label:"run 1",
                 backgroundColor: colors,
                 data: dataValues,
             }],
@@ -376,10 +377,11 @@ export default {
                     anchor: "center",
                     align: "center",
                 },
+                legend: { 
+                  display: false, 
+              },
             },
-            legend: { 
-                display: false, 
-            },
+            
         },
     });
 
@@ -407,7 +409,7 @@ export default {
         },
       ];
 
-      if (this.compare) {
+      if (this.compareRunStore.compare) {
         datasets.push({
           label: `${this.compareRunStore.runName}`,
           data: this.compareRunStore.paretoBikeTTArray.map(
@@ -441,7 +443,7 @@ export default {
               type: "linear",
               title: {
                 display: true,
-                text: "Increase in car travel time [%]",
+                text: "Change in car travel time [%]",
               },
             },
           },
@@ -532,4 +534,37 @@ export default {
 .dropdown:hover .dropbtn {
   background-color: #dd667aea;
 }
+.close-btn {
+  position: relative;
+  top: 5px;
+  right: 5px;
+  background: transparent;
+  border: none;
+  color: #333;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.close-btn:hover {
+  color: #da5268;
+}
+.info-box {
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 1px solid #ccc;
+  padding: 5px;
+  max-width: 200px;
+  z-index: 9999;
+  font-size: 11px;
+
+}
+
+.fa-info-circle {
+  cursor: help;
+}
+.small-icon {
+  font-size: 11px; 
+}
+
 </style>

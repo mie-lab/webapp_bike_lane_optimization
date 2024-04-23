@@ -98,6 +98,7 @@ import {
 } from "../scripts/api.js";
 import { loadWFS, loadWMS } from "../scripts/map.js";
 import UserInputNewRun from "./UserInputNewRun.vue";
+import { useCompareRunEvaluation } from "../stores/compareRunStore.js";
 
 export default {
   name: "UserInputRun",
@@ -111,6 +112,7 @@ export default {
     const resultsStore = useResultsStore();
     const prjStore = projectsStore();
     const filteredRuns = ref(null);
+    const compareRunStore = useCompareRunEvaluation();
 
     watch(
       () => prjStore.runs.runs,
@@ -123,9 +125,11 @@ export default {
     return {
       statusStore,
       resultsStore,
+      prjStore,
       inputStore,
       projectName: inputStore.projectName,
       filteredRuns,
+      compareRunStore,
     };
   },
   data() {
@@ -156,18 +160,17 @@ export default {
       statusStore.toggleCreateNewRunPage();
     },
     async loadRun(run) {
-      const prjStore = projectsStore();
-      prjStore.setSelectedRun(run);
+      this.prjStore.setSelectedRun(run);
       this.selectedRun = run;
 
-      const inputStore = userInputStore();
+      this.compareRunStore.reset(); // reset all comparisons
 
-      inputStore.setRunID(run.id_run);
+      this.inputStore.setRunID(run.id_run);
       this.runName = run.run_name;
-      inputStore.setRunName(this.runName);
+      this.inputStore.setRunName(this.runName);
 
       const response = await createView(
-        inputStore.projectID,
+        this.inputStore.projectID,
         run.id_run,
         "v_optimized"
       );
@@ -179,7 +182,7 @@ export default {
       const ResultsStore = useResultsStore();
 
       const paretoEvaluation = await getPareto(
-        inputStore.projectID,
+        this.inputStore.projectID,
         run.id_run
       );
       // Extracting data from paretoEvaluation
@@ -191,7 +194,7 @@ export default {
 
       // get km per bike / car lane
       const distanceEvaluation = await getKmDistancePerLaneType(
-        inputStore.projectID,
+        this.inputStore.projectID,
         run.id_run
       );
       ResultsStore.setDistancesKM(
@@ -215,12 +218,11 @@ export default {
 
     async reloadRuns() {
       this.isLoading = true;
-      const inputStore = userInputStore();
-      const prjStore = projectsStore();
+
       try {
-        const response = await getRunList(inputStore.projectID);
-        prjStore.setRuns(response);
-        this.filteredRuns = prjStore.runs.runs;
+        const response = await getRunList(this.inputStore.projectID);
+        this.prjStore.setRuns(response);
+        this.filteredRuns = this.prjStore.runs.runs;
       } catch (error) {
         console.log("error: ", error.message);
       } finally {

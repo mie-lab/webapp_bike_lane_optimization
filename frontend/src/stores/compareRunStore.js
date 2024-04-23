@@ -8,6 +8,7 @@ export const useCompareRunEvaluation = defineStore("compareRun",{
     kmBike: null,
     kmCar: null,
     runName: null,
+    compare:false,
   }),
   actions: {
     setTraveltimes(bikeTT,carTT) {
@@ -27,6 +28,10 @@ export const useCompareRunEvaluation = defineStore("compareRun",{
       this.kmBike = null;
       this.kmCar = null;
       this.runName = null;
+      this.compare = false;
+    },
+    setCompareTrue(){
+      this.compare = true;
     }
   },
 });
