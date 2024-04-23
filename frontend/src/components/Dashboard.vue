@@ -12,7 +12,12 @@
     </div>
     <div v-show="dashboard" class="dashboard-content bg-lightgrey">
       <h1 class="text-pink">Dashboard</h1>
+      <div v-if="inputStore.runName === ''">
+        <p>Please select a run to display the results.</p>
+      </div>
+      <div v-else>
 
+      
        <!-- Title and Compare Button -->
       <div class="titel-inkl-button">
         <h2 class="h2_override">
@@ -106,6 +111,8 @@
       </div>
     </div>
   </div>
+</div>
+  
 </template>
 
 <script>
@@ -175,9 +182,7 @@ export default {
   },
 
   mounted() {
-    this.createScatterPlot();
-    this.createPieChart();
-    this.createBarChart();
+
 
     watch(
       () => this.ResultsStore.paretoBikeTTArray,
