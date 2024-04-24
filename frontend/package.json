@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "build": "vite build",
+    "build:ethz": "vite build --base='/~mbauckhage/ebikecity/'",
     "lint": "vue-cli-service lint",
     "dev": "vite",
     "prettier": "prettier . --write",
