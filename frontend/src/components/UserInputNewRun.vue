@@ -149,18 +149,6 @@ export default {
 
       loadWMS("v_optimized", "wms_optimized");
 
-      const ResultsStore = useResultsStore();
-
-      const responseEvaluation = await evalTravelTime(
-        run.project_id,
-        run.run_id
-      );
-      console.log(responseEvaluation);
-      ResultsStore.setEvaluation(
-        responseEvaluation.bike_travel_time,
-        responseEvaluation.car_travel_time
-      );
-
       const statusStore = statusVariablesStore();
       statusStore.openDashboard();
       this.isLoading = false;
