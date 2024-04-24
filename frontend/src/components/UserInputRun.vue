@@ -176,6 +176,7 @@ export default {
       );
 
       loadWMS("v_optimized", "wms_optimized");
+      loadWMS("v_optimized_arrows", "wms_optimized_arrows");
       loadWFS("v_optimized_wfs", "wfs_optimized");
 
       // create evaluation for the selected run
