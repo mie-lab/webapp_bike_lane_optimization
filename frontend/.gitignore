@@ -40,3 +40,6 @@ colors.txt
 # Ignore files containing "test" in the filename
 */components/*test*
 */scripts/*test*
+
+# Ignore build files
+dist
