@@ -23,19 +23,24 @@
         <h2 class="h2_override">
         {{ inputStore.runName }}
         </h2>
-        <span v-if="compareRunStore.compare">&nbsp;<i class="fa-solid fa-arrows-alt-h"></i>&nbsp;</span>
+        <span v-if="compareRunStore.compare" style="color: var(--blue-color);">&nbsp;<i class="fa-solid fa-arrows-alt-h"></i>&nbsp;</span>
 
-        <!-- Dropdown for Comparison -->
+        <!-- Dropdown for Comparison :class="{ 'compare-button-active': compareRunStore.compare }"
+            :style="{ borderColor: compareRunStore.compare ? getColors()[3] : '' }"-->
         <div class="dropdown">
           <button 
-            class="dropbtn" 
+            class="dropbtn-compare" 
             @mouseover="toggleDropdown" 
             @mouseleave="toggleDropdown" 
-            :class="{ 'compare-button-active': compareRunStore.compare }"
-            :style="{ borderColor: compareRunStore.compare ? getColors()[3] : '' }"
+            :style="{ paddingRight: compareRunStore.compare ? '27px' : '10px' }"
           >
             {{ compareRunStore && compareRunStore.runName ? compareRunStore.runName : 'Compare' }}
            <!-- <i :class="showDropdown ? 'fa-solid fa-angle-up' : 'fa-solid fa-angle-down'"></i> -->
+          
+           <!-- Stop Comparing Button -->
+            <button v-if="compareRunStore.compare" style="color: var(--blue-color);" class="close-btn"  @click="stopComparing">
+              <i class="fa-solid fa-times"></i>
+            </button>
           </button>
 
           <div class="dropdown-content" >
@@ -46,11 +51,9 @@
               >{{ run.run_name }}</a
             >
           </div>
+          
         </div>
-         <!-- Stop Comparing Button -->
-         <button v-if="compareRunStore.compare" class="close-btn" @click="stopComparing">
-          <i class="fa-solid fa-times"></i>
-        </button>
+         
       </div>
       <!-- Travel times -->
       <div>
@@ -313,23 +316,18 @@ export default {
             cutout: "70%",
           },
           plugins: {
-        datalabels: {
-          formatter: (value, context) => {
-            // Show the value as label only if it's greater than 0
-            if (value > 0) {
-              return value;
-            } else {
-              return ''; // Hide the label
-            }
+            datalabels: {
+              display: true,
+              align: 'bottom',
+              backgroundColor: '#ccc',
+              borderRadius: 3,
+              font: {
+                size: 18,
+              },
+            },
           },
-          color: '#000', // Font color
-          anchor: 'end', // Position the labels at the end of the arcs
-          align: 'start', // Align the labels at the start of the arcs
-          offset: 6, // Padding between the labels and the arcs
-        },
-      },
-    },
-  });
+        }
+      });
     },
 
     getColors(){
@@ -555,11 +553,14 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  
 }
 /* Dropdown styles */
 .dropdown {
   position: relative;
   display: inline-block;
+  align-items: center; 
+  margin-right: 33px;
 }
 
 .dropdown-content {
@@ -577,6 +578,8 @@ export default {
   text-decoration: none;
   display: block;
   text-align: left;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 11px;
 }
 
 .dropdown-content a:hover {
@@ -591,19 +594,31 @@ export default {
   background-color: #dd667aea;
 }
 .close-btn {
-  position: relative;
-  top: 5px;
+  position: absolute; /* Change position to absolute */
+  top: 50%; /* Move the button 50% from the top */
   right: 5px;
+  transform: translateY(-50%); /* Adjust the button position vertically */
   background: transparent;
   border: none;
   color: #333;
   font-size: 18px;
   cursor: pointer;
   padding: 0;
+  margin-left: 10px;
+
 }
 
 .close-btn:hover {
   color: #da5268;
+}
+.dropbtn-compare{
+  outline-color: var(--blue-color);
+  border: 2px solid var(--blue-color);
+  color: var(--blue-color);
+  background-color: transparent;
+  padding: 5px;
+  padding-right: 27px;
+  padding-left:10px;
 }
 .info-box {
   position: absolute;

@@ -78,6 +78,7 @@ import { createView, getRunList, getProjectList } from "../scripts/api.js";
 import { storeToRefs } from "pinia";
 import RingLoader from "vue-spinner/src/RingLoader.vue";
 import { remove } from "ol/array";
+import { useResultsStore } from "../stores/algorithmResultsStore.js";
 
 export default {
   name: "UserInputLoad",
@@ -90,6 +91,7 @@ export default {
     const inputStore = userInputStore();
     const prjStore = projectsStore();
     const searchQuery = ref("");
+    const ResultsStore = useResultsStore();
 
     const activeComponent = computed(() => {
       // Determine which component to show based on status
@@ -121,6 +123,7 @@ export default {
       searchQuery,
       filteredProjects,
       activeComponent,
+      ResultsStore,
     };
   },
 
@@ -144,9 +147,9 @@ export default {
     },
 
     openCreate() {
-      const statusStore = statusVariablesStore();
-      statusStore.toggleCreatePage();
-      statusStore.toggleLoadPage();
+      this.statusStore.toggleCreatePage();
+      this.statusStore.toggleLoadPage();
+      this.ResultsStore.reset();
     },
     async openProject(project) {
       this.resetProject();
