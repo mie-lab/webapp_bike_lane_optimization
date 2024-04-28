@@ -1,13 +1,13 @@
 :root {
   --pink-color: #da5268;
-  --pinkTransparent-color: #dd667aea;
-  --pink-compare: #bd7364ea;
-  --blue-compare: #314377;
+  --pinkTransparent-color: #da5268;
+  --pink-compare: #fef32b;
+  --blue-compare: #3e00a3bf;
   --blue-color: #0d00a3;
   --blueTransparent-color: #0e00a3bf;
   --lightgrey-bg: #e0e0e0;
   --darkgrey-bg: #b3b3b3;
   --darkgrey-2-bg: #333;
   --black: #000000;
-  --pink-bright: rgb(184, 109, 121);
+  --pink-bright: #da5268;
 }

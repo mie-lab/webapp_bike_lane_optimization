@@ -16,106 +16,129 @@
         <p>Please select a run to display the results.</p>
       </div>
       <div v-else>
-
-      
-       <!-- Title and Compare Button -->
-      <div class="titel-inkl-button">
-        <h2 class="h2_override">
-        {{ inputStore.runName }}
-        </h2>
-        <span v-if="compareRunStore.compare" style="color: var(--blue-color);">&nbsp;<i class="fa-solid fa-arrows-alt-h"></i>&nbsp;</span>
-
-        <!-- Dropdown for Comparison :class="{ 'compare-button-active': compareRunStore.compare }"
-            :style="{ borderColor: compareRunStore.compare ? getColors()[3] : '' }"-->
-        <div class="dropdown">
-          <button 
-            class="dropbtn-compare" 
-            @mouseover="toggleDropdown" 
-            @mouseleave="toggleDropdown" 
-            :style="{ paddingRight: compareRunStore.compare ? '27px' : '10px' }"
+        <!-- Title and Compare Button -->
+        <div class="titel-inkl-button">
+          <h2 class="h2_override">
+            {{ inputStore.runName }}
+          </h2>
+          <span v-if="compareRunStore.compare" style="color: var(--blue-color)"
+            >&nbsp;<i class="fa-solid fa-arrows-alt-h"></i>&nbsp;</span
           >
-            {{ compareRunStore && compareRunStore.runName ? compareRunStore.runName : 'Compare' }}
-           <!-- <i :class="showDropdown ? 'fa-solid fa-angle-up' : 'fa-solid fa-angle-down'"></i> -->
-          
-           <!-- Stop Comparing Button -->
-            <button v-if="compareRunStore.compare" style="color: var(--blue-color);" class="close-btn"  @click="stopComparing">
-              <i class="fa-solid fa-times"></i>
-            </button>
-          </button>
 
-          <div class="dropdown-content" >
-            <a
-              v-for="run in filteredRuns"
-              :key="run.id_run"
-              @click="compareRun(run)"
-              >{{ run.run_name }}</a
+          <!-- Dropdown for Comparison :class="{ 'compare-button-active': compareRunStore.compare }"
+            :style="{ borderColor: compareRunStore.compare ? getColors()[3] : '' }"-->
+          <div class="dropdown">
+            <button
+              class="dropbtn-compare"
+              @mouseover="toggleDropdown"
+              @mouseleave="toggleDropdown"
+              :style="{
+                paddingRight: compareRunStore.compare ? '27px' : '10px',
+              }"
             >
+              {{
+                compareRunStore && compareRunStore.runName
+                  ? compareRunStore.runName
+                  : "Compare"
+              }}
+              <!-- <i :class="showDropdown ? 'fa-solid fa-angle-up' : 'fa-solid fa-angle-down'"></i> -->
+
+              <!-- Stop Comparing Button -->
+              <button
+                v-if="compareRunStore.compare"
+                style="color: var(--blue-color)"
+                class="close-btn"
+                @click="stopComparing"
+              >
+                <i class="fa-solid fa-times"></i>
+              </button>
+            </button>
+
+            <div class="dropdown-content">
+              <a
+                v-for="run in filteredRuns"
+                :key="run.id_run"
+                @click="compareRun(run)"
+                >{{ run.run_name }}</a
+              >
+            </div>
           </div>
-          
         </div>
-         
-      </div>
-      <!-- Travel times -->
-      <div>
-        <h3>Travel Times Changes
-          <i class="fa-solid fa-info-circle small-icon" @mouseover="showInfoBoxTravelTimes = true" @mouseleave="showInfoBoxTravelTimes = false"></i>
-          <div v-show="showInfoBoxTravelTimes" class="info-box">
-            Travel Time Info text; And other additional Information ...
-          </div>
-        </h3>
-        <p>This is the relative change of travel times for the chosen run.</p>
+        <!-- Travel times -->
+        <div>
+          <h3>
+            Travel Times Changes
+            <i
+              class="fa-solid fa-info-circle small-icon"
+              @mouseover="showInfoBoxTravelTimes = true"
+              @mouseleave="showInfoBoxTravelTimes = false"
+            ></i>
+            <div v-show="showInfoBoxTravelTimes" class="info-box">
+              Travel Time Info text; And other additional Information ...
+            </div>
+          </h3>
+          <p>This is the relative change of travel times for the chosen run.</p>
 
-        <canvas class="barChart" ref="barChart" height="125"></canvas>
-      </div>
+          <canvas class="barChart" ref="barChart" height="125"></canvas>
+        </div>
 
-      <!-- Pareto -->
-      <div>
-        <h3>Pareto
-          <i class="fa-solid fa-info-circle small-icon" @mouseover="showInfoBox = true" @mouseleave="showInfoBox = false"></i>
-          <div v-show="showInfoBox" class="info-box">
-              Pareto Info Text
-          </div>
-        </h3>
-        <p>
-          This plot shows the pareto frontier from the chosen linear
-          formulation.
-        </p>
-        <canvas
-          class="scatterPlotCanvas"
-          ref="scatterPlotCanvas"
-          height="200"
-        ></canvas>
-      </div>
-
-      <div>
-        <h3>Distances per lane type
-          <i class="fa-solid fa-info-circle small-icon" @mouseover="showInfoBoxDistances = true" @mouseleave="showInfoBoxDistances = false"></i>
-          <div v-show="showInfoBoxDistances" class="info-box">
-            Distance per lane type; And other additional Information ...
-          </div>
-        </h3>
-        <p>
-          Your optimizations contains {{Math.round(ResultsStore.kmBike*100)/100}} km of bike lanes and
-          {{Math.round(ResultsStore.kmCar*100)/100}} km of car lanes.
-        </p>
-        <div
-          class="pieChartContainer"
-          :style="{ width: compareRunStore.compare ? '50%' : '50%' }"
-        >
-          <canvas class="pieChart" ref="pieChart" height="50"></canvas>
-
+        <!-- Pareto -->
+        <div>
+          <h3>
+            Pareto
+            <i
+              class="fa-solid fa-info-circle small-icon"
+              @mouseover="showInfoBox = true"
+              @mouseleave="showInfoBox = false"
+            ></i>
+            <div v-show="showInfoBox" class="info-box">Pareto Info Text</div>
+          </h3>
+          <p>
+            This plot shows the pareto frontier from the chosen linear
+            formulation.
+          </p>
           <canvas
-            v-show="compareRunStore.compare"
-            class="pieChart"
-            ref="pieChart2"
-            height="50"
+            class="scatterPlotCanvas"
+            ref="scatterPlotCanvas"
+            height="200"
           ></canvas>
+        </div>
+
+        <div>
+          <h3>
+            Distances per lane type
+            <i
+              class="fa-solid fa-info-circle small-icon"
+              @mouseover="showInfoBoxDistances = true"
+              @mouseleave="showInfoBoxDistances = false"
+            ></i>
+            <div v-show="showInfoBoxDistances" class="info-box">
+              Distance per lane type; And other additional Information ...
+            </div>
+          </h3>
+          <p>
+            Your optimizations contains
+            {{ Math.round(ResultsStore.kmBike * 100) / 100 }} km of bike lanes
+            and {{ Math.round(ResultsStore.kmCar * 100) / 100 }} km of car
+            lanes.
+          </p>
+          <div
+            class="pieChartContainer"
+            :style="{ width: compareRunStore.compare ? '50%' : '50%' }"
+          >
+            <canvas class="pieChart" ref="pieChart" height="50"></canvas>
+
+            <canvas
+              v-show="compareRunStore.compare"
+              class="pieChart"
+              ref="pieChart2"
+              height="50"
+            ></canvas>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
-  
 </template>
 
 <script>
@@ -142,24 +165,25 @@ export default {
     const filteredRuns = ref(null);
     const compareRunStore = useCompareRunEvaluation();
 
-
     watch(
       () => statusStore.dashboard,
       (newValue, oldValue) => {
         dashboard.value = newValue;
       }
     );
-    
 
- 
     watch(
       () => [prjStore.selectedRun, compareRunStore.runName],
       ([selectedRun, compareRunName], [oldSelectedRun, oldCompareRunName]) => {
         // Filter out the selected Run and the compareRunStore.runName from the dropdown options
         if (selectedRun !== null) {
-          filteredRuns.value = prjStore.runs.runs.filter(run => run !== selectedRun && run.run_name !== compareRunName);
+          filteredRuns.value = prjStore.runs.runs.filter(
+            (run) => run !== selectedRun && run.run_name !== compareRunName
+          );
         } else {
-          filteredRuns.value = prjStore.runs.runs.filter(run => run.run_name !== compareRunName);
+          filteredRuns.value = prjStore.runs.runs.filter(
+            (run) => run.run_name !== compareRunName
+          );
         }
       }
     );
@@ -179,14 +203,12 @@ export default {
     return {
       showDropdown: false,
       showInfoBox: false,
-      showInfoBoxTravelTimes:false,
-      showInfoBoxDistances:false,
+      showInfoBoxTravelTimes: false,
+      showInfoBoxDistances: false,
     };
   },
 
   mounted() {
-
-
     watch(
       () => this.ResultsStore.paretoBikeTTArray,
       (newTime, oldTime) => {
@@ -197,9 +219,7 @@ export default {
 
     watch(
       () => this.ResultsStore.paretoCarTTArray,
-      (newTime, oldTime) => {
-
-      }
+      (newTime, oldTime) => {}
     );
 
     watch(
@@ -214,23 +234,18 @@ export default {
         this.createScatterPlot();
         this.createBarChart();
         this.createPieChart();
-       
       }
     );
-
-    
-
-
   },
 
   methods: {
-    stopComparing(){
+    stopComparing() {
       this.compareRunStore.reset();
       this.createBarChart();
       this.createScatterPlot();
       this.createPieChart();
     },
-    
+
     toggleDashboard() {
       this.statusStore.toggleDashboard();
     },
@@ -243,8 +258,7 @@ export default {
       const inputStore = userInputStore();
 
       // create evaluation for the selected run
-      this.compareRunStore.setRunName(run.run_name); 
-
+      this.compareRunStore.setRunName(run.run_name);
 
       const paretoEvaluation = await getPareto(run.id_prj, run.id_run);
       // Extracting data from paretoEvaluation
@@ -273,11 +287,14 @@ export default {
       let canvas = this.$refs.pieChart;
       let ctx = canvas.getContext("2d");
 
-      const colorsDefined = this.getColors(); // get the standart colors 
+      const colorsDefined = this.getColors(); // get the standart colors
 
       let dataset = [this.ResultsStore.kmBike, this.ResultsStore.kmCar];
       let colors = [colorsDefined[0], colorsDefined[1]];
-      let labels =  [`Bike_${this.ResultsStore.runName}`, `Car_${this.ResultsStore.runName}`];
+      let labels = [
+        `Bike_${this.ResultsStore.runName}`,
+        `Car_${this.ResultsStore.runName}`,
+      ];
 
       if (this.compareRunStore.compare) {
         // create second pie chart when comparing
@@ -285,9 +302,11 @@ export default {
         ctx = canvas.getContext("2d");
 
         dataset = [this.compareRunStore.kmBike, this.compareRunStore.kmCar];
-        labels =[`Bike_${this.compareRunStore.runName}`, `Car_${this.compareRunStore.runName}`];
-        colors= [colorsDefined[2], colorsDefined[3]];
-
+        labels = [
+          `Bike_${this.compareRunStore.runName}`,
+          `Car_${this.compareRunStore.runName}`,
+        ];
+        colors = [colorsDefined[2], colorsDefined[3]];
       }
 
       // Check if there's already a Chart instance on this canvas
@@ -318,19 +337,19 @@ export default {
           plugins: {
             datalabels: {
               display: true,
-              align: 'bottom',
-              backgroundColor: '#ccc',
+              align: "bottom",
+              backgroundColor: "#ccc",
               borderRadius: 3,
               font: {
                 size: 18,
               },
             },
           },
-        }
+        },
       });
     },
 
-    getColors(){
+    getColors() {
       // function to get the colors saved in colors.css
       const pinkColor = getComputedStyle(
         document.documentElement
@@ -344,7 +363,7 @@ export default {
       const blueCompareColor = getComputedStyle(
         document.documentElement
       ).getPropertyValue("--blue-compare");
-      return [pinkColor,blueColor,pinkCompareColor,blueCompareColor]
+      return [pinkColor, blueColor, pinkCompareColor, blueCompareColor];
     },
 
     createBarChart() {
@@ -372,7 +391,10 @@ export default {
         ) / 100;
 
       let dataValues = [relativeBikeTTChange, relativeCarTTChange];
-      let labels = [`Bike_${this.ResultsStore.runName}`, `Car_${this.ResultsStore.runName}`];
+      let labels = [
+        `Bike_${this.ResultsStore.runName}`,
+        `Car_${this.ResultsStore.runName}`,
+      ];
       let colors = [colorsDefined[0], colorsDefined[1]];
 
       // add additional data, when in comparing mode
@@ -401,43 +423,43 @@ export default {
       canvas.chart = new Chart(ctx, {
         type: "bar",
         data: {
-            labels: labels,
-            datasets: [{
-              label:"run 1",
-                backgroundColor: colors,
-                data: dataValues,
-            }],
+          labels: labels,
+          datasets: [
+            {
+              label: "run 1",
+              backgroundColor: colors,
+              data: dataValues,
+            },
+          ],
         },
         options: {
-            scales: {
-                y: {
-                    beginAtZero: true,
-                },
-                x: { 
-                    display: true, 
-                    title: { 
-                        display: true,
-                        text: "Changes in travel time [%]",
-                        font: {
-                            size: 12, 
-                        },
-                    },
-                },
+          scales: {
+            y: {
+              beginAtZero: true,
             },
-            indexAxis: "y",
-            plugins: {
-                datalabels: {
-                    anchor: "center",
-                    align: "center",
+            x: {
+              display: true,
+              title: {
+                display: true,
+                text: "Changes in travel time [%]",
+                font: {
+                  size: 12,
                 },
-                legend: { 
-                  display: false, 
               },
             },
-            
+          },
+          indexAxis: "y",
+          plugins: {
+            datalabels: {
+              anchor: "center",
+              align: "center",
+            },
+            legend: {
+              display: false,
+            },
+          },
         },
-    });
-
+      });
     },
 
     createScatterPlot() {
@@ -472,7 +494,7 @@ export default {
               y: this.compareRunStore.paretoCarTTArray[index],
             })
           ),
-          backgroundColor: this.getColors()[3], 
+          backgroundColor: this.getColors()[2],
           borderColor: this.getColors()[2],
           borderWidth: 1,
         });
@@ -553,13 +575,12 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  
 }
 /* Dropdown styles */
 .dropdown {
   position: relative;
   display: inline-block;
-  align-items: center; 
+  align-items: center;
   margin-right: 33px;
 }
 
@@ -605,20 +626,19 @@ export default {
   cursor: pointer;
   padding: 0;
   margin-left: 10px;
-
 }
 
 .close-btn:hover {
   color: #da5268;
 }
-.dropbtn-compare{
+.dropbtn-compare {
   outline-color: var(--blue-color);
   border: 2px solid var(--blue-color);
   color: var(--blue-color);
   background-color: transparent;
   padding: 5px;
   padding-right: 27px;
-  padding-left:10px;
+  padding-left: 10px;
 }
 .info-box {
   position: absolute;
@@ -636,24 +656,21 @@ export default {
   cursor: help;
 }
 .small-icon {
-  font-size: 11px; 
-  
+  font-size: 11px;
 }
 .compare-button-active {
   background-color: var(--pink-compare);
-  color: var(--blue-compared);
+  color: var(--blue-compare);
 }
 
 .compare-button-active:hover {
   background-color: var(--pink-compare);
-  color: var(--blue-compared);
+  color: var(--blue-compare);
 }
 
 .compare-button-active:focus {
-  outline-color: var(--blue-compared);
-  border-width: 2px; 
-  color: var(--blue-compared);
+  outline-color: var(--blue-compare);
+  border-width: 2px;
+  color: var(--blue-compare);
 }
-
-
 </style>
