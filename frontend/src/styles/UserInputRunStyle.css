@@ -8,11 +8,11 @@
 }
 .list-header {
   display: grid;
-  grid-template-columns: 6fr 1.5fr 1.2fr;
+  grid-template-columns: 6fr 1.8fr 1.1fr;
   font-weight: bold;
-  padding: 8px;
+  padding: 0px;
+  padding-left: 4px;
   margin-top: 20px;
-  margin-left: 5px;
 }
 .run-details {
   display: grid;
@@ -38,7 +38,6 @@
 .run_list_name {
   color: var(--darkgrey-2-bg);
   margin: 0;
-  margin-left: 20px;
 }
 
 .h2_override {
@@ -55,22 +54,8 @@
   align-items: center;
 }
 
-.runs-text {
-  margin-right: 10px;
-}
-
 .refresh-container {
   position: relative;
-}
-
-.refresh-button {
-  position: absolute;
-  top: -5px;
-  left: 0;
-}
-
-.refresh-button {
-  cursor: pointer;
 }
 
 .ring-loader-container {

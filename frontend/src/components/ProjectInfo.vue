@@ -7,8 +7,9 @@
       ></i>
     </button>
     <h1 class="text-pink">Project Info</h1>
-    <p class="text-blue">Project info goes here</p>
-   
+    <div class="sidebar-content-container">
+      <p class="text-blue">Project info goes here</p>
+    </div>
   </div>
 </template>
 

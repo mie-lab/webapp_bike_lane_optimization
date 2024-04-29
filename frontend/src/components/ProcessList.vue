@@ -11,9 +11,9 @@
       <li v-for="process in runningProcesses" :key="process.id">
         <div class="process-details">
           <div class="process-name">{{ process.name }}</div>
-          <div class="process-bike-ratio">{{ process.car_weight}}</div>
+          <div class="process-bike-ratio">{{ process.car_weight }}</div>
           <div class="process-optimize-frequency">
-            {{ process.bike_ratio*100 }} %
+            {{ process.bike_ratio * 100 }} %
           </div>
           <div class="process-status">
             <template v-if="process.status === 'pending'">
@@ -61,18 +61,18 @@ export default {
 </script>
 
 <style scoped>
+.running-requests-list {
+  margin-left: 30px;
+}
 .rotated-beat-loader {
-  transform: scale(0.4) rotate(90deg); 
-  height: 20px; 
+  transform: scale(0.4) rotate(90deg);
+  height: 20px;
 }
 
-
-
 .list-header {
-  margin-left: 30px;
   display: grid;
   grid-template-columns: 3fr 1fr 1fr 1fr;
-  align-items: center; 
+  align-items: center;
   margin-bottom: 10px;
   border-bottom: 1px solid #ccc;
   margin-right: 20px;
@@ -91,14 +91,14 @@ export default {
 
 .header-item {
   padding: 5px;
-  text-align: right; 
+  text-align: right;
 }
 
 .header-item:first-child {
-  text-align: left; 
+  text-align: left;
 }
 
 .header-item:last-child {
-  text-align: right; 
+  text-align: right;
 }
 </style>

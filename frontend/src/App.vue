@@ -36,13 +36,13 @@ const calculateBaseLayerSwitchPosition = () => {
     return {
       position: "absolute",
       bottom: "20px", // Adjust as needed
-      left: "50px", // Adjust as needed
+      left: "70px", // Adjust as needed
     };
   } else {
     return {
       position: "absolute",
       bottom: "20px", // Adjust as needed
-      left: "400px", // Adjust as needed
+      left: "420px", // Adjust as needed
     };
   }
 };

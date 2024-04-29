@@ -222,8 +222,4 @@ export default {
 .created-date {
   margin-left: 20px; /* Adjust as needed */
 }
-
-.project-list {
-  margin-right: 20px;
-}
 </style>

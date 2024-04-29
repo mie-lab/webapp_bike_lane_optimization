@@ -12,10 +12,10 @@
     </div>
     <div v-show="dashboard" class="dashboard-content bg-lightgrey">
       <h1 class="text-pink">Dashboard</h1>
-      <div v-if="inputStore.runName === ''">
+      <div class="text-align" v-if="inputStore.runName === ''">
         <p>Please select a run to display the results.</p>
       </div>
-      <div v-else>
+      <div class="text-align" v-else>
         <!-- Title and Compare Button -->
         <div class="titel-inkl-button">
           <h2 class="h2_override">
@@ -551,15 +551,7 @@ export default {
 
 .dashboard-content {
   flex-grow: 1;
-  width: 400px;
-}
-
-.scatterPlotCanvas,
-.barChart,
-.pieChart {
-  margin-left: 30px;
-  margin-right: 30px;
-  align-content: center;
+  width: 500px;
 }
 
 .pieChartContainer {
@@ -581,16 +573,19 @@ export default {
   position: relative;
   display: inline-block;
   align-items: center;
-  margin-right: 33px;
+  margin-right: 30px;
 }
 
 .dropdown-content {
+  margin-top: 1px;
   display: none;
   position: absolute;
   background-color: #f1f1f1;
-  min-width: 160px;
+  width: 130px;
+  margin-right: 10px;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 1;
+  border-radius: 5px;
 }
 
 .dropdown-content a {
@@ -637,24 +632,10 @@ export default {
   color: var(--blue-color);
   background-color: transparent;
   padding: 5px;
-  padding-right: 27px;
+  padding-right: 40px;
   padding-left: 10px;
 }
-.info-box {
-  position: absolute;
-  background-color: rgba(255, 255, 255, 0.8);
-  border: 1px solid #ccc;
-  padding: 5px;
-  max-width: 200px;
-  z-index: 9999;
-  font-size: 11px;
-  color: #333;
-  font-weight: normal;
-}
 
-.fa-info-circle {
-  cursor: help;
-}
 .small-icon {
   font-size: 11px;
 }
@@ -672,5 +653,18 @@ export default {
   outline-color: var(--blue-compare);
   border-width: 2px;
   color: var(--blue-compare);
+}
+
+.barChart {
+  margin-right: 20px;
+}
+
+.scatterPlotCanvas {
+  margin-right: 20px;
+}
+
+.text-align {
+  margin-left: 30px;
+  margin-right: 20px;
 }
 </style>

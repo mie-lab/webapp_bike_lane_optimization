@@ -15,7 +15,6 @@ h2 {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   font-size: 1.2em;
   text-align: left;
-  margin-left: 10%;
   color: var(--blue-color);
 }
 
@@ -23,7 +22,6 @@ h3 {
   font-size: 1em;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   text-align: left;
-  margin-left: 10%;
   color: var(--blue-color);
 }
 
@@ -32,7 +30,6 @@ h4 {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   text-align: left;
   margin-bottom: 10px;
-  margin-left: 10%;
 }
 
 p {
@@ -40,12 +37,10 @@ p {
   color: var(--black);
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   text-align: left;
-  margin-left: 10%;
-  margin-right: 8%;
 }
 
 a {
-  font-size: 0.8em;
+  font-size: 1em;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
@@ -74,5 +69,31 @@ li {
   font-size: 0.72em;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   text-align: left;
-  margin-left: 10%;
+}
+
+.info-box {
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 1px solid #ccc;
+  padding: 5px;
+  max-width: 200px;
+  z-index: 9999;
+  font-size: 11px;
+  color: #333;
+  font-weight: normal;
+}
+
+.fa-info-circle {
+  cursor: help;
+}
+
+.refresh-button {
+  position: absolute;
+  top: -5px;
+  left: 5px;
+}
+
+.sidebar-content-container {
+  margin-left: 30px;
+  margin-right: 20px;
 }

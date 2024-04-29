@@ -16,49 +16,50 @@
           Create a new Run for the project, or click on already existing runs to
           see their results.
         </p>
-      </div>
-      <br />
-      <br />
-      <h3 class="runs-header">
-        <span class="runs-text">Runs</span>
-        <span class="refresh-container">
-          <i
-            v-if="!isLoading"
-            class="fa-solid fa-rotate-right refresh-button"
-            @click="reloadRuns"
-          >
-          </i>
-        </span>
-        <span class="ring-loader-container">
-          <div class="ring-loader">
-            <RingLoader v-if="isLoading" :size="'80'" :color="'#123abc'" />
-          </div>
-        </span>
-      </h3>
 
-      <div class="list-header">
-        <div class="header-item-left"><p class="run_list_name">Name</p></div>
-        <div class="header-item"><i class="far fa-clock"></i></div>
-        <div class="header-item">
-          <i class="fa-solid fa-lines-leaning"></i>
-        </div>
-      </div>
-      <div class="project-list">
-        <ul>
-          <li
-            v-for="run in filteredRuns"
-            :key="run.run_name"
-            @click="loadRun(run)"
-            :class="{ selected: run === selectedRun }"
-          >
-            <div class="run-details">
-              <div class="run_name">{{ run.run_name }}</div>
-              <div class="run_tt_weight">{{ run.car_weight }}</div>
-              <div class="run_alloc">{{ run.bike_ratio * 100 }}%</div>
+        <br />
+        <br />
+        <h3 class="runs-header">
+          <span class="runs-text">Runs</span>
+          <span class="refresh-container">
+            <i
+              v-if="!isLoading"
+              class="fa-solid fa-rotate-right refresh-button"
+              @click="reloadRuns"
+            >
+            </i>
+          </span>
+          <span class="ring-loader-container">
+            <div class="ring-loader">
+              <RingLoader v-if="isLoading" :size="'80'" :color="'#123abc'" />
             </div>
-            <hr class="divider" />
-          </li>
-        </ul>
+          </span>
+        </h3>
+
+        <div class="list-header">
+          <div class="header-item-left"><p class="run_list_name">Name</p></div>
+          <div class="header-item"><i class="far fa-clock"></i></div>
+          <div class="header-item">
+            <i class="fa-solid fa-lines-leaning"></i>
+          </div>
+        </div>
+        <div class="project-list">
+          <ul>
+            <li
+              v-for="run in filteredRuns"
+              :key="run.run_name"
+              @click="loadRun(run)"
+              :class="{ selected: run === selectedRun }"
+            >
+              <div class="run-details">
+                <div class="run_name">{{ run.run_name }}</div>
+                <div class="run_tt_weight">{{ run.car_weight }}</div>
+                <div class="run_alloc">{{ run.bike_ratio * 100 }}%</div>
+              </div>
+              <hr class="divider" />
+            </li>
+          </ul>
+        </div>
       </div>
 
       <!-- User input container -->

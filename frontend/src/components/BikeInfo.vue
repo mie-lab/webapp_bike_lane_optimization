@@ -7,25 +7,27 @@
       ></i>
     </button>
     <h1 class="text-pink">E-Bike City Zurich</h1>
-    <p class="text-blue justified-text">
-      E-Bike City is a forward-thinking urban initiative that aims to
-      revolutionize transportation dynamics within city limits. At its core,
-      E-Bike City is about reallocating road space to prioritize alternative
-      modes of transportation such as walking, cycling, and micromobility
-      options like e-bikes and e-scooters. By reclaiming 50% of road space
-      traditionally occupied by parked and moving cars, E-Bike City seeks to
-      create more pedestrian-friendly environments while simultaneously reducing
-      traffic congestion and carbon emissions.
+    <div class="sidebar-content-container">
+      <p class="text-blue justified-text">
+        E-Bike City is a forward-thinking urban initiative that aims to
+        revolutionize transportation dynamics within city limits. At its core,
+        E-Bike City is about reallocating road space to prioritize alternative
+        modes of transportation such as walking, cycling, and micromobility
+        options like e-bikes and e-scooters. By reclaiming 50% of road space
+        traditionally occupied by parked and moving cars, E-Bike City seeks to
+        create more pedestrian-friendly environments while simultaneously
+        reducing traffic congestion and carbon emissions.
 
-      <br /><br />
-      More information about
-      <a
-        href="https://storymaps.arcgis.com/stories/f6d216846a5644728ca6c95ead55d3f0"
-        target="_blank"
-        class="website-link"
-        >E-Bike City</a
-      >
-    </p>
+        <br /><br />
+        More information about
+        <a
+          href="https://storymaps.arcgis.com/stories/f6d216846a5644728ca6c95ead55d3f0"
+          target="_blank"
+          class="website-link"
+          >E-Bike City</a
+        >
+      </p>
+    </div>
   </div>
 </template>
 

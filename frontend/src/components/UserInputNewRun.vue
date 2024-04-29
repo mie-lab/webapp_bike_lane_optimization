@@ -1,6 +1,5 @@
 <template>
   <div>
-    <!-- User input container -->
     <button class="close-btn" @click="toggleTabsVisibility">
       <i
         class="fa-solid fa-times"
@@ -15,11 +14,24 @@
       <p class="info-text">
         You can manually change the values for car travel time weighting or lane
         allocation. <br /><br />
-        Click <a href="#" @click="toggleActiveTab('Help')"> here</a> for more
-        information on the impact of these parameters.
+        Click
+        <a href="#" @click="toggleActiveTab('Help')" style="font-size: 1em">
+          here</a
+        >
+        for more information on the impact of these parameters.
       </p>
 
-      <h4 class="text-blue">Run name</h4>
+      <h4 class="text-blue">
+        Run name
+        <i
+          class="fa-regular fa-circle-question"
+          @mouseover="showInfoBox = true"
+          @mouseleave="showInfoBox = false"
+        ></i>
+        <div v-show="showInfoBox" class="info-box">
+          {{ infoBoxTexts.run_name }}
+        </div>
+      </h4>
       <input
         class="project-name-input"
         type="text"
@@ -149,6 +161,7 @@ import { ref } from "vue";
 import { createView, getRunList, getNewRunID } from "../scripts/api.js";
 import { loadWMS } from "../scripts/map.js";
 import ProcessList from "./ProcessList.vue";
+import { infoBoxTexts } from "../scripts/infoBoxText.js";
 
 export default {
   name: "UserInputNewRun",
@@ -200,6 +213,8 @@ export default {
       isLoading: false,
       isOpen: false,
       selectedOption: null,
+      showInfoBox: false,
+      infoBoxTexts: infoBoxTexts,
       algorithms: [
         {
           algorithm: "optimize",
@@ -374,14 +389,13 @@ export default {
 
 .dropdown {
   position: relative;
-  display: inline-block;
 }
 
 .dropbtn {
   background-color: var(--lightgrey-bg);
   color: var(--darkgrey-bg);
   border: 1px solid var(--darkgrey-bg);
-  width: 270px;
+  width: 250px;
   margin: 0;
   padding: 0;
   padding-top: 5px;
@@ -396,7 +410,7 @@ export default {
 
 .dropdown-content {
   position: absolute;
-  width: 270px;
+  width: 250px;
   text-align: left;
   background-color: #f9f9f9;
   border-radius: 5px;

@@ -37,6 +37,10 @@
           <td>Bike</td>
         </tr>
       </table>
+      <br></br>
+
+      <h2 class="legend-text">Algorithms</h2>
+      <h3>Optimize</h3>
     </div>
   </div>
 </template>
