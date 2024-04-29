@@ -189,6 +189,7 @@ export default {
       inputStore.resetRuns();
       statusStore.closeDashboard();
       removeLayer("v_optimized", "wms_optimized");
+      removeLayer("v_optimized_arrows", "wms_optimized_arrows");
     },
 
     async reloadProjects() {

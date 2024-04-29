@@ -180,6 +180,8 @@ export async function loadWMS(layerID, layerSource) {
     paint: {},
   });
 
+  console.log("WMS layer loaded: ", tile);
+
   const userInput = userInputStore();
 
   const east = userInput.boundingBox.bbox_east;

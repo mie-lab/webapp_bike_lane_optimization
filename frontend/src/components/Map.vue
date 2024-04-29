@@ -11,6 +11,8 @@ import { enableDrawRectangle, onDrawCreate } from "../scripts/draw.js";
 import { userInputStore } from "../stores/userInputStore.js";
 import { statusVariablesStore } from "../stores/statusVariablesStore.js";
 import { mapStore } from "../stores/mapStore.js";
+import { watch } from "vue";
+import { loadWMS } from "../scripts/map.js";
 
 // Define projection definitions
 proj4.defs("EPSG:4326", "+proj=longlat +datum=WGS84 +no_defs"); // WGS84
@@ -33,9 +35,11 @@ export default {
       rectangleCoordinates: null,
     };
   },
+
   mounted() {
     const inputStore = userInputStore();
     const statusStore = statusVariablesStore();
+    const mapStoreInstance = mapStore();
 
     // Mapbox custom map (https://account.mapbox.com)
     mapboxgl.accessToken =
@@ -48,12 +52,11 @@ export default {
 
     this.map = new mapboxgl.Map({
       container: this.$refs.mapContainer,
-      style: mapboxmaps.dark,
+      style: mapStoreInstance.mapStyle,
       center: [8.5417, 47.3769], // Zurich's coordinates
       zoom: 12, // Adjust zoom level to your preference
     });
 
-    const mapStoreInstance = mapStore();
     mapStoreInstance.setMap(this.map);
 
     this.map.on("draw.create", (event) => {
@@ -71,8 +74,47 @@ export default {
       onDrawCreate(event, this);
       this.saveBoundingBox(event.features[0].geometry.coordinates[0]);
     });
+    watch(
+      () => mapStoreInstance.mapStyle,
+      (newStyle) => {
+        console.log("Map style updated:", newStyle);
+        if (this.map.loaded()) {
+          this.map.setStyle(newStyle);
+        }
+        console.log("Layers before: ", this.map.getStyle().layers);
+
+        if (this.isLayerExists("v_bound")) {
+          this.map.removeLayer("v_bound");
+
+          loadWMS("v_bound", "wms_bound");
+        }
+        if (this.isLayerExists("v_optimized")) {
+          this.map.removeLayer("v_optimized");
+          loadWMS("v_optimized", "wms_optimized");
+        }
+        if (this.isLayerExists("v_optimized_arrows")) {
+          this.map.removeLayer("v_optimized_arrows");
+          loadWMS("v_optimized_arrows", "wms_optimized_arrows");
+        }
+        if (this.isLayerExists("v_optimized_wfs")) {
+          this.map.removeLayer("v_optimized_wfs");
+          loadWMS("v_optimized_wfs", "wfs_optimized");
+        }
+        console.log("Layers after: ", this.map.getStyle().layers);
+      }
+    );
   },
   methods: {
+    isLayerExists(layerId) {
+      // Iterate through all layers on the map
+      const mapLayers = this.map.getStyle().layers;
+      for (let i = 0; i < mapLayers.length; i++) {
+        if (mapLayers[i].id === layerId) {
+          return true; // Layer with the specified ID found
+        }
+      }
+      return false; // Layer with the specified ID not found
+    },
     enableDrawRectangle() {
       enableDrawRectangle(this.drawRectangleObject);
     },

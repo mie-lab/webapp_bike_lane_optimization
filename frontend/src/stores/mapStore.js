@@ -5,6 +5,7 @@ export const mapStore = defineStore("mapStore", {
   state: () => ({
     map: null,
     mapControl: null,
+    mapStyle: "mapbox://styles/mischabckhg/cltiglf9g00an01qwbinn48w5",
     lastControl: "",
     drawRectangleObject: null,
     drawPolygonObject: null,
@@ -16,6 +17,9 @@ export const mapStore = defineStore("mapStore", {
     },
     setMapControl(mapControl) {
       this.mapControl = mapControl;
+    },
+    setMapStyle(mapStyle) {
+      this.mapStyle = mapStyle;
     },
     setLastControl(control) {
       this.lastControl = control;
