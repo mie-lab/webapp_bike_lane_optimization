@@ -44,6 +44,11 @@ p {
   margin-right: 8%;
 }
 
+a {
+  font-size: 0.8em;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
 td {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }

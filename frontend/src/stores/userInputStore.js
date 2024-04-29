@@ -1,10 +1,14 @@
+import { set } from "ol/transform";
 import { defineStore } from "pinia";
 
 export const userInputStore = defineStore("variableStore", {
   id: "variableStore",
   state: () => ({
+    algorithm: "",
     timeWeighting: 0.7,
     laneAllocation: 0.1,
+    bikeSafetyPenalty: 2.0,
+    optimizeFrequency: 30,
     boundingBox: null,
     projectName: "",
     projectID: null,
@@ -12,6 +16,9 @@ export const userInputStore = defineStore("variableStore", {
     runName: "",
   }),
   actions: {
+    setAlgorithm(algorithm) {
+      this.algorithm = algorithm;
+    },
     setBoundingBox(boundingBox) {
       this.boundingBox = boundingBox;
     },
@@ -24,6 +31,13 @@ export const userInputStore = defineStore("variableStore", {
     setTimeWeighting(timeWeighting) {
       this.timeWeighting = timeWeighting;
     },
+    setBikeSafetyPenalty(bikeSafetyPenalty) {
+      this.bikeSafetyPenalty = bikeSafetyPenalty;
+    },
+    setOptimizeFrequency(optimizeFrequency) {
+      this.optimizeFrequency = optimizeFrequency;
+    },
+
     setProjectID(projectID) {
       this.projectID = projectID;
     },

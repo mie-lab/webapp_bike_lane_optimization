@@ -18,6 +18,7 @@
         Click <a href="#" @click="toggleActiveTab('Help')"> here</a> for more
         information on the impact of these parameters.
       </p>
+
       <h4 class="text-blue">Run name</h4>
       <input
         class="project-name-input"
@@ -26,34 +27,101 @@
         @input="setRunName($event.target.value)"
       />
       <br />
-      <h4 class="text-blue">
-        What should be the importance of the car travel time
-      </h4>
-      <div class="slide-container">
-        <input
-          class="slider"
-          type="range"
-          min="0"
-          max="10"
-          step="0.1"
-          v-model="timeWeighting"
-          @click="setTimeWeight(timeWeighting)"
-        />
+      <h4 class="text-blue">Algorithm</h4>
+      <div class="dropdown" ref="dropdown" @click="toggleDropdown">
+        <button
+          class="dropbtn"
+          :style="{ color: selectedOption ? 'black' : 'var(--darkgrey-bg)' }"
+        >
+          {{ selectedOption ? selectedOption.displayName : "Algorithm" }}
+          <i class="fa-solid fa-angle-down"></i>
+        </button>
+        <div class="dropdown-content" v-if="isOpen">
+          <a
+            href="#"
+            v-for="algorithm in algorithms"
+            :key="algorithm.algorithm"
+            @click="setAlgorithm(algorithm)"
+            >{{ algorithm.displayName }}</a
+          >
+        </div>
       </div>
-      <p>Chosen weighting: {{ timeWeighting }}</p>
-      <br />
-      <h4 class="text-blue">How many lanes should become bike lanes?</h4>
-      <div class="slide-container">
-        <input
-          class="slider"
-          type="range"
-          min="0"
-          max="100"
-          v-model="laneAllocation"
-          @click="setLaneAllocation(laneAllocation)"
-        />
+
+      <div class="bike-ratio" style="margin-top: 35px">
+        <h4 class="text-blue">How many lanes should become bike lanes?</h4>
+        <div class="slide-container">
+          <input
+            class="slider"
+            type="range"
+            min="0"
+            max="100"
+            v-model="laneAllocation"
+            @click="setLaneAllocation(laneAllocation)"
+          />
+        </div>
+        <p>{{ laneAllocation }} % of the lanes</p>
       </div>
-      <p>{{ laneAllocation }} % of the lanes</p>
+
+      <div class="bike-safety-penalty" style="margin-top: 35px">
+        <h4 class="text-blue">
+          Factor by how much the perceived bike travel time increases if cycling
+          on car lane
+        </h4>
+        <div class="slide-container">
+          <input
+            class="slider"
+            type="range"
+            min="0"
+            max="10"
+            step="0.1"
+            v-model="bikeSafetyPenalty"
+            @click="setBikeSafetyPenalty(bikeSafetyPenalty)"
+          />
+        </div>
+        <p>{{ bikeSafetyPenalty }} times</p>
+      </div>
+
+      <div
+        class="car-weight"
+        v-if="selectedOption && selectedOption.algorithm === 'optimize'"
+        style="margin-top: 35px"
+      >
+        <h4 class="text-blue">
+          What should be the importance of the car travel time
+        </h4>
+        <div class="slide-container">
+          <input
+            class="slider"
+            type="range"
+            min="0"
+            max="10"
+            step="0.1"
+            v-model="timeWeighting"
+            @click="setTimeWeight(timeWeighting)"
+          />
+        </div>
+        <p>Chosen weighting: {{ timeWeighting }}</p>
+      </div>
+
+      <div
+        class="optimize-frequency"
+        v-if="selectedOption && selectedOption.algorithm === 'optimize'"
+        style="margin-top: 35px"
+      >
+        <h4 class="text-blue">How often to re-run the optimization</h4>
+        <div class="slide-container">
+          <input
+            class="slider"
+            type="range"
+            min="0"
+            max="100"
+            v-model="optimizeFrequency"
+            @click="setOptimizeFrequency(optimizeFrequency)"
+          />
+        </div>
+        <p>Re-run algorithm {{ optimizeFrequency }} times</p>
+      </div>
+
       <br />
 
       <br />
@@ -121,6 +189,8 @@ export default {
     return {
       timeWeighting: 0.7,
       laneAllocation: 10,
+      bikeSafetyPenalty: 2.0,
+      optimizeFrequency: 30,
       isButtonDisabled: true,
       projectName: inputStore.projectName,
       setRunName: inputStore.setRunName,
@@ -128,7 +198,29 @@ export default {
       color: "#da5268",
       size: "25px",
       isLoading: false,
+      isOpen: false,
+      selectedOption: null,
+      algorithms: [
+        {
+          algorithm: "optimize",
+          displayName: "Optimize",
+        },
+        {
+          algorithm: "betweenness_biketime",
+          displayName: "Betweenness Biketime",
+        },
+        {
+          algorithm: "betweenness_cartime",
+          displayName: "Betweenness Cartime",
+        },
+      ],
     };
+  },
+  mounted() {
+    document.addEventListener("click", this.closeDropdownOnClickOutside);
+  },
+  beforeUnmount() {
+    document.removeEventListener("click", this.closeDropdownOnClickOutside);
   },
   methods: {
     async loadRun(run) {
@@ -186,6 +278,14 @@ export default {
       const inputStore = userInputStore();
       inputStore.setLaneAllocation(value);
     },
+    setBikeSafetyPenalty(value) {
+      const inputStore = userInputStore();
+      inputStore.setBikeSafetyPenalty(value);
+    },
+    setOptimizeFrequency(value) {
+      const inputStore = userInputStore();
+      inputStore.setOptimizeFrequency(value);
+    },
 
     async reloadRuns() {
       // not used
@@ -207,12 +307,11 @@ export default {
     async callOptimization() {
       const inputStore = userInputStore();
       const project_id = inputStore.projectID;
-      const algorithm = "betweenness_biketime";
+      const algorithm = inputStore.algorithm;
       const bikeRatio = inputStore.laneAllocation;
       const carWeight = inputStore.timeWeighting;
-      const project_name = inputStore.projectName;
-      const bikeSafetyPenatly = 2;
-      const optimizeFrequency = 30;
+      const bikeSafetyPenatly = inputStore.bikeSafetyPenalty;
+      const optimizeFrequency = inputStore.optimizeFrequency;
 
       const responseRunID = await getNewRunID(project_id);
 
@@ -223,7 +322,6 @@ export default {
         car_weight: carWeight,
         status: "pending",
       });
-      //this.toggleUserInputPreviousSide();
 
       try {
         const response = await runOptimization(
@@ -244,6 +342,23 @@ export default {
         this.processStore.markProcessAsDone(responseRunID.run_id);
       }
     },
+
+    toggleDropdown() {
+      this.isOpen = !this.isOpen;
+    },
+
+    setAlgorithm(option) {
+      this.selectedOption = option;
+      this.isOpen = false;
+      this.inputStore.setAlgorithm(option.algorithm);
+      console.log("Algorithm: ", this.inputStore.algorithm);
+    },
+    closeDropdownOnClickOutside(event) {
+      const dropdown = this.$refs.dropdown;
+      if (dropdown && !dropdown.contains(event.target)) {
+        this.isOpen = false;
+      }
+    },
   },
 };
 </script>
@@ -255,5 +370,52 @@ export default {
 
 .process_list {
   margin-top: 40px;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropbtn {
+  background-color: var(--lightgrey-bg);
+  color: var(--darkgrey-bg);
+  border: 1px solid var(--darkgrey-bg);
+  width: 270px;
+  margin: 0;
+  padding: 0;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  text-align: left;
+  padding-left: 10px;
+  padding-right: 10px;
+  display: flex; /* Use flexbox */
+  justify-content: space-between; /* Align items with space between */
+  align-items: center;
+}
+
+.dropdown-content {
+  position: absolute;
+  width: 270px;
+  text-align: left;
+  background-color: #f9f9f9;
+  border-radius: 5px;
+
+  margin-top: 5px;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+.dropdown-content a:hover {
+  background-color: #f1f1f1;
+}
+.dropdown.show .dropdown-content {
+  display: block;
 }
 </style>
