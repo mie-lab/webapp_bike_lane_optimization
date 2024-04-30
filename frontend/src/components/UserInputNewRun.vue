@@ -46,7 +46,7 @@
           :style="{ color: selectedOption ? 'black' : 'var(--darkgrey-bg)' }"
         >
           {{ selectedOption ? selectedOption.displayName : "Algorithm" }}
-          <i class="fa-solid fa-angle-down"></i>
+          <i :class="isOpen ? 'fa-solid fa-angle-up' : 'fa-solid fa-angle-down'"></i>
         </button>
         <div class="dropdown-content" v-if="isOpen">
           <a
@@ -195,6 +195,7 @@ export default {
       filteredRuns,
       updateRuns,
       processStore,
+
     };
   },
   data() {
