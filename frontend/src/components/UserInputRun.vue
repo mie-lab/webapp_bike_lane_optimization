@@ -96,6 +96,7 @@ import {
   getRunList,
   getPareto,
   getKmDistancePerLaneType,
+  getComplexity,
 } from "../scripts/api.js";
 import { loadWFS, loadWMS } from "../scripts/map.js";
 import UserInputNewRun from "./UserInputNewRun.vue";
@@ -170,6 +171,7 @@ export default {
       this.runName = run.run_name;
       this.inputStore.setRunName(this.runName);
 
+      // create view on the map for the selected run
       const response = await createView(
         this.inputStore.projectID,
         run.id_run,
@@ -181,8 +183,6 @@ export default {
       loadWFS("v_optimized_wfs", "wfs_optimized");
 
       // create evaluation for the selected run
-      const ResultsStore = useResultsStore();
-
       const paretoEvaluation = await getPareto(
         this.inputStore.projectID,
         run.id_run
@@ -192,30 +192,35 @@ export default {
       const bikeTimes = projects.map((project) => project.bike_time_change);
       const carTimes = projects.map((project) => project.car_time_change);
 
-      ResultsStore.setTraveltimes(bikeTimes, carTimes);
+      this.resultsStore.setTraveltimes(bikeTimes, carTimes);
 
       // get km per bike / car lane
       const distanceEvaluation = await getKmDistancePerLaneType(
         this.inputStore.projectID,
         run.id_run
       );
-      ResultsStore.setDistancesKM(
+      this.resultsStore.setDistancesKM(
         distanceEvaluation.distance_bike[0].total_bike_lane_distance,
         distanceEvaluation.distance_car[0].total_car_lane_distance
       );
-      ResultsStore.setRunName(run.run_name);
-      const statusStore = statusVariablesStore();
-      statusStore.openDashboard();
+      this.resultsStore.setRunName(run.run_name);
+
+      // get complexity
+      const complexityEvaluation = await getComplexity(
+        this.inputStore.projectID,
+        run.id_run
+      );
+      this.resultsStore.setComplexity(complexityEvaluation.bike_degree_ratio, complexityEvaluation.car_degree_ratio);
+
+      this.statusStore.openDashboard();
     },
 
     toggleUserInputNextSide() {
-      const statusStore = statusVariablesStore();
-      statusStore.toggleRunPage();
+      this.statusStore.toggleRunPage();
     },
 
     toggleTabsVisibility() {
-      const statusStore = statusVariablesStore();
-      statusStore.toggleTabsVisibility();
+      this.statusStore.toggleTabsVisibility();
     },
 
     async reloadRuns() {

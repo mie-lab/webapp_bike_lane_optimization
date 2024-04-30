@@ -8,6 +8,11 @@ export const useResultsStore = defineStore("evaluation",{
     kmBike: null,
     kmCar: null,
     runName: null,
+    complexity: {
+      bike: null,
+      car: null
+    }
+   
   }),
   actions: {
     setTraveltimes(bikeTT,carTT) {
@@ -21,12 +26,18 @@ export const useResultsStore = defineStore("evaluation",{
     setRunName(runName){
       this.runName = runName;
     },
+    setComplexity(complexityBike, complexityCar) {
+      this.complexity.bike = complexityBike;
+      this.complexity.car = complexityCar;
+    },
     reset(){
       this.paretoBikeTTArray = [];
       this.paretoCarTTArray = [];
       this.kmBike = null;
       this.kmCar = null;
       this.runName = null;
+      this.complexity.bike = null;
+      this.complexity.car = null;
     }
   },
 });
