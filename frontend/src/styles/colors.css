@@ -5,9 +5,11 @@
   --blue-compare: #3e00a3bf;
   --blue-color: #0d00a3;
   --blueTransparent-color: #0e00a3bf;
-  --lightgrey-bg: #e0e0e0;
+  --lightgrey-bg: #d4d4d4;
+  --lightgrey-2-bg: #c0c0c0;
   --darkgrey-bg: #b3b3b3;
   --darkgrey-2-bg: #333;
+  --darkgrey-3-bg: #6b6b6b;
   --black: #000000;
   --pink-bright: #da5268;
 }

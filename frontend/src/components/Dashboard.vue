@@ -63,145 +63,165 @@
           </div>
         </div>
         <div class="dashboard-content-evaluation">
-        <!-- Pareto -->
-        <div class="dropdown-evaluation" @click="toggleParetoDropdown">
-          <div class="dropdown-header">
-            <h3>
-              Pareto
+          <!-- Pareto -->
+          <div class="dropdown-evaluation" @click="toggleParetoDropdown">
+            <div class="dropdown-header">
+              <h3>
+                Pareto
+                <i
+                  class="fa-solid fa-info-circle small-icon"
+                  @mouseover="showInfoBox = true"
+                  @mouseleave="showInfoBox = false"
+                ></i>
+                <div v-show="showInfoBox" class="info-box">
+                  Pareto Info Text
+                </div>
+              </h3>
               <i
-                class="fa-solid fa-info-circle small-icon"
-                @mouseover="showInfoBox = true"
-                @mouseleave="showInfoBox = false"
+                :class="
+                  isOpenPareto
+                    ? 'fa-solid fa-angle-up'
+                    : 'fa-solid fa-angle-down'
+                "
+                style="color: var(--blue-color)"
               ></i>
-              <div v-show="showInfoBox" class="info-box">Pareto Info Text</div>
-            </h3>
-            <i :class="isOpenPareto ? 'fa-solid fa-angle-up' : 'fa-solid fa-angle-down'" style="color: var(--blue-color)"></i>
-          </div>
-          <div class="dropdown-eval-content" v-if="isOpenPareto">
-            <p>
-              This plot shows the pareto frontier from the chosen linear
-              formulation.
-            </p>
-            <canvas
-              class="scatterPlotCanvas"
-              ref="scatterPlotCanvas"
-              height="150"
-            ></canvas>
-            
-          </div>
-        </div>
-
-        <!-- Travel times -->
-        <div class="dropdown-evaluation" @click="toggleTTDropdown">
-          <div class="dropdown-header">
-            <h3>
-              Travel Times Changes
-              <i
-                class="fa-solid fa-info-circle small-icon"
-                @mouseover="showInfoBoxTravelTimes = true"
-                @mouseleave="showInfoBoxTravelTimes = false"
-              ></i>
-              <div v-show="showInfoBoxTravelTimes" class="info-box">
-                Travel Time Info text; And other additional Information ...
-              </div>
-            
-            </h3>
-            <i :class="isOpenTT ? 'fa-solid fa-angle-up' : 'fa-solid fa-angle-down'" style="color: var(--blue-color)"></i>
-          </div>
-          
-          <div class="dropdown-eval-content" v-if="isOpenTT">
-            <p>This is the relative change of travel times for the chosen run.</p>
-
-            <canvas class="barChart" ref="barChart" height="105"></canvas>
-          
-          </div>
-          
-        </div>
-
-        
-
-        <!-- Distances -->
-        <div class="dropdown-evaluation" @click="toggleDistancesDropdown">
-          <div class="dropdown-header">
-            <h3>
-              Distances per lane type
-              <i
-                class="fa-solid fa-info-circle small-icon"
-                @mouseover="showInfoBoxDistances = true"
-                @mouseleave="showInfoBoxDistances = false"
-              ></i>
-              <div v-show="showInfoBoxDistances" class="info-box">
-                Distance per lane type; And other additional Information ...
-              </div>
-            </h3>
-            <i :class="isOpenDistances ? 'fa-solid fa-angle-up' : 'fa-solid fa-angle-down'" style="color: var(--blue-color)"></i>
-          </div>
-          <div class="dropdown-eval-content" v-if="isOpenDistances">
-            <p>
-              Your optimizations contains
-              {{ Math.round(ResultsStore.kmBike * 100) / 100 }} km of bike lanes
-              and {{ Math.round(ResultsStore.kmCar * 100) / 100 }} km of car
-              lanes.
-            </p>
-            <div
-              class="pieChartContainer"
-              :style="{ width: compareRunStore.compare ? '50%' : '50%' }"
-            >
-              <canvas class="pieChart" ref="pieChart" height="50"></canvas>
-
+            </div>
+            <div class="dropdown-eval-content" v-if="isOpenPareto">
+              <p>
+                This plot shows the pareto frontier from the chosen linear
+                formulation.
+              </p>
               <canvas
-                v-show="compareRunStore.compare"
-                class="pieChart"
-                ref="pieChart2"
-                height="50"
+                class="scatterPlotCanvas"
+                ref="scatterPlotCanvas"
+                height="150"
               ></canvas>
             </div>
-          
           </div>
-          
-        </div>
 
-        <!-- Complexity -->
-        <div class="dropdown-evaluation" @click="toggleComplexityDropdown">
-          <div class="dropdown-header">
-            <h3>
-              Network Complexity
+          <!-- Travel times -->
+          <div class="dropdown-evaluation" @click="toggleTTDropdown">
+            <div class="dropdown-header">
+              <h3>
+                Travel Times Changes
+                <i
+                  class="fa-solid fa-info-circle small-icon"
+                  @mouseover="showInfoBoxTravelTimes = true"
+                  @mouseleave="showInfoBoxTravelTimes = false"
+                ></i>
+                <div v-show="showInfoBoxTravelTimes" class="info-box">
+                  Travel Time Info text; And other additional Information ...
+                </div>
+              </h3>
               <i
-                class="fa-solid fa-info-circle small-icon"
-                @mouseover="showInfoBoxComplexity = true"
-                @mouseleave="showInfoBoxComplexity = false"
+                :class="
+                  isOpenTT ? 'fa-solid fa-angle-up' : 'fa-solid fa-angle-down'
+                "
+                style="color: var(--blue-color)"
               ></i>
-              <div v-show="showInfoBoxComplexity" class="info-box">Network Info Text</div>
-            </h3>
-            <i :class="isOpenComplexity ? 'fa-solid fa-angle-up' : 'fa-solid fa-angle-down'" style="color: var(--blue-color)"></i>
-          </div>
-          <div class="dropdown-eval-content" v-if="isOpenComplexity"> 
-            <div class="pieChartContainer">
-              <div class="column">
-                <p>
-                  {{ inputStore.runName }} has a bike complexity of
-                  {{ ResultsStore.complexity.bike }}
-                  and a car complexity of {{ ResultsStore.complexity.car }}.
-                </p>
-              </div>
-              <div class="column" v-show="compareRunStore.compare">
-                <p>
-                  {{ compareRunStore.runName }} has a bike complexity of
-                  {{ compareRunStore.complexity.bike }}
-                  and a car complexity of {{ compareRunStore.complexity.car }}.
-                </p>
-              </div>
             </div>
 
-            
-            
+            <div class="dropdown-eval-content" v-if="isOpenTT">
+              <p>
+                This is the relative change of travel times for the chosen run.
+              </p>
+
+              <canvas class="barChart" ref="barChart" height="105"></canvas>
+            </div>
+          </div>
+
+          <!-- Distances -->
+          <div class="dropdown-evaluation" @click="toggleDistancesDropdown">
+            <div class="dropdown-header">
+              <h3>
+                Distances per lane type
+                <i
+                  class="fa-solid fa-info-circle small-icon"
+                  @mouseover="showInfoBoxDistances = true"
+                  @mouseleave="showInfoBoxDistances = false"
+                ></i>
+                <div v-show="showInfoBoxDistances" class="info-box">
+                  Distance per lane type; And other additional Information ...
+                </div>
+              </h3>
+              <i
+                :class="
+                  isOpenDistances
+                    ? 'fa-solid fa-angle-up'
+                    : 'fa-solid fa-angle-down'
+                "
+                style="color: var(--blue-color)"
+              ></i>
+            </div>
+            <div class="dropdown-eval-content" v-if="isOpenDistances">
+              <p>
+                Your optimizations contains
+                {{ Math.round(ResultsStore.kmBike * 100) / 100 }} km of bike
+                lanes and {{ Math.round(ResultsStore.kmCar * 100) / 100 }} km of
+                car lanes.
+              </p>
+              <div
+                class="pieChartContainer"
+                :style="{ width: compareRunStore.compare ? '50%' : '50%' }"
+              >
+                <canvas class="pieChart" ref="pieChart" height="50"></canvas>
+
+                <canvas
+                  v-show="compareRunStore.compare"
+                  class="pieChart"
+                  ref="pieChart2"
+                  height="50"
+                ></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Complexity -->
+          <div class="dropdown-evaluation" @click="toggleComplexityDropdown">
+            <div class="dropdown-header">
+              <h3>
+                Network Complexity
+                <i
+                  class="fa-solid fa-info-circle small-icon"
+                  @mouseover="showInfoBoxComplexity = true"
+                  @mouseleave="showInfoBoxComplexity = false"
+                ></i>
+                <div v-show="showInfoBoxComplexity" class="info-box">
+                  Network Info Text
+                </div>
+              </h3>
+              <i
+                :class="
+                  isOpenComplexity
+                    ? 'fa-solid fa-angle-up'
+                    : 'fa-solid fa-angle-down'
+                "
+                style="color: var(--blue-color)"
+              ></i>
+            </div>
+            <div class="dropdown-eval-content" v-if="isOpenComplexity">
+              <div class="pieChartContainer">
+                <div class="column">
+                  <p>
+                    {{ inputStore.runName }} has a bike complexity of
+                    {{ ResultsStore.complexity.bike }}
+                    and a car complexity of {{ ResultsStore.complexity.car }}.
+                  </p>
+                </div>
+                <div class="column" v-show="compareRunStore.compare">
+                  <p>
+                    {{ compareRunStore.runName }} has a bike complexity of
+                    {{ compareRunStore.complexity.bike }}
+                    and a car complexity of
+                    {{ compareRunStore.complexity.car }}.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-
-
       </div>
     </div>
-  </div>
   </div>
 </template>
 
@@ -214,7 +234,11 @@ import { userInputStore } from "../stores/userInputStore.js";
 import { projectsStore } from "../stores/projectsStore.js";
 import { useCompareRunEvaluation } from "../stores/compareRunStore.js";
 import { ref, watch } from "vue";
-import { getPareto, getKmDistancePerLaneType,getComplexity } from "../scripts/api.js";
+import {
+  getPareto,
+  getKmDistancePerLaneType,
+  getComplexity,
+} from "../scripts/api.js";
 import { create } from "ol/transform.js";
 
 export default {
@@ -280,9 +304,7 @@ export default {
   mounted() {
     watch(
       () => this.ResultsStore.paretoBikeTTArray,
-      (newTime, oldTime) => {
-
-      }
+      (newTime, oldTime) => {}
     );
 
     watch(
@@ -292,9 +314,7 @@ export default {
 
     watch(
       [() => this.ResultsStore.kmBike, () => this.ResultsStore.kmCar],
-      ([newBikeTime, newCarTime], [oldBikeTime, oldCarTime]) => {
-
-      }
+      ([newBikeTime, newCarTime], [oldBikeTime, oldCarTime]) => {}
     );
     watch(
       () => this.ResultsStore.runName,
@@ -307,14 +327,14 @@ export default {
   },
 
   methods: {
-    toggleComplexityDropdown(){
+    toggleComplexityDropdown() {
       this.isOpenComplexity = !this.isOpenComplexity;
     },
-    toggleTTDropdown(){
+    toggleTTDropdown() {
       this.isOpenTT = !this.isOpenTT;
       this.createBarChart();
     },
-    toggleParetoDropdown(){
+    toggleParetoDropdown() {
       this.isOpenPareto = !this.isOpenPareto;
       this.createScatterPlot();
     },
@@ -322,7 +342,7 @@ export default {
       this.isOpenDistances = !this.isOpenDistances;
       this.createPieChart();
     },
-    
+
     stopComparing() {
       this.compareRunStore.reset();
       this.createBarChart();
@@ -366,8 +386,10 @@ export default {
         this.inputStore.projectID,
         run.id_run
       );
-      this.compareRunStore.setComplexity(complexityEvaluation.bike_degree_ratio, complexityEvaluation.car_degree_ratio);
-
+      this.compareRunStore.setComplexity(
+        complexityEvaluation.bike_degree_ratio,
+        complexityEvaluation.car_degree_ratio
+      );
 
       this.createBarChart();
       this.createScatterPlot();
@@ -376,8 +398,7 @@ export default {
 
     createPieChart() {
       this.$nextTick(() => {
-        if (this.isOpenDistances){
-
+        if (this.isOpenDistances) {
           let canvas = this.$refs.pieChart;
           let ctx = canvas.getContext("2d");
 
@@ -434,7 +455,10 @@ export default {
             let canvas2 = this.$refs.pieChart2;
             let ctx2 = canvas2.getContext("2d");
 
-            let dataset2 = [this.compareRunStore.kmBike, this.compareRunStore.kmCar];
+            let dataset2 = [
+              this.compareRunStore.kmBike,
+              this.compareRunStore.kmCar,
+            ];
             let labels2 = [
               `Bike_${this.compareRunStore.runName}`,
               `Car_${this.compareRunStore.runName}`,
@@ -501,8 +525,6 @@ export default {
     createBarChart() {
       this.$nextTick(() => {
         if (this.isOpenTT) {
-          
-            
           const canvas = this.$refs.barChart;
           const ctx = canvas.getContext("2d");
 
@@ -556,7 +578,6 @@ export default {
             colors.push(colorsDefined[2], colorsDefined[3]);
           }
 
-          
           // creating the bar chart
           canvas.chart = new Chart(ctx, {
             type: "bar",
@@ -605,8 +626,6 @@ export default {
     createScatterPlot() {
       this.$nextTick(() => {
         if (this.isOpenPareto) {
-          
-            
           const canvas = this.$refs.scatterPlotCanvas;
           const ctx = canvas.getContext("2d");
 
@@ -618,10 +637,12 @@ export default {
           const datasets = [
             {
               label: `${this.ResultsStore.runName}`,
-              data: this.ResultsStore.paretoBikeTTArray.map((bikeTime, index) => ({
-                x: bikeTime,
-                y: this.ResultsStore.paretoCarTTArray[index],
-              })),
+              data: this.ResultsStore.paretoBikeTTArray.map(
+                (bikeTime, index) => ({
+                  x: bikeTime,
+                  y: this.ResultsStore.paretoCarTTArray[index],
+                })
+              ),
               backgroundColor: "rgba(255, 99, 132, 0.3)", // TODO: maybe change colors
               borderColor: "rgba(255, 99, 132, 0.8)",
               borderWidth: 1,
@@ -668,8 +689,8 @@ export default {
                 },
               },
             },
-      });
-    }
+          });
+        }
       });
     },
   },
@@ -677,17 +698,15 @@ export default {
 </script>
 
 <style scoped>
-.dashboard-content-evaluation{
-  overflow-y: auto; 
+.dashboard-content-evaluation {
+  overflow-y: auto;
   height: 100%;
-
 }
-.dropdown-header{
+.dropdown-header {
   display: flex;
   justify-content: space-between;
   padding-right: 50px;
   align-items: center;
-  
 }
 .dashboard-container {
   display: flex;
@@ -723,12 +742,11 @@ export default {
   position: relative;
 }
 .column {
-  flex: 1; 
+  flex: 1;
   display: flex;
   width: 100%;
-
 }
-.column p{
+.column p {
   margin: 0;
 }
 .titel-inkl-button {

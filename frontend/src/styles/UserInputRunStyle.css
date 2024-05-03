@@ -8,7 +8,7 @@
 }
 .list-header {
   display: grid;
-  grid-template-columns: 6fr 1.8fr 1.1fr;
+  grid-template-columns: 6fr 1.8fr 1.1fr 1.1fr 1.1fr;
   font-weight: bold;
   padding: 0px;
   padding-left: 4px;
@@ -46,12 +46,19 @@
 }
 
 .h4_override {
-  font-weight: 300;
+  font-weight: bold;
   margin-bottom: 2px;
+  color: var(--darkgrey-bg);
 }
 .runs-header {
   display: flex;
   align-items: center;
+}
+
+.refresh-button {
+  position: absolute;
+  top: -10px;
+  left: 8px;
 }
 
 .refresh-container {
@@ -64,6 +71,41 @@
 
 .ring-loader {
   position: absolute;
-  top: -5px;
-  left: 0;
+  top: -10px;
+  left: 8px;
+}
+
+.run-details2 {
+  border: 1px solid var(--darkgrey-bg);
+  border-radius: 5px;
+  box-shadow: 2px 3px 10px 0px rgba(0, 0, 0, 0.05);
+}
+
+.run-details2:hover {
+  border: 2px solid var(--pink-color);
+}
+
+.run-details-inner-container {
+  padding: 10px;
+}
+
+.run_name {
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--black);
+  padding-bottom: 5px;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.project-list {
+  width: 400px;
+  margin-left: 0px;
+  padding: 0;
+  max-height: 500px;
+  overflow-y: scroll;
+  position: relative;
+  padding-right: 4px;
 }

@@ -27,11 +27,14 @@
         </button>
 
         <button
-          class="nav-button"
+          class="nav-button nav-button-info"
           :style="{ color: getIconColor('Info') }"
           @click="toggleActiveTab('Info')"
         >
-          <i class="fa-solid fa-circle-info" style="font-size: 24px"></i>
+          <i
+            class="fa-solid fa-circle-info button-icon"
+            style="font-size: 24px"
+          ></i>
         </button>
       </div>
 

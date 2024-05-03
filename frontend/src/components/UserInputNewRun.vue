@@ -12,14 +12,14 @@
       <h2 class="h2_override">{{ inputStore.projectName }} | {{ runName }}</h2>
 
       <p class="info-text">
-        You can manually change the values for car travel time weighting or lane
-        allocation. <br /><br />
-        Click
-        <a href="#" @click="toggleActiveTab('Help')" style="font-size: 1em">
-          here</a
-        >
-        for more information on the impact of these parameters.
+        Change your network according to your preferences.
       </p>
+      <p class="link-style-p">
+        <a class="link-style" href="#" @click="toggleActiveTab('Help')"
+          >more inforamtion</a
+        >
+      </p>
+      <br></br>
 
       <h4 class="text-blue">
         Run name
@@ -46,7 +46,9 @@
           :style="{ color: selectedOption ? 'black' : 'var(--darkgrey-bg)' }"
         >
           {{ selectedOption ? selectedOption.displayName : "Algorithm" }}
-          <i :class="isOpen ? 'fa-solid fa-angle-up' : 'fa-solid fa-angle-down'"></i>
+          <i
+            :class="isOpen ? 'fa-solid fa-angle-up' : 'fa-solid fa-angle-down'"
+          ></i>
         </button>
         <div class="dropdown-content" v-if="isOpen">
           <a
@@ -195,7 +197,6 @@ export default {
       filteredRuns,
       updateRuns,
       processStore,
-
     };
   },
   data() {
@@ -432,5 +433,20 @@ export default {
 }
 .dropdown.show .dropdown-content {
   display: block;
+}
+
+.link-style-p {
+  margin: 0;
+}
+
+.info-text {
+  padding-bottom: 2px;
+  margin: 0;
+}
+
+.link-style {
+  color: var(--darkgrey-3-bg);
+  font-style: italic;
+  text-decoration: none;
 }
 </style>

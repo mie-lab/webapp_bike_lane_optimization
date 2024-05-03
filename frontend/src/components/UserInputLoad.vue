@@ -38,9 +38,14 @@
       />
 
       <!-- Project list -->
+      <div class="list-header">
+        <div class="header-item-left"><p class="run_list_name">Name</p></div>
+        <div class="header-item-left"><p class="run_list_name">Date</p></div>
+      </div>
       <div class="project-list">
         <ul>
           <li
+            class="project-list-item"
             v-for="project in filteredProjects"
             :key="project.id"
             @click="openProject(project)"
@@ -143,7 +148,10 @@ export default {
   methods: {
     formatDate(timestamp) {
       const date = new Date(timestamp);
-      return date.toLocaleDateString();
+      const day = date.getDate().toString().padStart(2, "0");
+      const month = (date.getMonth() + 1).toString().padStart(2, "0");
+      const year = date.getFullYear();
+      return `${day}.${month}.${year}`;
     },
 
     openCreate() {
@@ -221,5 +229,9 @@ export default {
 
 .created-date {
   margin-left: 20px; /* Adjust as needed */
+}
+
+.project-list-item:hover {
+  color: var(--pink-color);
 }
 </style>

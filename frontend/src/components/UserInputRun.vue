@@ -17,8 +17,6 @@
           see their results.
         </p>
 
-        <br />
-        <br />
         <h3 class="runs-header">
           <span class="runs-text">Runs</span>
           <span class="refresh-container">
@@ -36,27 +34,78 @@
           </span>
         </h3>
 
+        <!---
+
         <div class="list-header">
           <div class="header-item-left"><p class="run_list_name">Name</p></div>
+          <i class="fa-solid fa-gears"></i>
+          <div class="header-item"><i class="far fa-clock"></i></div>
           <div class="header-item"><i class="far fa-clock"></i></div>
           <div class="header-item">
             <i class="fa-solid fa-lines-leaning"></i>
           </div>
         </div>
+
+        -->
+
+        <input
+        type="text"
+        v-model="searchQuery"
+        placeholder="Search runs..."
+        class="project-name-input"
+      />
+
         <div class="project-list">
           <ul>
             <li
               v-for="run in filteredRuns"
               :key="run.run_name"
               @click="loadRun(run)"
-              :class="{ selected: run === selectedRun }"
             >
-              <div class="run-details">
-                <div class="run_name">{{ run.run_name }}</div>
-                <div class="run_tt_weight">{{ run.car_weight }}</div>
-                <div class="run_alloc">{{ run.bike_ratio * 100 }}%</div>
+            <div :class="{ 'run-details2': true, 'selected': run === selectedRun }">
+                <div class="run-details-inner-container" style="color: black;">
+                  <div class="run_name" 
+              :class="{ selected: run === selectedRun }">{{ run.run_name }}</div>
+                  <table>
+                    <colgroup>
+                    <col style="width: 10%;">
+                    <col style="width: 75%;">
+                    <col style="width: 15%;">
+                  
+                  </colgroup>
+
+                  <tr>
+                      <td><i class="fa-solid fa-gears"></i></td>
+                      <td>Algorithm</td>
+                      <td class="bold">{{ convertAlgName(run.algorithm) }}</td>
+                    </tr>
+                    
+                    <tr>
+                      <td><i class="fa-solid fa-bicycle"></i></td>
+                      <td>Bike ratio</td>
+                      <td class="bold">{{ run.bike_ratio }}</td>
+                    </tr>
+                    <tr>
+                      <td><i class="fa-solid fa-shield-heart"></i></td>
+                      <td>Safety penalty</td>
+                      <td class="bold">{{ run.bike_safety_penalty }}</td>
+                    </tr>
+                    <tr v-if="convertAlgName(run.algorithm) === 'O'">
+                      <td><i class="fa-solid fa-car"></i></td>
+                      <td>Car weight:</td>
+                      <td class="bold">{{ run.car_weight }}</td>
+                    </tr>
+                    <tr v-if="convertAlgName(run.algorithm) === 'O'">
+                      <td><i class="fa-solid fa-arrow-up-short-wide"></i></td>
+                      <td>Optimize Frequency</td>
+                      <td class="bold">{{ run.optimize_frequency }}</td>
+                    </tr>
+                  </table>
+                  
+                </div>
               </div>
-              <hr class="divider" />
+              <br></br>
+              
             </li>
           </ul>
         </div>
@@ -90,7 +139,7 @@ import { statusVariablesStore } from "../stores/statusVariablesStore.js";
 import { useResultsStore } from "../stores/algorithmResultsStore.js";
 import { projectsStore } from "../stores/projectsStore.js";
 import RingLoader from "vue-spinner/src/RingLoader.vue";
-import { ref, watch } from "vue";
+import { ref, watch , computed} from "vue";
 import {
   createView,
   getRunList,
@@ -113,9 +162,11 @@ export default {
     const inputStore = userInputStore();
     const resultsStore = useResultsStore();
     const prjStore = projectsStore();
-    const filteredRuns = ref(null);
+    //const filteredRuns = ref(null);
     const compareRunStore = useCompareRunEvaluation();
+    const searchQuery = ref("");
 
+    /*
     watch(
       () => prjStore.runs.runs,
       (newValue, oldValue) => {
@@ -123,12 +174,30 @@ export default {
         filteredRuns.value = newValue;
       }
     );
+    */
+
+    const filteredRuns = computed(() => {
+      const prjArray = prjStore.runs.runs
+      if (prjArray) {
+        // Sort projects by "created" timestamp in descending order
+        return prjArray
+          .slice() // Create a shallow copy to avoid mutating the original array
+          
+          .filter((run) =>
+            run.run_name
+              .toLowerCase()
+              .includes(searchQuery.value.toLowerCase())
+          );
+      }
+      return [];
+    });
 
     return {
       statusStore,
       resultsStore,
       prjStore,
       inputStore,
+      searchQuery,
       projectName: inputStore.projectName,
       filteredRuns,
       compareRunStore,
@@ -210,7 +279,10 @@ export default {
         this.inputStore.projectID,
         run.id_run
       );
-      this.resultsStore.setComplexity(complexityEvaluation.bike_degree_ratio, complexityEvaluation.car_degree_ratio);
+      this.resultsStore.setComplexity(
+        complexityEvaluation.bike_degree_ratio,
+        complexityEvaluation.car_degree_ratio
+      );
 
       this.statusStore.openDashboard();
     },
@@ -236,6 +308,20 @@ export default {
         this.isLoading = false;
       }
     },
+
+    convertAlgName(algorithm){
+      if (algorithm.trim().toLowerCase() === "betweenness_biketime") {
+        return "BB";}
+      else if (algorithm.trim().toLowerCase() === "betweenness_cartime") {
+        return "BC";
+      } 
+      else if (algorithm.trim().toLowerCase() === "optimize") {
+        return "O";
+      } 
+     else {
+        return algorithm;
+    }
+    }
   },
 };
 </script>
@@ -245,11 +331,18 @@ export default {
 @import "../styles/SideBarStyle.css";
 @import "../styles/UserInputRunStyle.css";
 .selected {
-  background-color: #e0e0e0;
-  font-weight: bold;
+  color: var(--pink-color);
 }
 
 .buttons {
   margin-top: 20px;
+}
+
+.run-details2 {
+  border: 1px solid var(--darkgrey-bg);
+}
+
+.run-details2.selected {
+  border-color: var(--pink-color);
 }
 </style>
