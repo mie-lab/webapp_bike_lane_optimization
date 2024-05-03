@@ -39,11 +39,11 @@
       </table>
       <br></br>
       <h2 class="legend-text">Algorithms</h2>
-    <h3>Optimize</h3>
+    <h3>Optimize (O)</h3>
     <p>{{ optimizeContent }}</p>
-    <h3>Betweeness Biketime</h3>
+    <h3>Betweeness Biketime (BB)</h3>
     <p>{{ betweenessBiketimeContent }}</p>
-    <h3>Betweeness Cartime</h3>
+    <h3>Betweeness Cartime (BC)</h3>
     <p>{{ betweenessCartimeContent }}</p>
   </div>
 </div>
