@@ -50,7 +50,7 @@ export default {
 
 .justified-text {
   text-align: justify;
-  max-width: 285px;
+  max-width: 390px;
   word-wrap: break-word;
   padding-top: 10px;
 }

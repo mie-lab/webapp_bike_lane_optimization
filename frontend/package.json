@@ -27,7 +27,7 @@
     "mapbox-gl": "^3.2.0",
     "mapbox-gl-draw-rectangle-mode": "^1.0.4",
     "mapboxgl-draw-rectangle-drag": "^1.0.1",
-    "ol": "^6.15.1",
+    "ol": "^9.1.0",
     "ol-mapbox-style": "^12.2.1",
     "pinia": "^2.1.7",
     "proj4": "^2.10.0",
@@ -37,8 +37,6 @@
   "devDependencies": {
     "@mdi/font": "^7.3.67",
     "@vitejs/plugin-vue": "^4.3.4",
-    "@vue/cli-plugin-eslint": "~5.0.0",
-    "@vue/cli-plugin-router": "~5.0.0",
     "eslint": "^8.55.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",

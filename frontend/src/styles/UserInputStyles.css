@@ -72,7 +72,8 @@
 }
 
 .project-name-input {
-  width: 280px;
+  width: 220px;
+  height: 15px;
   display: flex;
   border: 1.5px solid var(--darkgrey-bg);
   border-radius: 8px;
@@ -115,8 +116,11 @@
   margin-top: 5px;
 }
 
-li:hover {
-  color: var(--pink-color);
+.divider-big {
+  height: 2px;
+  background-color: var(--darkgrey-bg);
+  border: none;
+  margin-top: 15px;
 }
 
 ul {
@@ -132,12 +136,12 @@ li {
 }
 
 .project-list {
-  width: 290px;
-  margin-left: 4px;
-  padding: 0;
+  width: 390px;
+  margin-left: 0px;
   max-height: 250px;
   overflow-y: scroll;
   position: relative; /* Ensure relative positioning */
+  padding-right: 4px;
 }
 
 /* Adjust the scrollbar position */
@@ -145,7 +149,6 @@ li {
   background-color: #0000;
   width: 8px;
   position: absolute;
-  left: 40px; /* Adjust the right margin as needed */
 }
 
 /* Rest of your scrollbar styles */

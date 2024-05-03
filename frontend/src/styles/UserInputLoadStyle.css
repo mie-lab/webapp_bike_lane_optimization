@@ -1,10 +1,11 @@
 .refresh-container {
   position: relative;
+  margin-bottom: 30px;
 }
 
 .refresh-button {
   position: absolute;
-  top: 4px;
+  top: 2px;
   left: 8px;
 }
 
@@ -16,4 +17,27 @@
   position: absolute;
   top: 4px;
   left: 8px;
+}
+
+.list-header {
+  display: grid;
+  grid-template-columns: 7fr 1.75fr;
+  font-weight: bold;
+  padding: 0px;
+  margin-top: 20px;
+}
+
+.header-item-left {
+  text-align: left;
+  color: #30332d;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.run_list_name {
+  color: var(--darkgrey-2-bg);
+  margin: 0;
+}
+
+.li:hover {
+  color: var(--pink-color);
 }

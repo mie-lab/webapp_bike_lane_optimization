@@ -1,0 +1,13 @@
+# build stage
+FROM node:18-alpine
+WORKDIR /frontend
+COPY package*.json ./
+
+# remove for production
+ENV NODE_ENV development
+
+
+RUN npm ci
+COPY . .
+EXPOSE 8080
+CMD ["npm", "run", "dev"] 

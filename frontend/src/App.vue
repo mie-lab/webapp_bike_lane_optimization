@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="sidebar-container"><SidebarVue /></div>
+    <div class="sidebar-container"><SideBar /></div>
     <div class="map-container"><MapVue /></div>
     <div class="dashboard-container"><DashboardVue /></div>
     <div
@@ -15,7 +15,7 @@
 <script setup>
 // This starter template is using Vue 3 <script setup> SFCs
 // Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
-import SidebarVue from "./components/Sidebar.vue";
+import SideBar from "./components/SideBar.vue";
 import MapVue from "./components/Map.vue";
 import DashboardVue from "./components/Dashboard.vue";
 import BaseLayerSwitch from "./components/BaseLayerSwitch.vue";
@@ -42,7 +42,7 @@ const calculateBaseLayerSwitchPosition = () => {
     return {
       position: "absolute",
       bottom: "20px", // Adjust as needed
-      left: "420px", // Adjust as needed
+      left: "520px", // Adjust as needed
     };
   }
 };
@@ -57,6 +57,7 @@ const calculateBaseLayerSwitchPosition = () => {
   right: 0;
   bottom: 0;
   left: 0;
+  overflow: hidden;
 }
 
 .map-container {

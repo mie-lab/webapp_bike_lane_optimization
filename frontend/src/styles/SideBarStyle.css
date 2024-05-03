@@ -22,11 +22,19 @@
   justify-content: center; /* Add this line to horizontally center the content */
   background-color: transparent;
   border: none;
-  color: #333;
+
   padding: 10px;
   margin: 5px 0;
   width: 100%;
   cursor: pointer;
+}
+
+.nav-button-info {
+  margin-top: auto;
+  margin-bottom: 20px;
+}
+.button-icon {
+  color: var(--darkgrey-3-bg);
 }
 
 .nav-button:hover {
@@ -42,9 +50,10 @@
 }
 
 .sidebar-content {
-  width: 350px;
+  width: 450px;
   flex-grow: 1;
   box-shadow: 0px 20px 20px rgba(0, 0, 0, 0.05);
+  overflow: hidden; /* Add this line to prevent scrolling */
 }
 
 .close-btn {

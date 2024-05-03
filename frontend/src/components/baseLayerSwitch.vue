@@ -35,6 +35,7 @@
 <script>
 import { mapStore } from "../stores/mapStore.js";
 export default {
+  name: "BaseLayerSwitch",
   data() {
     const mapStoreInstance = mapStore();
     return {
