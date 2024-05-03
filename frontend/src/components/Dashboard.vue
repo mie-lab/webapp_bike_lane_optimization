@@ -679,7 +679,7 @@ export default {
 <style scoped>
 .dashboard-content-evaluation{
   overflow-y: auto; 
-  height: 100%;
+  height: 80vh;
 
 }
 .dropdown-header{
