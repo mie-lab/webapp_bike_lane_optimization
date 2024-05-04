@@ -146,6 +146,7 @@ import {
   getPareto,
   getKmDistancePerLaneType,
   getComplexity,
+  getNetworkBearing,
 } from "../scripts/api.js";
 import { loadWFS, loadWMS } from "../scripts/map.js";
 import UserInputNewRun from "./UserInputNewRun.vue";
@@ -262,6 +263,13 @@ export default {
       const carTimes = projects.map((project) => project.car_time_change);
 
       this.resultsStore.setTraveltimes(bikeTimes, carTimes);
+      
+      // get network bearing
+      const bearingEvaluation = await getNetworkBearing(
+        this.inputStore.projectID,
+        run.id_run
+      );
+      this.resultsStore.setNetworkBearing(bearingEvaluation.bike_network_bearings,bearingEvaluation.car_network_bearings);
 
       // get km per bike / car lane
       const distanceEvaluation = await getKmDistancePerLaneType(
@@ -333,6 +341,7 @@ export default {
 .selected {
   color: var(--pink-color);
 }
+
 
 .buttons {
   margin-top: 20px;

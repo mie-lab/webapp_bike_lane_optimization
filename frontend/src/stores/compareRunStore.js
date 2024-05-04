@@ -12,9 +12,17 @@ export const useCompareRunEvaluation = defineStore("compareRun",{
     complexity: {
       bike: null,
       car: null
+    },
+    networkBearing: {
+      bike: null,
+      car: null
     }
   }),
   actions: {
+    setNetworkBearing(bike,car){
+      this.networkBearing.bike = bike;
+      this.networkBearing.car = car;
+    },
     setTraveltimes(bikeTT,carTT) {
       this.paretoBikeTTArray = bikeTT;
       this.paretoCarTTArray = carTT;
@@ -35,6 +43,8 @@ export const useCompareRunEvaluation = defineStore("compareRun",{
       this.compare = false;
       this.complexity.bike = null;
       this.complexity.car = null;
+      this.networkBearing.bike = null;
+      this.networkBearing.car = null;
     },
     setCompareTrue(){
       this.compare = true;

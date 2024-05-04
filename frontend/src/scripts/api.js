@@ -239,3 +239,27 @@ export async function getComplexity(projectID, runID) {
     throw error; // Rethrow error for handling in the Vue component
   }
 }
+
+export async function getNetworkBearing(projectID, runID) {
+  const url =
+    `http://localhost:8989/get_network_bearing?` +
+    `project_id=${encodeURIComponent(projectID)}` +
+    `&run_name=${encodeURIComponent(runID)}`;
+  const params = {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+  try {
+    const response = await fetch(url, params);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json(); // Parse and return JSON response
+  } catch (error) {
+    console.error("Error:", error);
+    throw error; // Rethrow error for handling in the Vue component
+  }
+}

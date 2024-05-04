@@ -65,7 +65,7 @@
         <div class="dashboard-content-evaluation">
           <!-- Pareto -->
           <div class="dropdown-evaluation" @click="toggleParetoDropdown">
-            <div class="dropdown-header">
+            <div :class="{ 'dropdown-header': true, 'selected': isOpenPareto }">
               <h3>
                 Pareto
                 <i
@@ -101,7 +101,7 @@
 
           <!-- Travel times -->
           <div class="dropdown-evaluation" @click="toggleTTDropdown">
-            <div class="dropdown-header">
+            <div :class="{ 'dropdown-header': true, 'selected': isOpenTT }">
               <h3>
                 Travel Times Changes
                 <i
@@ -132,7 +132,7 @@
 
           <!-- Distances -->
           <div class="dropdown-evaluation" @click="toggleDistancesDropdown">
-            <div class="dropdown-header">
+            <div :class="{ 'dropdown-header': true, 'selected': isOpenDistances }">
               <h3>
                 Distances per lane type
                 <i
@@ -178,7 +178,7 @@
 
           <!-- Complexity -->
           <div class="dropdown-evaluation" @click="toggleComplexityDropdown">
-            <div class="dropdown-header">
+            <div :class="{ 'dropdown-header': true, 'selected': isOpenComplexity }">
               <h3>
                 Network Complexity
                 <i
@@ -219,6 +219,68 @@
               </div>
             </div>
           </div>
+
+          <!-- Network Bearing -->
+          <div class="dropdown-evaluation" @click="toggleBearingDropdown">
+            <div :class="{ 'dropdown-header': true, 'selected': isOpenComplexity }">
+              <h3>
+                Network Bearing
+                <i
+                  class="fa-solid fa-info-circle small-icon"
+                  @mouseover="showInfoBoxBearing = true"
+                  @mouseleave="showInfoBoxBearing = false"
+                ></i>
+                <div v-show="showInfoBoxBearing" class="info-box">
+                  Bearing Info Text
+                </div>
+              </h3>
+              <i
+                :class="
+                  isOpenBearing
+                    ? 'fa-solid fa-angle-up'
+                    : 'fa-solid fa-angle-down'
+                "
+                style="color: var(--blue-color)"
+              ></i>
+            </div>
+            <div class="dropdown-eval-content" v-if="isOpenBearing">
+              <div class="pieChartContainer">
+                <div class="column" style="margin: auto;">
+                  <table>
+                  <tr v-show="compareRunStore.compare">
+                    <td  colspan="2" style="text-align: center;">{{ResultsStore.runName}}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding-right: 20px;"><i class="fa-solid fa-bicycle"></i></td>
+                    <td style="padding-left: 20px;"><i class="fa-solid fa-car"></i></td>
+                  </tr>
+                  <tr>
+                    <td style="padding-right: 20px;">{{ ResultsStore.networkBearing.bike !== null ? ResultsStore.networkBearing.bike.toFixed(2) : '' }}</td>
+                    <td style="padding-left: 20px;">{{ ResultsStore.networkBearing.car !== null ? ResultsStore.networkBearing.car.toFixed(2) : '' }}</td>
+                  </tr>
+                </table>
+
+                </div>
+                
+                <div class="column" v-show="compareRunStore.compare">
+                  <table>
+                  <tr>
+                    <td colspan="2" style="text-align: center;">{{compareRunStore.runName}}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding-right: 20px;"><i class="fa-solid fa-bicycle"></i></td>
+                    <td style="padding-left: 20px;"><i class="fa-solid fa-car"></i></td>
+                  </tr>
+                  <tr>
+                    <td style="padding-right: 20px;">{{ compareRunStore.networkBearing.bike !== null ? compareRunStore.networkBearing.bike.toFixed(2) : '' }}</td>
+                    <td style="padding-left: 20px;">{{ compareRunStore.networkBearing.car !== null ? compareRunStore.networkBearing.car.toFixed(2) : '' }}</td>
+                  </tr>
+                </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
@@ -238,6 +300,7 @@ import {
   getPareto,
   getKmDistancePerLaneType,
   getComplexity,
+  getNetworkBearing,
 } from "../scripts/api.js";
 import { create } from "ol/transform.js";
 
@@ -298,6 +361,8 @@ export default {
       isOpenDistances: false,
       isOpenComplexity: false,
       showInfoBoxComplexity: false,
+      isOpenBearing:false,
+      showInfoBoxBearing:false,
     };
   },
 
@@ -327,6 +392,9 @@ export default {
   },
 
   methods: {
+    toggleBearingDropdown() {
+      this.isOpenBearing = !this.isOpenBearing;
+    },
     toggleComplexityDropdown() {
       this.isOpenComplexity = !this.isOpenComplexity;
     },
@@ -390,6 +458,13 @@ export default {
         complexityEvaluation.bike_degree_ratio,
         complexityEvaluation.car_degree_ratio
       );
+
+      // get network bearing
+      const bearingEvaluation = await getNetworkBearing(
+        this.inputStore.projectID,
+        run.id_run
+      );
+      this.compareRunStore.setNetworkBearing(bearingEvaluation.bike_network_bearings,bearingEvaluation.car_network_bearings);
 
       this.createBarChart();
       this.createScatterPlot();
@@ -698,160 +773,6 @@ export default {
 </script>
 
 <style scoped>
-.dashboard-content-evaluation{
-  overflow-y: auto; 
-  height: 80vh;
+@import "../styles/dashboardStyle.css";
 
-}
-.dropdown-header {
-  display: flex;
-  justify-content: space-between;
-  padding-right: 50px;
-  align-items: center;
-}
-.dashboard-container {
-  display: flex;
-  height: 100vh;
-  position: absolute;
-  right: 0;
-}
-
-.dashboard-navigation {
-  background-color: rgba(149, 149, 149, 0.5);
-  height: 100%;
-  width: 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  cursor: pointer;
-}
-
-.dashboard-content {
-  flex-grow: 1;
-  width: 500px;
-  height: 100%;
-}
-
-.pieChartContainer {
-  width: 100%;
-  margin: 0 auto;
-  align-content: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-}
-.column {
-  flex: 1;
-  display: flex;
-  width: 100%;
-}
-.column p {
-  margin: 0;
-}
-.titel-inkl-button {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-/* Dropdown styles */
-.dropdown {
-  position: relative;
-  display: inline-block;
-  align-items: center;
-  margin-right: 30px;
-}
-
-.dropdown-content {
-  margin-top: 1px;
-  display: none;
-  position: absolute;
-  background-color: #f1f1f1;
-  width: 100%;
-  margin-right: 10px;
-  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-  z-index: 1;
-  border-radius: 5px;
-}
-
-.dropdown-content a {
-  color: black;
-  padding: 12px 16px;
-  text-decoration: none;
-  display: block;
-  text-align: left;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  font-size: 11px;
-}
-
-.dropdown-content a:hover {
-  background-color: #ddd;
-}
-
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-
-.dropdown:hover .dropbtn {
-  background-color: #dd667aea;
-}
-.close-btn {
-  position: absolute; /* Change position to absolute */
-  top: 50%; /* Move the button 50% from the top */
-  right: 5px;
-  transform: translateY(-50%); /* Adjust the button position vertically */
-  background: transparent;
-  border: none;
-  color: #333;
-  font-size: 18px;
-  cursor: pointer;
-  padding: 0;
-  margin-left: 10px;
-}
-
-.close-btn:hover {
-  color: #da5268;
-}
-.dropbtn-compare {
-  outline-color: var(--blue-color);
-  border: 2px solid var(--blue-color);
-  color: var(--blue-color);
-  background-color: transparent;
-  padding: 5px;
-  padding-right: 40px;
-  padding-left: 10px;
-}
-
-.small-icon {
-  font-size: 11px;
-}
-.compare-button-active {
-  background-color: var(--pink-compare);
-  color: var(--blue-compare);
-}
-
-.compare-button-active:hover {
-  background-color: var(--pink-compare);
-  color: var(--blue-compare);
-}
-
-.compare-button-active:focus {
-  outline-color: var(--blue-compare);
-  border-width: 2px;
-  color: var(--blue-compare);
-}
-
-.barChart {
-  margin-right: 20px;
-}
-
-.scatterPlotCanvas {
-  margin-right: 20px;
-}
-
-.text-align {
-  margin-left: 30px;
-  margin-right: 20px;
-}
 </style>

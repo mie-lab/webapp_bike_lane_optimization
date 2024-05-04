@@ -11,10 +11,18 @@ export const useResultsStore = defineStore("evaluation",{
     complexity: {
       bike: null,
       car: null
+    },
+    networkBearing: {
+      bike: null,
+      car: null
     }
    
   }),
   actions: {
+    setNetworkBearing(bike,car){
+      this.networkBearing.bike = bike;
+      this.networkBearing.car = car;
+    },
     setTraveltimes(bikeTT,carTT) {
       this.paretoBikeTTArray = bikeTT;
       this.paretoCarTTArray = carTT;
@@ -38,6 +46,8 @@ export const useResultsStore = defineStore("evaluation",{
       this.runName = null;
       this.complexity.bike = null;
       this.complexity.car = null;
+      this.networkBearing.bike = null;
+      this.networkBearing.car = null;
     }
   },
 });
