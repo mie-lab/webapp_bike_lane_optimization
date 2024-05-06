@@ -30,7 +30,6 @@
 }
 
 .nav-button-info {
-  margin-top: auto;
   margin-bottom: 20px;
 }
 .button-icon {
@@ -47,6 +46,13 @@
   margin-right: 8px;
   filter: invert(55%) sepia(95%) saturate(650%) hue-rotate(300deg)
     brightness(100%) contrast(101%);
+}
+
+.lower-buttons {
+  margin-top: auto;
+}
+
+.nav-button-process {
 }
 
 .sidebar-content {
@@ -70,4 +76,31 @@
 
 .close-btn:hover {
   color: #da5268;
+}
+
+.process-container {
+  position: absolute;
+  left: 70px;
+  bottom: 50px;
+
+  /* Other styles as needed */
+}
+
+.rectangle {
+  width: 400px;
+  height: 100px;
+  background-color: var(--lightgrey-2-bg);
+  border-radius: 10px;
+  box-shadow: 2px 10px 10px rgba(0, 0, 0, 0.2);
+}
+
+.triangle {
+  position: absolute;
+  bottom: 15px;
+  left: -10px; /* Adjust as needed */
+  width: 0;
+  height: 0;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-right: 10px solid var(--lightgrey-2-bg);
 }

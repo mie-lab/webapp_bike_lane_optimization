@@ -68,16 +68,16 @@
               :class="{ selected: run === selectedRun }">{{ run.run_name }}</div>
                   <table>
                     <colgroup>
-                    <col style="width: 10%;">
-                    <col style="width: 75%;">
-                    <col style="width: 15%;">
+                    <col style="width: 30px;">
+                    <col style="width: 270px;">
+                    <col style="width: 20px;">
                   
                   </colgroup>
 
                   <tr>
                       <td><i class="fa-solid fa-gears"></i></td>
                       <td>Algorithm</td>
-                      <td class="bold">{{ convertAlgName(run.algorithm) }}</td>
+                      <td class="bold">BC</td> <!--{{ convertAlgName(run.algorithm) }}-->
                     </tr>
                     
                     <tr>
@@ -90,12 +90,12 @@
                       <td>Safety penalty</td>
                       <td class="bold">{{ run.bike_safety_penalty }}</td>
                     </tr>
-                    <tr v-if="convertAlgName(run.algorithm) === 'O'">
+                    <tr v-if="convertAlgName(run.algorithm) === 'BC'">
                       <td><i class="fa-solid fa-car"></i></td>
                       <td>Car weight:</td>
                       <td class="bold">{{ run.car_weight }}</td>
                     </tr>
-                    <tr v-if="convertAlgName(run.algorithm) === 'O'">
+                    <tr v-if="convertAlgName(run.algorithm) === 'BC'">
                       <td><i class="fa-solid fa-arrow-up-short-wide"></i></td>
                       <td>Optimize Frequency</td>
                       <td class="bold">{{ run.optimize_frequency }}</td>

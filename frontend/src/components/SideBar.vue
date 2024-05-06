@@ -26,16 +26,30 @@
           <i class="fa-solid fa-circle-question" style="font-size: 24px"></i>
         </button>
 
-        <button
-          class="nav-button nav-button-info"
-          :style="{ color: getIconColor('Info') }"
-          @click="toggleActiveTab('Info')"
-        >
-          <i
-            class="fa-solid fa-circle-info button-icon"
-            style="font-size: 24px"
-          ></i>
-        </button>
+        <div class="lower-buttons">
+          <button
+            class="nav-button nav-button-process"
+            :style="{ color: getIconColor('Process') }"
+            @click="toggleContainer"
+          >
+            <i class="fa-solid fa-list-check" style="font-size: 24px"></i>
+          </button>
+          <div class="process-container" v-show="isContainerVisible">
+            <div class="triangle"></div>
+            <div class="rectangle"></div>
+          </div>
+
+          <button
+            class="nav-button nav-button-info"
+            :style="{ color: getIconColor('Info') }"
+            @click="toggleActiveTab('Info')"
+          >
+            <i
+              class="fa-solid fa-circle-info button-icon"
+              style="font-size: 24px"
+            ></i>
+          </button>
+        </div>
       </div>
 
       <div class="sidebar-content bg-lightgrey" v-show="activeTab !== 'None'">
@@ -64,6 +78,7 @@ export default {
         Info: "#000",
         None: "#000",
       },
+      isContainerVisible: true,
     };
   },
   computed: {
@@ -101,6 +116,9 @@ export default {
       return this.activeTab === icon
         ? "var(--pink-color)"
         : this.iconColors[icon];
+    },
+    toggleContainer() {
+      this.isContainerVisible = !this.isContainerVisible;
     },
   },
   mounted() {},
