@@ -36,7 +36,9 @@
           </button>
           <div class="process-container" v-show="isContainerVisible">
             <div class="triangle"></div>
-            <div class="rectangle"></div>
+            <div class="rectangle">
+              <ProcessList />
+            </div>
           </div>
 
           <button
@@ -66,9 +68,13 @@ import UserInputStart from "./UserInputStart.vue";
 import BikeInfo from "./BikeInfo.vue";
 import Help from "./Help.vue";
 import { statusVariablesStore } from "../stores/statusVariablesStore.js";
+import ProcessList from "./ProcessList.vue";
 
 export default {
   name: "SideBar",
+  components: {
+    ProcessList,
+  },
   data() {
     return {
       iconColors: {

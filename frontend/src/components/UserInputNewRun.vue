@@ -39,6 +39,7 @@
         @input="setRunName($event.target.value)"
       />
       <br />
+      <div class="scrollable-input-container">
       <h4 class="text-blue">Algorithm</h4>
       <div class="dropdown" ref="dropdown" @click="toggleDropdown">
         <button
@@ -137,19 +138,23 @@
       </div>
 
       <br />
+    </div>
 
-      <br />
-      <button @click="toggleUserInputPreviousSide" class="back-button">
+      
+      
+      
+    </div>
+    <br />
+    <button @click="toggleUserInputPreviousSide" class="back-button">
         Back
       </button>
 
       <button @click="callOptimization">Run</button>
-      
-    </div>
-    
+    <!--
     <div class="process_list">
       <ProcessList />
     </div>
+  -->
   </div>
 </template>
 
@@ -426,8 +431,24 @@ export default {
   padding-top: 10px;
   margin-left: 30px;
   margin-right: 20px;
-  height: 50vh;
+}
+
+.scrollable-input-container {
+  max-height: 55vh;
   overflow-y: scroll;
+}
+
+.scrollable-input-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollable-input-container::-webkit-scrollbar-thumb {
+  background: var(--lightgrey-2-bg); /* Color of the scroll thumb */
+  border-radius: 5px; /* Radius of the scroll thumb */
+}
+
+.scrollable-input-container::-webkit-scrollbar-thumb:hover {
+  background:var(--pink-color); /* Color of the scroll thumb when hovered */
 }
 
 
