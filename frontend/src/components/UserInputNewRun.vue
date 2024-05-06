@@ -39,6 +39,7 @@
         @input="setRunName($event.target.value)"
       />
       <br />
+      <div class="scrollable-input-container">
       <h4 class="text-blue">Algorithm</h4>
       <div class="dropdown" ref="dropdown" @click="toggleDropdown">
         <button
@@ -137,17 +138,23 @@
       </div>
 
       <br />
+    </div>
 
-      <br />
-      <button @click="toggleUserInputPreviousSide" class="back-button">
+      
+      
+      
+    </div>
+    <br />
+    <button @click="toggleUserInputPreviousSide" class="back-button">
         Back
       </button>
 
       <button @click="callOptimization">Run</button>
-    </div>
+    <!--
     <div class="process_list">
       <ProcessList />
     </div>
+  -->
   </div>
 </template>
 
@@ -201,6 +208,7 @@ export default {
   },
   data() {
     const inputStore = userInputStore();
+    const statusStore = statusVariablesStore();
     return {
       timeWeighting: 0.7,
       laneAllocation: 10,
@@ -217,6 +225,8 @@ export default {
       selectedOption: null,
       showInfoBox: false,
       infoBoxTexts: infoBoxTexts,
+      statusStore,
+      inputStore,
       algorithms: [
         {
           algorithm: "optimize",
@@ -241,94 +251,61 @@ export default {
   },
   methods: {
     async loadRun(run) {
-      const inputStore = userInputStore();
       this.isLoading = true;
 
-      inputStore.setRunID(run.run_id);
+      this.inputStore.setRunID(run.run_id);
       this.runName = run.run_name;
-      inputStore.setRunName(this.runName);
-
-      /*
-      const response = await createView(
-        inputStore.projectID,
-        run.id_run,
-        "v_optimized"
-      );*/
-      //console.log("Create View Response: ", response);
+      this.inputStore.setRunName(this.runName);
 
       loadWMS("v_optimized", "wms_optimized");
 
-      const statusStore = statusVariablesStore();
-      statusStore.openDashboard();
+      this.statusStore.openDashboard();
       this.isLoading = false;
     },
 
     toggleActiveTab(tab) {
-      // Toggle the active tab using the Pinia store
-      const statusStore = statusVariablesStore();
       const storedTab = this.activeTab;
       if (tab == storedTab) {
-        statusStore.setActiveTab("None");
+        this.statusStore.setActiveTab("None");
       } else {
-        statusStore.setActiveTab(tab);
+        this.statusStore.setActiveTab(tab);
       }
     },
     toggleUserInputNextSide() {
-      const statusStore = statusVariablesStore();
-      statusStore.toggleRunPage();
+      
+      this.statusStore.toggleRunPage();
     },
     toggleUserInputPreviousSide() {
-      const statusStore = statusVariablesStore();
-      statusStore.toggleCreateNewRunPage();
+      this.statusStore.toggleCreateNewRunPage();
+
     },
 
     toggleTabsVisibility() {
-      const statusStore = statusVariablesStore();
-      statusStore.toggleTabsVisibility();
+      this.statusStore.toggleTabsVisibility();
     },
 
     setTimeWeight(value) {
-      const inputStore = userInputStore();
-      inputStore.setTimeWeighting(value);
+      this.inputStore.setTimeWeighting(value);
     },
     setLaneAllocation(value) {
-      const inputStore = userInputStore();
-      inputStore.setLaneAllocation(value);
+      this.inputStore.setLaneAllocation(value);
     },
     setBikeSafetyPenalty(value) {
-      const inputStore = userInputStore();
-      inputStore.setBikeSafetyPenalty(value);
+      this.inputStore.setBikeSafetyPenalty(value);
     },
     setOptimizeFrequency(value) {
-      const inputStore = userInputStore();
-      inputStore.setOptimizeFrequency(value);
+      this.inputStore.setOptimizeFrequency(value);
     },
 
-    async reloadRuns() {
-      // not used
-      this.isLoading = true;
-      const inputStore = userInputStore();
-      const prjStore = projectsStore();
-      try {
-        const response = await getRunList(inputStore.projectID);
-        prjStore.setRuns(response);
-        this.updateRuns();
-        this.filteredRuns = prjStore.runs.runs;
-      } catch (error) {
-        console.log("error: ", error.message);
-      } finally {
-        this.isLoading = false;
-      }
-    },
+
 
     async callOptimization() {
-      const inputStore = userInputStore();
-      const project_id = inputStore.projectID;
-      const algorithm = inputStore.algorithm;
-      const bikeRatio = inputStore.laneAllocation;
-      const carWeight = inputStore.timeWeighting;
-      const bikeSafetyPenatly = inputStore.bikeSafetyPenalty;
-      const optimizeFrequency = inputStore.optimizeFrequency;
+      const project_id = this.inputStore.projectID;
+      const algorithm = this.inputStore.algorithm;
+      const bikeRatio = this.inputStore.laneAllocation;
+      const carWeight = this.inputStore.timeWeighting;
+      const bikeSafetyPenatly = this.inputStore.bikeSafetyPenalty;
+      const optimizeFrequency = this.inputStore.optimizeFrequency;
 
       const responseRunID = await getNewRunID(project_id);
 
@@ -368,7 +345,6 @@ export default {
       this.selectedOption = option;
       this.isOpen = false;
       this.inputStore.setAlgorithm(option.algorithm);
-      console.log("Algorithm: ", this.inputStore.algorithm);
     },
     closeDropdownOnClickOutside(event) {
       const dropdown = this.$refs.dropdown;
@@ -449,4 +425,32 @@ export default {
   font-style: italic;
   text-decoration: none;
 }
+
+.user-input-container {
+  padding-right: 10px;
+  padding-top: 10px;
+  margin-left: 30px;
+  margin-right: 20px;
+}
+
+.scrollable-input-container {
+  max-height: 55vh;
+  overflow-y: scroll;
+}
+
+.scrollable-input-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollable-input-container::-webkit-scrollbar-thumb {
+  background: var(--lightgrey-2-bg); /* Color of the scroll thumb */
+  border-radius: 5px; /* Radius of the scroll thumb */
+}
+
+.scrollable-input-container::-webkit-scrollbar-thumb:hover {
+  background:var(--pink-color); /* Color of the scroll thumb when hovered */
+}
+
+
+
 </style>

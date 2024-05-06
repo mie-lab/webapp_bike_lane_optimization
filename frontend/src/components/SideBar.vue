@@ -26,16 +26,32 @@
           <i class="fa-solid fa-circle-question" style="font-size: 24px"></i>
         </button>
 
-        <button
-          class="nav-button nav-button-info"
-          :style="{ color: getIconColor('Info') }"
-          @click="toggleActiveTab('Info')"
-        >
-          <i
-            class="fa-solid fa-circle-info button-icon"
-            style="font-size: 24px"
-          ></i>
-        </button>
+        <div class="lower-buttons">
+          <button
+            class="nav-button nav-button-process"
+            :style="{ color: getIconColor('Process') }"
+            @click="toggleContainer"
+          >
+            <i class="fa-solid fa-list-check" style="font-size: 24px"></i>
+          </button>
+          <div class="process-container" v-show="isContainerVisible">
+            <div class="triangle"></div>
+            <div class="rectangle">
+              <ProcessList />
+            </div>
+          </div>
+
+          <button
+            class="nav-button nav-button-info"
+            :style="{ color: getIconColor('Info') }"
+            @click="toggleActiveTab('Info')"
+          >
+            <i
+              class="fa-solid fa-circle-info button-icon"
+              style="font-size: 24px"
+            ></i>
+          </button>
+        </div>
       </div>
 
       <div class="sidebar-content bg-lightgrey" v-show="activeTab !== 'None'">
@@ -52,9 +68,13 @@ import UserInputStart from "./UserInputStart.vue";
 import BikeInfo from "./BikeInfo.vue";
 import Help from "./Help.vue";
 import { statusVariablesStore } from "../stores/statusVariablesStore.js";
+import ProcessList from "./ProcessList.vue";
 
 export default {
   name: "SideBar",
+  components: {
+    ProcessList,
+  },
   data() {
     return {
       iconColors: {
@@ -64,6 +84,7 @@ export default {
         Info: "#000",
         None: "#000",
       },
+      isContainerVisible: true,
     };
   },
   computed: {
@@ -101,6 +122,9 @@ export default {
       return this.activeTab === icon
         ? "var(--pink-color)"
         : this.iconColors[icon];
+    },
+    toggleContainer() {
+      this.isContainerVisible = !this.isContainerVisible;
     },
   },
   mounted() {},

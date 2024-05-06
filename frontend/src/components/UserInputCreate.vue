@@ -89,6 +89,7 @@ import { loadWMS } from "../scripts/map.js";
 import { createView, runConstructGraph } from "../scripts/api.js";
 import { watch, ref } from "vue";
 import RingLoader from "vue-spinner/src/RingLoader.vue";
+import { projectsStore } from "../stores/projectsStore.js";
 
 export default {
   name: "UserInputCreate",
@@ -111,6 +112,7 @@ export default {
 
     return {
       statusStore,
+
       projectName: inputStore.projectName,
       setProjectName: inputStore.setProjectName,
       continue: statusStore.runPage,
@@ -120,6 +122,7 @@ export default {
   data() {
     const inputStore = userInputStore();
     const statusStore = statusVariablesStore();
+    const prjStore = projectsStore();
     return {
       isButtonDisabled: true,
       projectName: inputStore.projectName,
@@ -127,6 +130,7 @@ export default {
       size: "25px",
       continue: statusStore.runPage,
       isLoading: false,
+      prjStore,
     };
   },
 
@@ -139,6 +143,7 @@ export default {
       const drawObjectRectangle = mapStoreInstance.drawRectangleObject;
       const drawObjectPolygon = mapStoreInstance.drawPolygonObject;
       const mapObject = mapStoreInstance.map;
+      this.prjStore.setRuns([]);
 
       mapStoreInstance.setLastControl("");
 

@@ -65,7 +65,7 @@
         <div class="dashboard-content-evaluation">
           <!-- Pareto -->
           <div class="dropdown-evaluation" @click="toggleParetoDropdown">
-            <div :class="{ 'dropdown-header': true, 'selected': isOpenPareto }">
+            <div :class="{ 'dropdown-header': true, selected: isOpenPareto }">
               <h3>
                 Pareto
                 <i
@@ -99,7 +99,7 @@
 
           <!-- Travel times -->
           <div class="dropdown-evaluation" @click="toggleTTDropdown">
-            <div :class="{ 'dropdown-header': true, 'selected': isOpenTT }">
+            <div :class="{ 'dropdown-header': true, selected: isOpenTT }">
               <h3>
                 Travel Times Changes
                 <i
@@ -128,7 +128,9 @@
 
           <!-- Distances -->
           <div class="dropdown-evaluation" @click="toggleDistancesDropdown">
-            <div :class="{ 'dropdown-header': true, 'selected': isOpenDistances }">
+            <div
+              :class="{ 'dropdown-header': true, selected: isOpenDistances }"
+            >
               <h3>
                 Distances per lane type
                 <i
@@ -172,7 +174,9 @@
 
           <!-- Complexity -->
           <div class="dropdown-evaluation" @click="toggleComplexityDropdown">
-            <div :class="{ 'dropdown-header': true, 'selected': isOpenComplexity }">
+            <div
+              :class="{ 'dropdown-header': true, selected: isOpenComplexity }"
+            >
               <h3>
                 Network Complexity
                 <i
@@ -216,7 +220,7 @@
 
           <!-- Network Bearing -->
           <div class="dropdown-evaluation" @click="toggleBearingDropdown">
-            <div :class="{ 'dropdown-header': true, 'selected': isOpenBearing }">
+            <div :class="{ 'dropdown-header': true, selected: isOpenBearing }">
               <h3>
                 Network Bearing
                 <i
@@ -239,42 +243,76 @@
             </div>
             <div class="dropdown-eval-content" v-if="isOpenBearing">
               <div class="pieChartContainer">
-                <div class="column" >
+                <div class="column" style="margin: auto">
                   <table>
-                  <tr v-show="compareRunStore.compare">
-                    <td  colspan="2" style="text-align: center;">{{ResultsStore.runName}}</td>
-                  </tr>
-                  <tr>
-                    <td style="padding-right: 20px;"><i class="fa-solid fa-bicycle"></i></td>
-                    <td style="padding-left: 20px;"><i class="fa-solid fa-car"></i></td>
-                  </tr>
-                  <tr>
-                    <td style="padding-right: 20px;">{{ ResultsStore.networkBearing.bike !== null ? ResultsStore.networkBearing.bike.toFixed(2) : '' }}</td>
-                    <td style="padding-left: 20px;">{{ ResultsStore.networkBearing.car !== null ? ResultsStore.networkBearing.car.toFixed(2) : '' }}</td>
-                  </tr>
-                </table>
-
+                    <tr v-show="compareRunStore.compare">
+                      <td colspan="2" style="text-align: center">
+                        {{ ResultsStore.runName }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding-right: 20px">
+                        <i class="fa-solid fa-bicycle"></i>
+                      </td>
+                      <td style="padding-left: 20px">
+                        <i class="fa-solid fa-car"></i>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding-right: 20px">
+                        {{
+                          ResultsStore.networkBearing.bike !== null
+                            ? ResultsStore.networkBearing.bike.toFixed(2)
+                            : ""
+                        }}
+                      </td>
+                      <td style="padding-left: 20px">
+                        {{
+                          ResultsStore.networkBearing.car !== null
+                            ? ResultsStore.networkBearing.car.toFixed(2)
+                            : ""
+                        }}
+                      </td>
+                    </tr>
+                  </table>
                 </div>
-                
+
                 <div class="column" v-show="compareRunStore.compare">
                   <table>
-                  <tr>
-                    <td colspan="2" style="text-align: center;">{{compareRunStore.runName}}</td>
-                  </tr>
-                  <tr>
-                    <td style="padding-right: 20px;"><i class="fa-solid fa-bicycle"></i></td>
-                    <td style="padding-left: 20px;"><i class="fa-solid fa-car"></i></td>
-                  </tr>
-                  <tr>
-                    <td style="padding-right: 20px;">{{ compareRunStore.networkBearing.bike !== null ? compareRunStore.networkBearing.bike.toFixed(2) : '' }}</td>
-                    <td style="padding-left: 20px;">{{ compareRunStore.networkBearing.car !== null ? compareRunStore.networkBearing.car.toFixed(2) : '' }}</td>
-                  </tr>
-                </table>
+                    <tr>
+                      <td colspan="2" style="text-align: center">
+                        {{ compareRunStore.runName }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding-right: 20px">
+                        <i class="fa-solid fa-bicycle"></i>
+                      </td>
+                      <td style="padding-left: 20px">
+                        <i class="fa-solid fa-car"></i>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding-right: 20px">
+                        {{
+                          compareRunStore.networkBearing.bike !== null
+                            ? compareRunStore.networkBearing.bike.toFixed(2)
+                            : ""
+                        }}
+                      </td>
+                      <td style="padding-left: 20px">
+                        {{
+                          compareRunStore.networkBearing.car !== null
+                            ? compareRunStore.networkBearing.car.toFixed(2)
+                            : ""
+                        }}
+                      </td>
+                    </tr>
+                  </table>
                 </div>
               </div>
             </div>
           </div>
-
         </div>
       </div>
     </div>
@@ -355,8 +393,8 @@ export default {
       isOpenDistances: false,
       isOpenComplexity: false,
       showInfoBoxComplexity: false,
-      isOpenBearing:false,
-      showInfoBoxBearing:false,
+      isOpenBearing: false,
+      showInfoBoxBearing: false,
     };
   },
 
@@ -458,7 +496,10 @@ export default {
         this.inputStore.projectID,
         run.id_run
       );
-      this.compareRunStore.setNetworkBearing(bearingEvaluation.bike_network_bearings,bearingEvaluation.car_network_bearings);
+      this.compareRunStore.setNetworkBearing(
+        bearingEvaluation.bike_network_bearings,
+        bearingEvaluation.car_network_bearings
+      );
 
       this.createBarChart();
       this.createScatterPlot();
@@ -719,8 +760,8 @@ export default {
                   y: this.ResultsStore.paretoCarTTArray[index],
                 })
               ),
-              backgroundColor: "rgba(255, 99, 132, 0.3)", // TODO: maybe change colors
-              borderColor: "rgba(255, 99, 132, 0.8)",
+              backgroundColor: "rgba(218,139,45,0.4)", // TODO: maybe change colors
+              borderColor: "rgba(218, 139, 45, 0.8)",
               borderWidth: 1,
             },
           ];
@@ -735,8 +776,8 @@ export default {
                   y: this.compareRunStore.paretoCarTTArray[index],
                 })
               ),
-              backgroundColor: this.getColors()[2],
-              borderColor: this.getColors()[2],
+              backgroundColor: "rgba(81,106,156, 0.4)",
+              borderColor: "rgba(81,106,156, 0.8)",
               borderWidth: 1,
             });
           }
@@ -775,5 +816,4 @@ export default {
 
 <style scoped>
 @import "../styles/dashboardStyle.css";
-
 </style>
