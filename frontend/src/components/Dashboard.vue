@@ -226,9 +226,7 @@
 
           <!-- Network Bearing -->
           <div class="dropdown-evaluation" @click="toggleBearingDropdown">
-            <div
-              :class="{ 'dropdown-header': true, selected: isOpenComplexity }"
-            >
+            <div :class="{ 'dropdown-header': true, selected: isOpenBearing }">
               <h3>
                 Network Bearing
                 <i
@@ -396,8 +394,8 @@ export default {
       showInfoBox: false,
       showInfoBoxTravelTimes: false,
       showInfoBoxDistances: false,
-      isOpenTT: true,
-      isOpenPareto: true,
+      isOpenTT: false,
+      isOpenPareto: false,
       isOpenDistances: false,
       isOpenComplexity: false,
       showInfoBoxComplexity: false,
