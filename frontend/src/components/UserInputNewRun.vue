@@ -3,7 +3,7 @@
     <button class="close-btn" @click="toggleTabsVisibility">
       <i
         class="fa-solid fa-times"
-        style="font-size: 20px; color: var(--darkgrey-bg)"
+        style="font-size: 20px;"
       ></i>
     </button>
 
@@ -16,7 +16,7 @@
       </p>
       <p class="link-style-p">
         <a class="link-style" href="#" @click="toggleActiveTab('Help')"
-          >more inforamtion</a
+          >more information</a
         >
       </p>
       <br></br>
@@ -312,10 +312,18 @@ export default {
       this.processStore.addProcess({
         id: responseRunID.run_id,
         name: this.runName,
+        algorithm: algorithm,
         bike_ratio: bikeRatio,
         car_weight: carWeight,
+        bike_safety_penalty: bikeSafetyPenatly,
+        optimize_frequency: optimizeFrequency,
         status: "pending",
       });
+
+      this.statusStore.toggleProcessList();
+
+    
+      
 
       try {
         const response = await runOptimization(
@@ -420,11 +428,7 @@ export default {
   margin: 0;
 }
 
-.link-style {
-  color: var(--darkgrey-3-bg);
-  font-style: italic;
-  text-decoration: none;
-}
+
 
 .user-input-container {
   padding-right: 10px;

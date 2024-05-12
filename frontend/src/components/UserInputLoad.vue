@@ -1,10 +1,7 @@
 <template>
   <div>
     <button class="close-btn" @click="toggleTabsVisibility">
-      <i
-        class="fa-solid fa-times"
-        style="font-size: 20px; color: var(--darkgrey-bg)"
-      ></i>
+      <i class="fa-solid fa-times" style="font-size: 20px"></i>
     </button>
     <div v-show="!statusStore.runPage" class="user-input-container">
       <p class="info-text">

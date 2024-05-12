@@ -759,8 +759,8 @@ export default {
                   y: this.ResultsStore.paretoCarTTArray[index],
                 })
               ),
-              backgroundColor: "rgba(218,139,45,0.4)", // TODO: maybe change colors
-              borderColor: "rgba(218, 139, 45, 0.8)",
+              backgroundColor: "rgba(116, 41, 134,0.4)", // TODO: maybe change colors
+              borderColor: "rgba(116, 41, 134,0.8)",
               borderWidth: 1,
             },
           ];
@@ -775,8 +775,8 @@ export default {
                   y: this.compareRunStore.paretoCarTTArray[index],
                 })
               ),
-              backgroundColor: "rgba(81,106,156, 0.4)",
-              borderColor: "rgba(81,106,156, 0.8)",
+              backgroundColor: "rgba(114, 166, 97,0.4)",
+              borderColor: "rgba(114, 166, 97,0.8)",
               borderWidth: 1,
             });
           }

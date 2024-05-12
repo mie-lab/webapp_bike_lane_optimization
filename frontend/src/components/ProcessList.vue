@@ -3,17 +3,31 @@
     <h3>Running Requests</h3>
     <div class="list-header">
       <div class="header-item">Name</div>
-      <div class="header-item"><i class="far fa-clock"></i></div>
-      <div class="header-item"><i class="fa-solid fa-lines-leaning"></i></div>
+      <div class="header-item"><i class="fa-solid fa-gears"></i></div>
+      <div class="header-item"><i class="fa-solid fa-bicycle"></i></div>
+      <div class="header-item"><i class="fa-solid fa-shield-heart"></i></div>
+
+      <div class="header-item"><i class="fa-solid fa-car"></i></div>
+      <div class="header-item">
+        <i class="fa-solid fa-arrow-up-short-wide"></i>
+      </div>
+
       <div class="header-item"><i class="fa-solid fa-spinner"></i></div>
     </div>
     <ul>
       <li v-for="process in runningProcesses" :key="process.id">
         <div class="process-details">
           <div class="process-name">{{ process.name }}</div>
-          <div class="process-bike-ratio">{{ process.car_weight }}</div>
+          <div class="process-algorithm">
+            {{ convertAlgName(process.algorithm) }}
+          </div>
+          <div class="process-bike-ratio">{{ process.bike_ratio * 100 }}%</div>
+          <div class="process-safety-penalty">
+            {{ process.bike_safety_penalty }}
+          </div>
+          <div class="process-car_weight">{{ process.car_weight }}</div>
           <div class="process-optimize-frequency">
-            {{ process.bike_ratio * 100 }} %
+            {{ process.optimize_frequency }}
           </div>
           <div class="process-status">
             <template v-if="process.status === 'pending'">
@@ -57,6 +71,20 @@ export default {
       runningProcesses: runningProcessesStore.runningProcesses,
     };
   },
+
+  methods: {
+    convertAlgName(algorithm) {
+      if (algorithm.trim().toLowerCase() === "betweenness_biketime") {
+        return "BB";
+      } else if (algorithm.trim().toLowerCase() === "betweenness_cartime") {
+        return "BC";
+      } else if (algorithm.trim().toLowerCase() === "optimize") {
+        return "O";
+      } else {
+        return algorithm;
+      }
+    },
+  },
 };
 </script>
 
@@ -71,10 +99,11 @@ export default {
 
 .list-header {
   display: grid;
-  grid-template-columns: 3fr 1fr 1fr 1fr;
+  grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr 1fr;
   align-items: center;
-  margin-bottom: 10px;
-  border-bottom: 1px solid #ccc;
+  margin-bottom: 5px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--black);
   margin-right: 20px;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   font-size: 0.8em;
@@ -84,13 +113,12 @@ export default {
 
 .process-details {
   display: grid;
-  text-align: left;
+  text-align: center;
   align-items: center;
-  grid-template-columns: 5fr 1.4fr 1.4fr 0.5fr;
+  grid-template-columns: 2.9fr 1fr 1.1fr 1.1fr 1.1fr 1.1fr 0.8fr;
 }
 
 .header-item {
-  padding: 5px;
   text-align: right;
 }
 
@@ -100,5 +128,9 @@ export default {
 
 .header-item:last-child {
   text-align: right;
+}
+
+.process-details:first-child {
+  text-align: left;
 }
 </style>

@@ -7,8 +7,9 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      target: production
     ports:
-      - "8080:8080"
+      - "8080:80"
     networks:
       - fullstack-network
     volumes:

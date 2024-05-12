@@ -37,7 +37,9 @@
           <div class="process-container" v-show="isContainerVisible">
             <div class="triangle"></div>
             <div class="rectangle">
-              <ProcessList />
+              <div class="process-inner-container">
+                <ProcessList />
+              </div>
             </div>
           </div>
 
@@ -60,8 +62,8 @@
     </div>
   </div>
 </template>
-
 <script>
+import { ref, watch } from "vue";
 import ProjectInfo from "./ProjectInfo.vue";
 import UserInput from "./UserInputCreate.vue";
 import UserInputStart from "./UserInputStart.vue";
@@ -75,6 +77,25 @@ export default {
   components: {
     ProcessList,
   },
+  setup() {
+    const statusStore = statusVariablesStore();
+    const isContainerVisible = ref(false);
+
+    // Use a watcher to keep the list up to date
+    watch(
+      () => statusStore.processList,
+      (newProcesses, oldProcesses) => {
+        console.log("Open process list");
+        isContainerVisible.value = true;
+        console.log("Running processes updated:", isContainerVisible.value);
+      }
+    );
+
+    return {
+      statusStore,
+      isContainerVisible,
+    };
+  },
   data() {
     return {
       iconColors: {
@@ -84,13 +105,11 @@ export default {
         Info: "#000",
         None: "#000",
       },
-      isContainerVisible: true,
     };
   },
   computed: {
     activeTab() {
-      const statusStore = statusVariablesStore();
-      return statusStore.activeTab;
+      return this.statusStore.activeTab;
     },
     currentComponent() {
       switch (this.activeTab) {
@@ -110,15 +129,16 @@ export default {
   methods: {
     toggleActiveTab(tab) {
       // Toggle the active tab using the Pinia store
-      const statusStore = statusVariablesStore();
       const storedTab = this.activeTab;
+      this.statusStore.deactivateHelpDetailsPage();
       if (tab == storedTab) {
-        statusStore.setActiveTab("None");
+        this.statusStore.setActiveTab("None");
       } else {
-        statusStore.setActiveTab(tab);
+        this.statusStore.setActiveTab(tab);
       }
     },
     getIconColor(icon) {
+      console.log("Active tab:", this.activeTab);
       return this.activeTab === icon
         ? "var(--pink-color)"
         : this.iconColors[icon];

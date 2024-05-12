@@ -1,13 +1,19 @@
 # build stage
-FROM node:18-alpine
+FROM --platform=linux/amd64 node:21-alpine AS dev
 WORKDIR /frontend
-COPY package*.json ./
-
-# remove for production
-ENV NODE_ENV development
-
-
-RUN npm ci
+COPY package.json ./
+RUN npm install
 COPY . .
-EXPOSE 8080
-CMD ["npm", "run", "dev"] 
+
+
+FROM --platform=linux/amd64 node:21-alpine AS build
+WORKDIR /frontend
+
+COPY --from=dev /frontend/node_modules /frontend/node_modules
+COPY . .
+
+RUN npm run build
+
+FROM nginx:alpine AS production
+
+COPY --from=build /frontend/dist /usr/share/nginx/html

@@ -1,10 +1,7 @@
 <template>
   <div>
     <button class="close-btn" @click="toggleTabsVisibility">
-      <i
-        class="fa-solid fa-times"
-        style="font-size: 20px; color: var(--darkgrey-bg)"
-      ></i>
+      <i class="fa-solid fa-times" style="font-size: 20px"></i>
     </button>
     <h1 class="text-pink">E-Bike City Zurich</h1>
     <div class="sidebar-content-container">
