@@ -96,3 +96,7 @@
   border-bottom: 10px solid transparent;
   border-right: 10px solid var(--lightgrey-2-bg);
 }
+
+.nav-button-process-active {
+  color: var(--pink-color);
+}

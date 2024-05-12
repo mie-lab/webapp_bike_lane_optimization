@@ -29,6 +29,7 @@
         <div class="lower-buttons">
           <button
             class="nav-button nav-button-process"
+            :class="{ 'nav-button-process-active': isContainerVisible }"
             :style="{ color: getIconColor('Process') }"
             @click="toggleContainer"
           >
@@ -45,7 +46,7 @@
 
           <button
             class="nav-button nav-button-info"
-            :style="{ color: getIconColor('Info') }"
+            :class="{ 'nav-button-info-active': activeTab === 'None' }"
             @click="toggleActiveTab('Info')"
           >
             <i
@@ -85,9 +86,7 @@ export default {
     watch(
       () => statusStore.processList,
       (newProcesses, oldProcesses) => {
-        console.log("Open process list");
         isContainerVisible.value = true;
-        console.log("Running processes updated:", isContainerVisible.value);
       }
     );
 
@@ -138,7 +137,6 @@ export default {
       }
     },
     getIconColor(icon) {
-      console.log("Active tab:", this.activeTab);
       return this.activeTab === icon
         ? "var(--pink-color)"
         : this.iconColors[icon];
