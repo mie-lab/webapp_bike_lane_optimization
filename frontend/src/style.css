@@ -6,34 +6,34 @@
 }
 
 h1 {
-  font-size: 30px;
+  font-size: 28px;
   line-height: 1.1;
   font-family: "Roboto", Arial, sans-serif;
 }
 
 h2 {
   font-family: "Roboto", Arial, sans-serif;
-  font-size: 24px;
+  font-size: 22px;
   text-align: left;
   color: var(--blue-color);
 }
 
 h3 {
-  font-size: 20px;
+  font-size: 18px;
   font-family: "Roboto", Arial, sans-serif;
   text-align: left;
   color: var(--blue-color);
 }
 
 h4 {
-  font-size: 16px;
+  font-size: 14px;
   font-family: "Roboto", Arial, sans-serif;
   text-align: left;
   margin-bottom: 10px;
 }
 
 p {
-  font-size: 16px;
+  font-size: 14px;
   line-height: 1.4;
   color: var(--black);
   font-family: "Roboto", Arial, sans-serif;
@@ -41,7 +41,7 @@ p {
 }
 
 a {
-  font-size: 16px;
+  font-size: 14px;
   font-family: "Roboto", Arial, sans-serif;
 }
 
@@ -97,4 +97,30 @@ li {
 .sidebar-content-container {
   margin-left: 30px;
   margin-right: 20px;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.link-style {
+  color: var(--darkgrey-3-bg);
+  font-style: italic;
+  text-decoration: none;
+}
+
+.close-btn {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 0;
+  color: var(--darkgrey-bg);
+}
+
+.close-btn:hover {
+  color: var(--pink-color);
 }

@@ -47,6 +47,7 @@
 
 .h4_override {
   font-weight: bold;
+  margin: 0;
   margin-bottom: 2px;
   color: var(--darkgrey-bg);
 }
@@ -96,20 +97,30 @@
   padding-bottom: 5px;
 }
 
-.bold {
-  font-weight: bold;
-}
-
 .project-list {
   width: 100%;
   margin-left: 0px;
+  margin-top: 10px;
   padding: 0;
-  max-height: 500px;
   overflow-y: scroll;
   position: relative;
   padding-right: 4px;
+  max-height: 800px;
 }
-.project-name-input{
+
+@media screen and (max-width: 2000px) {
+  .project-list {
+    max-height: 350px;
+  }
+}
+
+@media screen and (max-width: 1500px) {
+  .project-list {
+    max-height: 300px;
+  }
+}
+
+.project-name-input {
   width: 95%;
   margin-left: 0px;
   position: relative;

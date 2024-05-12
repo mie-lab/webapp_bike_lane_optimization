@@ -3,6 +3,9 @@
     <div class="sidebar-container"><SideBar /></div>
     <div class="map-container"><MapVue /></div>
     <div class="dashboard-container"><DashboardVue /></div>
+    <div class="help-details-container" v-show="isHelpDetailsVisible">
+      <HelpDetails />
+    </div>
     <div
       class="base-layer-switch-container"
       :style="calculateBaseLayerSwitchPosition()"
@@ -20,6 +23,8 @@ import MapVue from "./components/Map.vue";
 import DashboardVue from "./components/Dashboard.vue";
 import BaseLayerSwitch from "./components/BaseLayerSwitch.vue";
 import { statusVariablesStore } from "./stores/statusVariablesStore.js";
+import HelpDetails from "./components/HelpDetails.vue";
+import { watch, ref } from "vue";
 
 if (import.meta.hot) {
   import.meta.hot.on("vite:beforeUpdate", (e) => {
@@ -27,6 +32,16 @@ if (import.meta.hot) {
     if (updatePaths.includes("/src/App.vue")) location.reload();
   });
 }
+
+const statusStore = statusVariablesStore();
+const isHelpDetailsVisible = ref(false);
+watch(
+  () => statusStore.helpDetailsPage,
+  (newProcesses, oldProcesses) => {
+    console.log("Open help details");
+    isHelpDetailsVisible.value = !isHelpDetailsVisible.value;
+  }
+);
 
 const calculateBaseLayerSwitchPosition = () => {
   const statusStore = statusVariablesStore();
@@ -69,5 +84,14 @@ const calculateBaseLayerSwitchPosition = () => {
 .sidebar-container {
   position: relative;
   z-index: 1;
+}
+
+.help-details-container {
+  z-index: 999;
+  position: absolute;
+  left: 50px;
+  background-color: var(--lightgrey-bg);
+  width: calc(100% - 50px);
+  height: 100%;
 }
 </style>

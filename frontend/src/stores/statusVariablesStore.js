@@ -10,6 +10,8 @@ export const statusVariablesStore = defineStore("statusVariables", {
     runPage: false,
     dashboard: false,
     createNewRunPage: false,
+    processList: false,
+    helpDetailsPage: false,
   }),
   actions: {
     toggleCreateNewRunPage() {
@@ -31,8 +33,20 @@ export const statusVariablesStore = defineStore("statusVariables", {
       this.loadPage = !this.loadPage;
     },
 
+    toggleProcessList() {
+      this.processList = !this.processList;
+    },
+
     activateLoadPage() {
       this.loadPage = true;
+    },
+
+    toggleHelpDetailsPage() {
+      this.helpDetailsPage = !this.helpDetailsPage;
+    },
+
+    deactivateHelpDetailsPage() {
+      this.helpDetailsPage = false;
     },
 
     toggleRunPage() {

@@ -2,7 +2,7 @@
 import { userInputStore } from "../stores/userInputStore.js";
 
 export async function runConstructGraph(boundingBox, projectName) {
-  const url = `http://localhost:8989/construct_graph?project_name=${projectName}`;
+  const url = `${import.meta.env.VITE_BACKEND_URL}/construct_graph?project_name=${projectName}`;
   const params = {
     method: "POST",
     headers: {
@@ -34,7 +34,7 @@ export async function runOptimization(
   runName
 ) {
   const url =
-    `http://localhost:8989/optimize?` +
+    `${import.meta.env.VITE_BACKEND_URL}/optimize?` +
     `project_id=${encodeURIComponent(projectID)}` +
     `&algorithm=${encodeURIComponent(algorithm)}` +
     `&bike_ratio=${encodeURIComponent(bikeRatio)}` +
@@ -65,7 +65,7 @@ export async function runOptimization(
 }
 
 export async function getProjectList() {
-  const url = `http://localhost:8989/get_projects`;
+  const url = `${import.meta.env.VITE_BACKEND_URL}/get_projects`;
   const params = {
     method: "GET",
     headers: {
@@ -87,7 +87,7 @@ export async function getProjectList() {
 
 export async function getRunList(projectID) {
   const url =
-    `http://localhost:8989/get_runs?` +
+    `${import.meta.env.VITE_BACKEND_URL}/get_runs?` +
     `project_id=${encodeURIComponent(projectID)}`;
   const params = {
     method: "GET",
@@ -110,7 +110,7 @@ export async function getRunList(projectID) {
 
 export async function getNewRunID(projectID) {
   const url =
-    `http://localhost:8989/get_new_run_id?` +
+    `${import.meta.env.VITE_BACKEND_URL}/get_new_run_id?` +
     `project_id=${encodeURIComponent(projectID)}`;
   const params = {
     method: "GET",
@@ -133,7 +133,7 @@ export async function getNewRunID(projectID) {
 
 export async function createView(projectID, runID, layerName) {
   const url =
-    `http://localhost:8989/create_view?` +
+    `${import.meta.env.VITE_BACKEND_URL}/create_view?` +
     `project_id=${encodeURIComponent(projectID)}` +
     `&run_id=${encodeURIComponent(runID)}` +
     `&layer=${encodeURIComponent(layerName)}`;
@@ -165,11 +165,9 @@ export async function createView(projectID, runID, layerName) {
   }
 }
 
-
-
 export async function getKmDistancePerLaneType(projectID, runID) {
   const url =
-    `http://localhost:8989/get_distance_per_lane_type?` +
+    `${import.meta.env.VITE_BACKEND_URL}/get_distance_per_lane_type?` +
     `project_id=${encodeURIComponent(projectID)}` +
     `&run_name=${encodeURIComponent(runID)}`;
   const params = {
@@ -193,7 +191,7 @@ export async function getKmDistancePerLaneType(projectID, runID) {
 
 export async function getPareto(projectID, runID) {
   const url =
-    `http://localhost:8989/get_pareto?` +
+    `${import.meta.env.VITE_BACKEND_URL}/get_pareto?` +
     `project_id=${encodeURIComponent(projectID)}` +
     `&run_name=${encodeURIComponent(runID)}`;
   const params = {
@@ -215,10 +213,9 @@ export async function getPareto(projectID, runID) {
   }
 }
 
-
 export async function getComplexity(projectID, runID) {
   const url =
-    `http://localhost:8989/get_complexity?` +
+    `${import.meta.env.VITE_BACKEND_URL}/get_complexity?` +
     `project_id=${encodeURIComponent(projectID)}` +
     `&run_name=${encodeURIComponent(runID)}`;
   const params = {
@@ -242,7 +239,7 @@ export async function getComplexity(projectID, runID) {
 
 export async function getNetworkBearing(projectID, runID) {
   const url =
-    `http://localhost:8989/get_network_bearing?` +
+    `${import.meta.env.VITE_BACKEND_URL}/get_network_bearing?` +
     `project_id=${encodeURIComponent(projectID)}` +
     `&run_name=${encodeURIComponent(runID)}`;
   const params = {
