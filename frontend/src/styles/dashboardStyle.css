@@ -53,22 +53,37 @@
   }
   
   .pieChartContainer {
-    width: 100%;
     margin: 0 auto;
     align-content: center;
     display: flex;
     justify-content: center;
     align-items: center;
-    position: relative;
+    position: relative;  
+    height: 10%;
+    width: 100%;
+  }
+  .pieChart{
+    width: 20%;
+    height: 20%;
+
   }
   .column {
     display: flex;
     justify-content: center;
     align-items: center;
     width: 100%;
+    margin: auto;
+    height: 166px;
   }
   .column p {
     margin: 0 auto;
+  }
+  .column.single {
+    width: 100%; /* Adjust as needed */
+  }
+  
+  .column.compare {
+    width: 100%;
   }
   .titel-inkl-button {
     display: flex;

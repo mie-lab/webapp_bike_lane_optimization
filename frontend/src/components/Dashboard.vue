@@ -156,18 +156,27 @@
             </div>
 
             <div class="dropdown-eval-content" v-if="isOpenDistances">
-              <div
-                class="pieChartContainer"
-                :style="{ width: compareRunStore.compare ? '50%' : '50%' }"
-              >
-                <canvas class="pieChart" ref="pieChart" height="50"></canvas>
+              <div class="pieChartContainer">
+                <div
+                  class="column"
+                  :class="{ single: !compareRunStore.compare, compare: compareRunStore.compare }"
+                  style="margin: auto"
+                >
+                  <canvas class="pieChart" ref="pieChart" style="padding-right: 0px;" ></canvas>
+                </div>
 
-                <canvas
+                <div
+                  class="column"
                   v-show="compareRunStore.compare"
-                  class="pieChart"
-                  ref="pieChart2"
-                  height="50"
-                ></canvas>
+                  :class="{ single: !compareRunStore.compare, compare: compareRunStore.compare }"
+                  style="padding-left: 0px;"
+                >
+                  <canvas
+                    class="pieChart"
+                    ref="pieChart2"
+                    style="padding-left: 0px;"
+                  ></canvas>
+                </div>
               </div>
             </div>
           </div>
@@ -197,22 +206,17 @@
                 style="color: var(--blue-color)"
               ></i>
             </div>
+            
             <div class="dropdown-eval-content" v-if="isOpenComplexity">
               <div class="pieChartContainer">
-                <div class="column">
-                  <p>
-                    {{ inputStore.runName }} has a bike complexity of
-                    {{ ResultsStore.complexity.bike }}
-                    and a car complexity of {{ ResultsStore.complexity.car }}.
-                  </p>
+                <div class="column" style="display: flex; justify-content: space-between;">
+                  <canvas class="pieChart" ref="pieChartComplexityBike" style="width: 45%; height: auto;"></canvas>
+                  <canvas class="pieChart" ref="pieChartComplexityCar" style="width: 45%; height: auto;"></canvas>
+        
                 </div>
                 <div class="column" v-show="compareRunStore.compare">
-                  <p>
-                    {{ compareRunStore.runName }} has a bike complexity of
-                    {{ compareRunStore.complexity.bike }}
-                    and a car complexity of
-                    {{ compareRunStore.complexity.car }}.
-                  </p>
+                  <canvas class="pieChart" ref="pieCharCompareComplexityBike"></canvas>
+                  <canvas class="pieChart" ref="pieChartCompareComplexityCar"></canvas>
                 </div>
               </div>
             </div>
@@ -277,7 +281,7 @@
                   </table>
                 </div>
 
-                <div class="column" v-show="compareRunStore.compare">
+                <div class="column" v-show="compareRunStore.compare" >
                   <table>
                     <tr>
                       <td colspan="2" style="text-align: center">
@@ -334,7 +338,6 @@ import {
   getComplexity,
   getNetworkBearing,
 } from "../scripts/api.js";
-import { create } from "ol/transform.js";
 
 export default {
   name: "Dashboard",
@@ -419,6 +422,7 @@ export default {
         this.createScatterPlot();
         this.createBarChart();
         this.createPieChart();
+        this.createPieChartComplexity();
       }
     );
   },
@@ -429,6 +433,7 @@ export default {
     },
     toggleComplexityDropdown() {
       this.isOpenComplexity = !this.isOpenComplexity;
+      this.createPieChartComplexity();
     },
     toggleTTDropdown() {
       this.isOpenTT = !this.isOpenTT;
@@ -448,6 +453,7 @@ export default {
       this.createBarChart();
       this.createScatterPlot();
       this.createPieChart();
+      this.createPieChartComplexity();
     },
 
     toggleDashboard() {
@@ -504,7 +510,87 @@ export default {
       this.createBarChart();
       this.createScatterPlot();
       this.createPieChart();
+      this.createPieChartComplexity();
     },
+    
+    createPieChartComplexity(){
+      this.$nextTick(() => {
+          if (this.isOpenComplexity) {
+            // get proper colors
+          const colorsDefined = this.getColors();
+
+            
+          // Bike pie chart
+          this.createSinglePieChart(Object.keys(this.ResultsStore.complexity.bike),
+              Object.values(this.ResultsStore.complexity.bike).map(value => value * 100),
+              [colorsDefined[0], colorsDefined[1]],
+              this.$refs.pieChartComplexityBike);
+
+            console.log(this.compareRunStore.complexity.bike);
+          
+          // Car pie chart
+          this.createSinglePieChart(Object.keys(this.ResultsStore.complexity.car),
+              Object.values(this.ResultsStore.complexity.car).map(value => value * 100),
+              [colorsDefined[2], colorsDefined[3]],
+              this.$refs.pieChartComplexityCar);
+
+
+          if (this.compareRunStore.compare) {
+              // Bike pie chart
+              this.createSinglePieChart(Object.keys(this.compareRunStore.complexity.bike),
+                  Object.values(this.compareRunStore.complexity.bike).map(value => value * 100),
+                  [colorsDefined[0], colorsDefined[1]],
+                  this.$refs.pieCharCompareComplexityBike);
+              
+              // Car pie chart
+              this.createSinglePieChart(Object.keys(this.compareRunStore.complexity.car),
+                  Object.values(this.compareRunStore.complexity.car).map(value => value * 100),
+                  [colorsDefined[2], colorsDefined[3]],
+                  this.$refs.pieChartCompareComplexityCar);
+          }
+
+
+    
+         
+
+
+
+        }
+      });
+    },
+    
+    createSinglePieChart(labels,dataset,colors,canvas){
+      let ctx = canvas.getContext("2d");
+
+      if (canvas.chart) {
+          canvas.chart.destroy(); 
+        }
+
+          canvas.chart = new Chart(ctx, {
+              type: "pie",
+              data: {
+              labels: labels,
+              datasets: [
+                  {
+                  data: dataset,
+                  //backgroundColor: colors,
+                  },
+              ],
+              },
+              options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                  legend: {
+                  display: true,
+                  position: "bottom",
+                  },
+              },
+              },
+          });
+
+
+   },
 
     createPieChart() {
       this.$nextTick(() => {
@@ -517,8 +603,8 @@ export default {
           let dataset = [this.ResultsStore.kmBike, this.ResultsStore.kmCar];
           let colors = [colorsDefined[0], colorsDefined[1]];
           let labels = [
-            `Bike_${this.ResultsStore.runName}`,
-            `Car_${this.ResultsStore.runName}`,
+            `Bike`,
+            `Car`,
           ];
 
           // Check if there's already a Chart instance on this canvas
@@ -543,12 +629,14 @@ export default {
               rotation: -90,
               circumference: 180,
               cutout: "50%",
-              title: {
-                display: true,
-                text: 'Your Title Here', 
-                
-              },
               plugins: {
+                title: {
+                  display: true,
+                  text: `${this.ResultsStore.runName}`,
+                  font: {
+                    size: 14,
+                  },
+                },
                 datalabels: {
                   display: true,
                   align: "center",
@@ -558,10 +646,11 @@ export default {
                     size: 18,
                   },
                   formatter: function(value, context) {
-                    return context.chart.data.datasets[context.datasetIndex].data[context.dataIndex];
+                    let sum = context.dataset.data.reduce((a, b) => a + b, 0);
+                    let percentage = value / sum * 100;
+                    return percentage.toFixed(2) + '%'; // toFixed(2) rounds to 2 decimal places
                   }
-
-                },
+                }
               },
             },
           });
@@ -576,8 +665,8 @@ export default {
               this.compareRunStore.kmCar,
             ];
             let labels2 = [
-              `Bike_${this.compareRunStore.runName}`,
-              `Car_${this.compareRunStore.runName}`,
+              `Bike`,
+              `Car`,
             ];
             let colors2 = [colorsDefined[2], colorsDefined[3]];
 
@@ -605,6 +694,13 @@ export default {
 
                 },
                 plugins: {
+                  title: {
+                  display: true,
+                  text: `${this.compareRunStore.runName}`,
+                  font: {
+                    size: 14,
+                  },
+                },
                   datalabels: {
                     display: true,
                     align: "bottom",
