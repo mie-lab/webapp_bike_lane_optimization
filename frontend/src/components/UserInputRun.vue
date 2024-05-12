@@ -255,13 +255,6 @@ export default {
 
       this.resultsStore.setTraveltimes(bikeTimes, carTimes);
       
-      // get network bearing
-      const bearingEvaluation = await getNetworkBearing(
-        this.inputStore.projectID,
-        run.id_run
-      );
-      this.resultsStore.setNetworkBearing(bearingEvaluation.bike_network_bearings,bearingEvaluation.car_network_bearings);
-      
 
       // get km per bike / car lane
       const distanceEvaluation = await getKmDistancePerLaneType(
@@ -283,7 +276,13 @@ export default {
         complexityEvaluation.bike_degree_ratio,
         complexityEvaluation.car_degree_ratio
       );
-      
+
+      // get network bearing
+      const bearingEvaluation = await getNetworkBearing(
+        this.inputStore.projectID,
+        run.id_run
+      );
+      this.resultsStore.setNetworkBearing(bearingEvaluation.bike_network_bearings,bearingEvaluation.car_network_bearings);
       
       // create view on the map for the selected run
       const response = await createView(
