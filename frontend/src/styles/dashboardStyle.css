@@ -1,5 +1,5 @@
 .dropdown-evaluation {
-  margin-bottom: 7px;
+  margin-bottom: 19px;
   padding: 0%;
 }
 .dropdown-eval-content {
@@ -18,13 +18,13 @@
   border-radius: 5px;
   box-shadow: 2px 3px 10px 0px rgba(0, 0, 0, 0.05);
   padding: 0px 10px;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
 }
 .dropdown-header:hover {
   border: 2px solid var(--pink-color);
 }
 .dropdown-header.selected {
-  border: 1.5px solid var(--darkgrey-bg);
+  border-color: var(--pink-color);
 }
 .dashboard-container {
   display: flex;
@@ -60,12 +60,13 @@
   position: relative;
 }
 .column {
-  flex: 1;
   display: flex;
+  justify-content: center;
+  align-items: center;
   width: 100%;
 }
 .column p {
-  margin: 0;
+  margin: 0 auto;
 }
 .titel-inkl-button {
   display: flex;

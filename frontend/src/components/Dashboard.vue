@@ -74,7 +74,8 @@
                   @mouseleave="showInfoBox = false"
                 ></i>
                 <div v-show="showInfoBox" class="info-box">
-                  Pareto Info Text
+                  This plot shows the pareto frontier from the chosen linear
+                formulation.
                 </div>
               </h3>
               <i
@@ -87,10 +88,7 @@
               ></i>
             </div>
             <div class="dropdown-eval-content" v-if="isOpenPareto">
-              <p>
-                This plot shows the pareto frontier from the chosen linear
-                formulation.
-              </p>
+
               <canvas
                 class="scatterPlotCanvas"
                 ref="scatterPlotCanvas"
@@ -110,7 +108,7 @@
                   @mouseleave="showInfoBoxTravelTimes = false"
                 ></i>
                 <div v-show="showInfoBoxTravelTimes" class="info-box">
-                  Travel Time Info text; And other additional Information ...
+                  This is the relative change of travel times for the chosen run.
                 </div>
               </h3>
               <i
@@ -122,9 +120,7 @@
             </div>
 
             <div class="dropdown-eval-content" v-if="isOpenTT">
-              <p>
-                This is the relative change of travel times for the chosen run.
-              </p>
+
 
               <canvas class="barChart" ref="barChart" height="105"></canvas>
             </div>
@@ -143,7 +139,10 @@
                   @mouseleave="showInfoBoxDistances = false"
                 ></i>
                 <div v-show="showInfoBoxDistances" class="info-box">
-                  Distance per lane type; And other additional Information ...
+                  Your optimizations contains
+                {{ Math.round(ResultsStore.kmBike * 100) / 100 }} km of bike
+                lanes and {{ Math.round(ResultsStore.kmCar * 100) / 100 }} km of
+                car lanes.
                 </div>
               </h3>
               <i
@@ -155,13 +154,8 @@
                 style="color: var(--blue-color)"
               ></i>
             </div>
+
             <div class="dropdown-eval-content" v-if="isOpenDistances">
-              <p>
-                Your optimizations contains
-                {{ Math.round(ResultsStore.kmBike * 100) / 100 }} km of bike
-                lanes and {{ Math.round(ResultsStore.kmCar * 100) / 100 }} km of
-                car lanes.
-              </p>
               <div
                 class="pieChartContainer"
                 :style="{ width: compareRunStore.compare ? '50%' : '50%' }"
@@ -546,21 +540,27 @@ export default {
               ],
             },
             options: {
+              rotation: -90,
+              circumference: 180,
+              cutout: "50%",
               title: {
                 display: true,
-                rotation: -90,
-                circumference: 180,
-                cutout: "70%",
+                text: 'Your Title Here', 
+                
               },
               plugins: {
                 datalabels: {
                   display: true,
-                  align: "bottom",
+                  align: "center",
                   backgroundColor: "#ccc",
                   borderRadius: 3,
                   font: {
                     size: 18,
                   },
+                  formatter: function(value, context) {
+                    return context.chart.data.datasets[context.datasetIndex].data[context.dataIndex];
+                  }
+
                 },
               },
             },
@@ -597,11 +597,12 @@ export default {
                 ],
               },
               options: {
+                rotation: -90,
+                circumference: 180,
+                cutout: "50%",
                 title: {
                   display: true,
-                  rotation: -90,
-                  circumference: 180,
-                  cutout: "70%",
+
                 },
                 plugins: {
                   datalabels: {
