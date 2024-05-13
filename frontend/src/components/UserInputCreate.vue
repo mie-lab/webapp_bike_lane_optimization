@@ -24,6 +24,7 @@
         v-model="projectName"
         @input="setProjectName($event.target.value)"
       />
+      <p class="missing-input" v-show="nameIsEmpty">* Enter a project name!</p>
 
       <h3 class="text-blue">Area of interest</h3>
       <div class="button-container">
@@ -47,10 +48,16 @@
         >
           <img
             class="draw-square-icon"
+            :class="{
+              'draw-square-icon-active': statusStore.drawingRectangleEnabled,
+            }"
             src="../assets/draw-square.svg"
             alt="Draw Polygon"
           />
         </button>
+        <p class="missing-input" v-show="boundingBoxIsEmpty">
+          *Draw an area of interest!
+        </p>
       </div>
       <br />
 
@@ -128,12 +135,17 @@ export default {
       continue: statusStore.runPage,
       isLoading: false,
       prjStore,
+      nameIsEmpty: false,
+      boundingBoxIsEmpty: false,
     };
   },
 
   methods: {
     async createProject() {
       this.isLoading = true;
+      this.nameIsEmpty = false;
+      this.boundingBoxIsEmpty = false;
+
       const mapStoreInstance = mapStore();
 
       const inputStore = userInputStore();
@@ -146,6 +158,20 @@ export default {
 
       mapStoreInstance.setDrawPolygon(null);
       mapStoreInstance.setDrawRectangle(null);
+
+      // check if project name is empty
+      if (inputStore.projectName == "" || inputStore.projectName == null) {
+        this.isLoading = false;
+        this.nameIsEmpty = true;
+        return;
+      }
+
+      // check if the user has drawn a polygon or rectangle
+      if (drawObjectRectangle === null && drawObjectPolygon === null) {
+        this.isLoading = false;
+        this.boundingBoxIsEmpty = true;
+        return;
+      }
 
       try {
         const response = await runConstructGraph(
@@ -222,5 +248,25 @@ export default {
   position: absolute;
   top: 4px;
   left: 8px;
+}
+
+.enablepolygon {
+  background-color: var(--pink-color-selected);
+  color: white;
+}
+
+.enablerectangle {
+  background-color: var(--pink-color-selected);
+  color: white;
+}
+
+.draw-square-icon-active {
+  filter: invert(1);
+}
+
+.missing-input {
+  color: rgb(179, 0, 0);
+  margin: 0;
+  font-size: 12px;
 }
 </style>

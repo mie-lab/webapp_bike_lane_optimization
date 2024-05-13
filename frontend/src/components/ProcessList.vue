@@ -62,7 +62,6 @@ export default {
     watch(
       () => runningProcessesStore.runningProcesses,
       (newProcesses, oldProcesses) => {
-        console.log("Running processes updated:", newProcesses);
         this.runningProcesses = newProcesses;
       }
     );

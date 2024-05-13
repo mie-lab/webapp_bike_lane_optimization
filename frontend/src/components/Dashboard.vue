@@ -75,7 +75,7 @@
                 ></i>
                 <div v-show="showInfoBox" class="info-box">
                   This plot shows the pareto frontier from the chosen linear
-                formulation.
+                  formulation.
                 </div>
               </h3>
               <i
@@ -88,7 +88,6 @@
               ></i>
             </div>
             <div class="dropdown-eval-content" v-if="isOpenPareto">
-
               <canvas
                 class="scatterPlotCanvas"
                 ref="scatterPlotCanvas"
@@ -108,7 +107,8 @@
                   @mouseleave="showInfoBoxTravelTimes = false"
                 ></i>
                 <div v-show="showInfoBoxTravelTimes" class="info-box">
-                  This is the relative change of travel times for the chosen run.
+                  This is the relative change of travel times for the chosen
+                  run.
                 </div>
               </h3>
               <i
@@ -120,8 +120,6 @@
             </div>
 
             <div class="dropdown-eval-content" v-if="isOpenTT">
-
-
               <canvas class="barChart" ref="barChart" height="105"></canvas>
             </div>
           </div>
@@ -140,9 +138,9 @@
                 ></i>
                 <div v-show="showInfoBoxDistances" class="info-box">
                   Your optimizations contains
-                {{ Math.round(ResultsStore.kmBike * 100) / 100 }} km of bike
-                lanes and {{ Math.round(ResultsStore.kmCar * 100) / 100 }} km of
-                car lanes.
+                  {{ Math.round(ResultsStore.kmBike * 100) / 100 }} km of bike
+                  lanes and {{ Math.round(ResultsStore.kmCar * 100) / 100 }} km
+                  of car lanes.
                 </div>
               </h3>
               <i
@@ -159,22 +157,32 @@
               <div class="pieChartContainer">
                 <div
                   class="column"
-                  :class="{ single: !compareRunStore.compare, compare: compareRunStore.compare }"
+                  :class="{
+                    single: !compareRunStore.compare,
+                    compare: compareRunStore.compare,
+                  }"
                   style="margin: auto"
                 >
-                  <canvas class="pieChart" ref="pieChart" style="padding-right: 0px;" ></canvas>
+                  <canvas
+                    class="pieChart"
+                    ref="pieChart"
+                    style="padding-right: 0px"
+                  ></canvas>
                 </div>
 
                 <div
                   class="column"
                   v-show="compareRunStore.compare"
-                  :class="{ single: !compareRunStore.compare, compare: compareRunStore.compare }"
-                  style="padding-left: 0px;"
+                  :class="{
+                    single: !compareRunStore.compare,
+                    compare: compareRunStore.compare,
+                  }"
+                  style="padding-left: 0px"
                 >
                   <canvas
                     class="pieChart"
                     ref="pieChart2"
-                    style="padding-left: 0px;"
+                    style="padding-left: 0px"
                   ></canvas>
                 </div>
               </div>
@@ -206,17 +214,33 @@
                 style="color: var(--blue-color)"
               ></i>
             </div>
-            
+
             <div class="dropdown-eval-content" v-if="isOpenComplexity">
               <div class="pieChartContainer">
-                <div class="column" style="display: flex; justify-content: space-between;">
-                  <canvas class="pieChart" ref="pieChartComplexityBike" style="width: 45%; height: auto;"></canvas>
-                  <canvas class="pieChart" ref="pieChartComplexityCar" style="width: 45%; height: auto;"></canvas>
-        
+                <div
+                  class="column"
+                  style="display: flex; justify-content: space-between"
+                >
+                  <canvas
+                    class="pieChart"
+                    ref="pieChartComplexityBike"
+                    style="width: 45%; height: auto"
+                  ></canvas>
+                  <canvas
+                    class="pieChart"
+                    ref="pieChartComplexityCar"
+                    style="width: 45%; height: auto"
+                  ></canvas>
                 </div>
                 <div class="column" v-show="compareRunStore.compare">
-                  <canvas class="pieChart" ref="pieCharCompareComplexityBike"></canvas>
-                  <canvas class="pieChart" ref="pieChartCompareComplexityCar"></canvas>
+                  <canvas
+                    class="pieChart"
+                    ref="pieCharCompareComplexityBike"
+                  ></canvas>
+                  <canvas
+                    class="pieChart"
+                    ref="pieChartCompareComplexityCar"
+                  ></canvas>
                 </div>
               </div>
             </div>
@@ -281,7 +305,7 @@
                   </table>
                 </div>
 
-                <div class="column" v-show="compareRunStore.compare" >
+                <div class="column" v-show="compareRunStore.compare">
                   <table>
                     <tr>
                       <td colspan="2" style="text-align: center">
@@ -512,85 +536,90 @@ export default {
       this.createPieChart();
       this.createPieChartComplexity();
     },
-    
-    createPieChartComplexity(){
+
+    createPieChartComplexity() {
       this.$nextTick(() => {
-          if (this.isOpenComplexity) {
-            // get proper colors
+        if (this.isOpenComplexity) {
+          // get proper colors
           const colorsDefined = this.getColors();
 
-            
           // Bike pie chart
-          this.createSinglePieChart(Object.keys(this.ResultsStore.complexity.bike),
-              Object.values(this.ResultsStore.complexity.bike).map(value => value * 100),
-              [colorsDefined[0], colorsDefined[1]],
-              this.$refs.pieChartComplexityBike);
+          this.createSinglePieChart(
+            Object.keys(this.ResultsStore.complexity.bike),
+            Object.values(this.ResultsStore.complexity.bike).map(
+              (value) => value * 100
+            ),
+            [colorsDefined[0], colorsDefined[1]],
+            this.$refs.pieChartComplexityBike
+          );
 
-            console.log(this.compareRunStore.complexity.bike);
-          
+          console.log(this.compareRunStore.complexity.bike);
+
           // Car pie chart
-          this.createSinglePieChart(Object.keys(this.ResultsStore.complexity.car),
-              Object.values(this.ResultsStore.complexity.car).map(value => value * 100),
-              [colorsDefined[2], colorsDefined[3]],
-              this.$refs.pieChartComplexityCar);
-
+          this.createSinglePieChart(
+            Object.keys(this.ResultsStore.complexity.car),
+            Object.values(this.ResultsStore.complexity.car).map(
+              (value) => value * 100
+            ),
+            [colorsDefined[2], colorsDefined[3]],
+            this.$refs.pieChartComplexityCar
+          );
 
           if (this.compareRunStore.compare) {
-              // Bike pie chart
-              this.createSinglePieChart(Object.keys(this.compareRunStore.complexity.bike),
-                  Object.values(this.compareRunStore.complexity.bike).map(value => value * 100),
-                  [colorsDefined[0], colorsDefined[1]],
-                  this.$refs.pieCharCompareComplexityBike);
-              
-              // Car pie chart
-              this.createSinglePieChart(Object.keys(this.compareRunStore.complexity.car),
-                  Object.values(this.compareRunStore.complexity.car).map(value => value * 100),
-                  [colorsDefined[2], colorsDefined[3]],
-                  this.$refs.pieChartCompareComplexityCar);
+            // Bike pie chart
+            this.createSinglePieChart(
+              Object.keys(this.compareRunStore.complexity.bike),
+              Object.values(this.compareRunStore.complexity.bike).map(
+                (value) => value * 100
+              ),
+              [colorsDefined[0], colorsDefined[1]],
+              this.$refs.pieCharCompareComplexityBike
+            );
+
+            // Car pie chart
+            this.createSinglePieChart(
+              Object.keys(this.compareRunStore.complexity.car),
+              Object.values(this.compareRunStore.complexity.car).map(
+                (value) => value * 100
+              ),
+              [colorsDefined[2], colorsDefined[3]],
+              this.$refs.pieChartCompareComplexityCar
+            );
           }
-
-
-    
-         
-
-
-
         }
       });
     },
-    
-    createSinglePieChart(labels,dataset,colors,canvas){
+
+    createSinglePieChart(labels, dataset, colors, canvas) {
       let ctx = canvas.getContext("2d");
 
       if (canvas.chart) {
-          canvas.chart.destroy(); 
-        }
+        canvas.chart.destroy();
+      }
 
-          canvas.chart = new Chart(ctx, {
-              type: "pie",
-              data: {
-              labels: labels,
-              datasets: [
-                  {
-                  data: dataset,
-                  //backgroundColor: colors,
-                  },
-              ],
-              },
-              options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              plugins: {
-                  legend: {
-                  display: true,
-                  position: "bottom",
-                  },
-              },
-              },
-          });
-
-
-   },
+      canvas.chart = new Chart(ctx, {
+        type: "pie",
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              data: dataset,
+              //backgroundColor: colors,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: true,
+              position: "bottom",
+            },
+          },
+        },
+      });
+    },
 
     createPieChart() {
       this.$nextTick(() => {
@@ -602,10 +631,7 @@ export default {
 
           let dataset = [this.ResultsStore.kmBike, this.ResultsStore.kmCar];
           let colors = [colorsDefined[0], colorsDefined[1]];
-          let labels = [
-            `Bike`,
-            `Car`,
-          ];
+          let labels = [`Bike`, `Car`];
 
           // Check if there's already a Chart instance on this canvas
           if (canvas.chart) {
@@ -645,12 +671,12 @@ export default {
                   font: {
                     size: 18,
                   },
-                  formatter: function(value, context) {
+                  formatter: function (value, context) {
                     let sum = context.dataset.data.reduce((a, b) => a + b, 0);
-                    let percentage = value / sum * 100;
-                    return percentage.toFixed(2) + '%'; // toFixed(2) rounds to 2 decimal places
-                  }
-                }
+                    let percentage = (value / sum) * 100;
+                    return percentage.toFixed(2) + "%"; // toFixed(2) rounds to 2 decimal places
+                  },
+                },
               },
             },
           });
@@ -664,10 +690,7 @@ export default {
               this.compareRunStore.kmBike,
               this.compareRunStore.kmCar,
             ];
-            let labels2 = [
-              `Bike`,
-              `Car`,
-            ];
+            let labels2 = [`Bike`, `Car`];
             let colors2 = [colorsDefined[2], colorsDefined[3]];
 
             if (canvas2.chart) {
@@ -691,16 +714,15 @@ export default {
                 cutout: "50%",
                 title: {
                   display: true,
-
                 },
                 plugins: {
                   title: {
-                  display: true,
-                  text: `${this.compareRunStore.runName}`,
-                  font: {
-                    size: 14,
+                    display: true,
+                    text: `${this.compareRunStore.runName}`,
+                    font: {
+                      size: 14,
+                    },
                   },
-                },
                   datalabels: {
                     display: true,
                     align: "bottom",
@@ -762,10 +784,7 @@ export default {
             ) / 100;
 
           let dataValues = [relativeBikeTTChange, relativeCarTTChange];
-          let labels = [
-            `Bike_${this.ResultsStore.runName}`,
-            `Car_${this.ResultsStore.runName}`,
-          ];
+          let labels = [`Bike`, `Car`];
           let colors = [colorsDefined[0], colorsDefined[1]];
 
           // add additional data, when in comparing mode
@@ -784,10 +803,7 @@ export default {
                 ] * 100
               ) / 100
             );
-            labels.push(
-              `Bike_${this.compareRunStore.runName}`,
-              `Car_${this.compareRunStore.runName}`
-            );
+            labels.push(`Bike`, `Car`);
             colors.push(colorsDefined[2], colorsDefined[3]);
           }
 

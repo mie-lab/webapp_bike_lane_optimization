@@ -63,11 +63,6 @@ export function addDrawToMap(map, draw) {
 export function removeDrawFromMap(map, draw) {
   draw.deleteAll();
   map.removeControl(draw);
-
-  /*
-  const mapStoreInstance = mapStore();
-  mapStoreInstance.setDrawRectangle(null);
-  mapStoreInstance.setDrawPolygon(null);*/
 }
 
 export function drawRectangle() {

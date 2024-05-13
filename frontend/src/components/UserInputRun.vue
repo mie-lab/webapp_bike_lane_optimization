@@ -242,6 +242,17 @@ export default {
       this.runName = run.run_name;
       this.inputStore.setRunName(this.runName);
 
+      // create view on the map for the selected run
+      const response = await createView(
+        this.inputStore.projectID,
+        run.id_run,
+        "v_optimized"
+      );
+      loadWMS("v_optimized", "wms_optimized");
+      loadWMS("v_optimized_arrows", "wms_optimized_arrows");
+      loadWFS("v_optimized_wfs", "wfs_optimized");
+
+
       
       // create evaluation for the selected run
       const paretoEvaluation = await getPareto(
@@ -284,18 +295,8 @@ export default {
       );
       this.resultsStore.setNetworkBearing(bearingEvaluation.bike_network_bearings,bearingEvaluation.car_network_bearings);
       
-      // create view on the map for the selected run
-      const response = await createView(
-        this.inputStore.projectID,
-        run.id_run,
-        "v_optimized"
-      );
-
-      loadWMS("v_optimized", "wms_optimized");
-      loadWMS("v_optimized_arrows", "wms_optimized_arrows");
-      loadWFS("v_optimized_wfs", "wfs_optimized");
+      
     },
-    
 
     toggleUserInputNextSide() {
       this.statusStore.toggleRunPage();
