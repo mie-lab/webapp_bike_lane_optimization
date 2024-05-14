@@ -38,6 +38,8 @@
         v-model="runName"
         @input="setRunName($event.target.value)"
       />
+      <p class="missing-input" v-show="nameIsEmpty">* Enter a run name!</p>
+
       <br />
       <div class="scrollable-input-container">
       <h4 class="text-blue">Algorithm</h4>
@@ -227,6 +229,7 @@ export default {
       infoBoxTexts: infoBoxTexts,
       statusStore,
       inputStore,
+      nameIsEmpty: false,
       algorithms: [
         {
           algorithm: "optimize",
@@ -306,6 +309,15 @@ export default {
       const carWeight = this.inputStore.timeWeighting;
       const bikeSafetyPenatly = this.inputStore.bikeSafetyPenalty;
       const optimizeFrequency = this.inputStore.optimizeFrequency;
+
+
+      // check if project name is empty
+      if (this.runName == "" || this.runName == null) {
+        this.nameIsEmpty = true;
+        return;
+      }
+
+      
 
       const responseRunID = await getNewRunID(project_id);
 
@@ -455,6 +467,9 @@ export default {
   background:var(--pink-color); /* Color of the scroll thumb when hovered */
 }
 
+.text-blue {
+  margin-top: 2px;
+}
 
 
 </style>
