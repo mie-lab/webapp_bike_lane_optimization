@@ -5,6 +5,12 @@
   left: 0;
 }
 
+@media screen and (max-width: 600px) {
+  .sidebar-container {
+    display: none;
+  }
+}
+
 .navigation-bar {
   height: 100%;
   width: 50px;

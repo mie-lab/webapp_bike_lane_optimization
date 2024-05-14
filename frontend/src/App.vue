@@ -11,6 +11,7 @@
       :style="calculateBaseLayerSwitchPosition()"
     >
       <baseLayerSwitch />
+      <MobileWarning v-show="isMobile" />
     </div>
   </div>
 </template>
@@ -24,7 +25,8 @@ import DashboardVue from "./components/Dashboard.vue";
 import BaseLayerSwitch from "./components/BaseLayerSwitch.vue";
 import { statusVariablesStore } from "./stores/statusVariablesStore.js";
 import HelpDetails from "./components/HelpDetails.vue";
-import { watch, ref } from "vue";
+import MobileWarning from "./components/MobileWarning.vue";
+import { watch, ref, onMounted, onUnmounted } from "vue";
 
 if (import.meta.hot) {
   import.meta.hot.on("vite:beforeUpdate", (e) => {
@@ -61,6 +63,20 @@ const calculateBaseLayerSwitchPosition = () => {
     };
   }
 };
+
+const isMobile = ref(window.innerWidth <= 600);
+
+const updateIsMobile = () => {
+  isMobile.value = window.innerWidth <= 600;
+};
+
+onMounted(() => {
+  window.addEventListener("resize", updateIsMobile);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("resize", updateIsMobile);
+});
 </script>
 
 <style scoped>
