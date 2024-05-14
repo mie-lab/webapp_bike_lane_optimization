@@ -263,10 +263,4 @@ export default {
 .draw-square-icon-active {
   filter: invert(1);
 }
-
-.missing-input {
-  color: rgb(179, 0, 0);
-  margin: 0;
-  font-size: 12px;
-}
 </style>
