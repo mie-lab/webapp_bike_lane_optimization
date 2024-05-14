@@ -80,14 +80,14 @@
       <div class="bike-safety-penalty" style="margin-top: 35px">
         <h4 class="text-blue">
           Factor by how much the perceived bike travel time increases if cycling
-          on car lane
+          on a car lane
         </h4>
         <div class="slide-container">
           <input
             class="slider"
             type="range"
-            min="0"
-            max="10"
+            min="1"
+            max="4"
             step="0.1"
             v-model="bikeSafetyPenalty"
             @click="setBikeSafetyPenalty(bikeSafetyPenalty)"
