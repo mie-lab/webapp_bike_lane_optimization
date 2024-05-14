@@ -1,5 +1,36 @@
 <template>
-  <div class="dashboard-container">
+
+  <div class="dashboard-container" >
+    <div class="legend-container bg-lightgrey" v-show="dashboard">
+      <h2 class="legend-text">Legend</h2>
+
+      <table class="legend-table">
+        <colgroup>
+          <col style="width: 20%" />
+          <col style="width: 80%" />
+        </colgroup>
+        <tr>
+          <td>
+            <div
+              class="legend-rectangle"
+              style="background-color: var(--blue-color)"
+            ></div>
+          </td>
+          <td>Car</td>
+        </tr>
+        <tr>
+          <td>
+            <div
+              class="legend-rectangle"
+              style="background-color: var(--pink-color)"
+            ></div>
+          </td>
+          <td>Bike</td>
+        </tr>
+      </table>
+
+    </div>
+
     <!-- Dashboard Navigation -->
     <div class="dashboard-navigation bg-darkgrey" @click="toggleDashboard">
       <i
@@ -36,6 +67,7 @@
               }"
             >
               {{
+
                 compareRunStore && compareRunStore.runName
                   ? compareRunStore.runName
                   : "Compare"

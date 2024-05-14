@@ -192,7 +192,7 @@ export function createBarChart(labels, dataValues, colors, canvas) {
             labels: labels,
             datasets: [
                 {
-                    label: "Data",
+                    label: "Change in percentage of travel time",
                     data: dataValues,
                     backgroundColor: colors,
                 },

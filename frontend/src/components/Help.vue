@@ -46,35 +46,7 @@
         >
       </p>
       </div>
-      
-
-      <h2 class="legend-text">Legend</h2>
-
-      <table class="legend-table">
-        <colgroup>
-          <col style="width: 20%" />
-          <col style="width: 80%" />
-        </colgroup>
-        <tr>
-          <td>
-            <div
-              class="legend-rectangle"
-              style="background-color: var(--blue-color)"
-            ></div>
-          </td>
-          <td>Car</td>
-        </tr>
-        <tr>
-          <td>
-            <div
-              class="legend-rectangle"
-              style="background-color: var(--pink-color)"
-            ></div>
-          </td>
-          <td>Bike</td>
-        </tr>
-      </table>
-      <br></br>
+  
       
   </div>
 </div>
@@ -115,27 +87,6 @@ export default {
 
 .content {
   margin-left: 30px;
-}
-
-.legend-text {
-  margin-left: 0;
-}
-
-.legend-table {
-  text-align: left;
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 0;
-}
-
-.legend-table td {
-  padding: 5px;
-}
-
-.legend-rectangle {
-  margin-top: 4px;
-  width: 50px;
-  height: 5px;
 }
 
 .numbered-circles {
