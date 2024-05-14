@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard-container">
     <div class="legend-container bg-lightgrey" v-show="dashboard">
-      <h2 class="legend-text">Legend</h2>
+      <h3 class="legend-text">Legend</h3>
 
       <table class="legend-table">
         <colgroup>
