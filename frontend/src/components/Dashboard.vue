@@ -62,9 +62,9 @@
             </div>
           </div>
         </div>
-        <div class="dashboard-content-evaluation">
+        <div class="dashboard-content-evaluation" >
           <!-- Pareto -->
-          <div class="dropdown-evaluation" @click="toggleParetoDropdown">
+          <div class="dropdown-evaluation" @click="toggleParetoDropdown" >
             <div :class="{ 'dropdown-header': true, selected: isOpenPareto }">
               <h3>
                 Pareto
@@ -87,12 +87,12 @@
                 style="color: var(--blue-color)"
               ></i>
             </div>
-            <div class="dropdown-eval-content" v-if="isOpenPareto">
+            <div class="dropdown-eval-content" v-if="isOpenPareto" style="width: 70%; display:flex; justify-content: center; align-items: center;margin: auto;">
 
               <canvas
                 class="scatterPlotCanvas"
                 ref="scatterPlotCanvas"
-                height="150"
+                height="260"
               ></canvas>
             </div>
           </div>
@@ -208,15 +208,17 @@
             </div>
             
             <div class="dropdown-eval-content" v-if="isOpenComplexity">
-              <div class="pieChartContainer">
-                <div class="column" style="display: flex; justify-content: space-between;">
-                  <canvas class="pieChart" ref="pieChartComplexityBike" style="width: 45%; height: auto;"></canvas>
-                  <canvas class="pieChart" ref="pieChartComplexityCar" style="width: 45%; height: auto;"></canvas>
+              <div class="pieChartContainer-complexity">
+                <p v-show="compareRunStore.compare"  style="text-align: center; font-family:'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;font-size: 14px; font-weight: bold; color:#666;padding: 0px;"> {{ResultsStore.runName}}</p>
+                <div class="column-complexity">
+                  <canvas class="pieChart-complexity" ref="pieChartComplexityBike" style="width: 50%; height: 100%;"></canvas>
+                  <canvas class="pieChart-complexity" ref="pieChartComplexityCar" style="width: 50%; height: 100%;"></canvas>
         
                 </div>
-                <div class="column" v-show="compareRunStore.compare">
-                  <canvas class="pieChart" ref="pieCharCompareComplexityBike"></canvas>
-                  <canvas class="pieChart" ref="pieChartCompareComplexityCar"></canvas>
+                <p v-show="compareRunStore.compare"  style="text-align: center; font-family:'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;font-size: 14px; font-weight: bold; color:#666;padding-top: 17px;"> {{compareRunStore.runName}}</p>
+                <div class="column-complexity" v-show="compareRunStore.compare">
+                  <canvas class="pieChart" ref="pieCharCompareComplexityBike" style="width: 50%; height: 100%;"></canvas>
+                  <canvas class="pieChart" ref="pieChartCompareComplexityCar" style="width: 50%; height: 100%;"></canvas>
                 </div>
               </div>
             </div>
@@ -246,11 +248,11 @@
               ></i>
             </div>
             <div class="dropdown-eval-content" v-if="isOpenBearing">
-              <div class="pieChartContainer">
-                <div class="column" style="margin: auto">
+              <div class="pieChartContainer" style="height: 80px;">
+                <div class="column" >
                   <table>
                     <tr v-show="compareRunStore.compare">
-                      <td colspan="2" style="text-align: center">
+                      <td colspan="2" style="text-align: center; font-family:'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;font-size: 14px; font-weight: bold; color:#666;padding-bottom: 10px;">
                         {{ ResultsStore.runName }}
                       </td>
                     </tr>
@@ -284,7 +286,7 @@
                 <div class="column" v-show="compareRunStore.compare" >
                   <table>
                     <tr>
-                      <td colspan="2" style="text-align: center">
+                      <td colspan="2" style="text-align: center; font-family:'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;font-size: 14px; font-weight: bold; color:#666;padding-bottom: 10px;">
                         {{ compareRunStore.runName }}
                       </td>
                     </tr>
@@ -384,7 +386,6 @@ export default {
       filteredRuns,
       prjStore,
       compareRunStore,
-
       dashboard,
     };
   },
@@ -405,27 +406,14 @@ export default {
   },
 
   mounted() {
-    watch(
-      () => this.ResultsStore.paretoBikeTTArray,
-      (newTime, oldTime) => {}
-    );
-
-    watch(
-      () => this.ResultsStore.paretoCarTTArray,
-      (newTime, oldTime) => {}
-    );
-
-    watch(
-      [() => this.ResultsStore.kmBike, () => this.ResultsStore.kmCar],
-      ([newBikeTime, newCarTime], [oldBikeTime, oldCarTime]) => {}
-    );
+    // reload Plots when new run is selected
     watch(
       () => this.ResultsStore.runName,
       (newRunName, oldRunName) => {
         this.createScatterPlotPareto();
         this.createBarChartTT();
         this.createDoughnutChartDistances();
-       // this.createPieChartComplexity();
+        this.createPieChartComplexityAll();
       }
     );
   },
@@ -436,18 +424,7 @@ export default {
     },
     toggleComplexityDropdown() {
       this.isOpenComplexity = !this.isOpenComplexity;
-
-      this.$nextTick(() => {
-        createPieChartComplexity(
-          this.ResultsStore.complexity, 
-          this.compareRunStore.complexity, 
-          this.isOpenComplexity,
-          this.compareRunStore.compare,
-          this.$refs.pieChartComplexityBike,
-          this.$refs.pieChartComplexityCar,
-          this.$refs.pieCharCompareComplexityBike,
-          this.$refs.pieChartCompareComplexityCar);
-        });
+      this.createPieChartComplexityAll();
       },
 
     toggleTTDropdown() {
@@ -468,7 +445,7 @@ export default {
       this.createBarChartTT();
       this.createScatterPlotPareto();
       this.createDoughnutChartDistances();
-      //this.createPieChartComplexity();
+      this.createPieChartComplexityAll();
     },
 
     toggleDashboard() {
@@ -509,7 +486,7 @@ export default {
       );
       this.compareRunStore.setComplexity(
         complexityEvaluation.bike_degree_ratio,
-        complexityEvaluation.car_degree_ratio
+        complexityEvaluation.car_degree_ratios
       );
 
       // get network bearing
@@ -525,12 +502,22 @@ export default {
       this.createBarChartTT();
       this.createScatterPlotPareto();
       this.createDoughnutChartDistances();
-      //this.createPieChartComplexity();
+      this.createPieChartComplexityAll();
+    },
+
+    createPieChartComplexityAll(){
+      this.$nextTick(() => {
+        createPieChartComplexity(
+          this.ResultsStore, 
+          this.compareRunStore, 
+          this.isOpenComplexity,
+          this.$refs.pieChartComplexityBike,
+          this.$refs.pieChartComplexityCar,
+          this.$refs.pieCharCompareComplexityBike,
+          this.$refs.pieChartCompareComplexityCar);
+        });
     },
     
-    
-    
-
 
     createDoughnutChartDistances() {
       this.$nextTick(() => {
@@ -552,7 +539,6 @@ export default {
           // create the second pie chart when comparing
           if (this.compareRunStore.compare) {
             let canvas2 = this.$refs.pieChart2;
-            let ctx2 = canvas2.getContext("2d");
 
             let dataset2 = [
               this.compareRunStore.kmBike,
