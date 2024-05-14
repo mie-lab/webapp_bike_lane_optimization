@@ -4,7 +4,8 @@
   }
   .dropdown-eval-content{
     margin-bottom: 7px;
-    padding-left: 10px;
+    width: 100%;
+
   }
   .dashboard-content-evaluation{
     overflow-y: auto; 
@@ -34,6 +35,36 @@
     position: absolute;
     right: 0;
   }
+  .legend-container {
+    position: absolute;
+    bottom:  30px;
+    left: -200px; /* Attached to the left side of the container */
+    width: 160px; /* Adjust as needed */
+    height: 150px; /* Adjust as needed */
+    background-color: #d4d4d4; /* Adjust as needed */
+    padding-left: 15px;
+    border-radius: 5px;
+}
+.legend-text {
+  margin-left: 0;
+}
+
+.legend-table {
+  text-align: left;
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0;
+}
+
+.legend-table td {
+  padding: 5px;
+}
+
+.legend-rectangle {
+  margin-top: 4px;
+  width: 50px;
+  height: 5px;
+}
   
   .dashboard-navigation {
     background-color: rgba(149, 149, 149, 0.5);
@@ -53,7 +84,7 @@
   }
   
   .pieChartContainer {
-    margin: 0 auto;
+    margin: 0 0;
     align-content: center;
     display: flex;
     justify-content: center;
@@ -61,20 +92,48 @@
     position: relative;  
     height: 10%;
     width: 100%;
+  
+  }
+  .pieChartContainer-complexity{
+    margin: 0 auto;
+    align-content: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;  
+    height: 20%;
+    width: 100%;
+
+    flex-direction: column;
+  }
+  .column-complexity{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin: auto;
+    height: 170px;
+  }
+  .pieChart-complexity{
+    width: 40%;
+    height: 40%;
   }
   .pieChart{
     width: 20%;
     height: 20%;
 
   }
-  .column {
+  .column  {
     display: flex;
     justify-content: center;
     align-items: center;
     width: 100%;
-    margin: auto;
+    padding-top: 0px;
     height: 166px;
+   
   }
+
+  
   .column p {
     margin: 0 auto;
   }
@@ -89,13 +148,14 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 13px;
   }
   /* Dropdown styles */
   .dropdown {
     position: relative;
     display: inline-block;
     align-items: center;
-    margin-right: 30px;
+    margin-right: 0px;
   }
   
   .dropdown-content {
@@ -153,9 +213,12 @@
     border: 2px solid var(--blue-color);
     color: var(--blue-color);
     background-color: transparent;
-    padding: 5px;
+    padding-top: 5px;
+    padding-bottom: 5px;
     padding-right: 40px;
     padding-left: 10px;
+
+    margin: 0px;
   }
   
   .small-icon {

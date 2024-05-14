@@ -285,7 +285,7 @@ export default {
       );
       this.resultsStore.setComplexity(
         complexityEvaluation.bike_degree_ratio,
-        complexityEvaluation.car_degree_ratio
+        complexityEvaluation.car_degree_ratios
       );
 
       // get network bearing
