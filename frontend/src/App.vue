@@ -64,12 +64,11 @@ const calculateBaseLayerSwitchPosition = () => {
   }
 };
 
-const isMobile = ref(window.innerWidth <= 600);
+const isMobile = ref(window.innerHeight <= 600);
 
 const updateIsMobile = () => {
-  isMobile.value = window.innerWidth <= 600;
+  isMobile.value = window.innerHeight <= 600;
 };
-
 onMounted(() => {
   window.addEventListener("resize", updateIsMobile);
 });

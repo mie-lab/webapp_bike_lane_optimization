@@ -3,8 +3,8 @@
     <div class="inner-container">
       <h1 class="warning">Welcome!</h1>
       <h2 class="h2-warning">
-        This page is not developed for mobile screens. Please visit on a
-        computer screen.
+        This page is not developed for vertical mobile screens. Please visit on
+        a computer screen or rotate your phone.
       </h2>
       <img :src="warningImage" alt="Warning" class="warning-image" />
     </div>
@@ -53,7 +53,7 @@ import warningImage from "../assets/warning5.png";
     width: 0;
   }
   100% {
-    width: 100%;
+    width: 40%;
   }
 }
 </style>

@@ -77,6 +77,12 @@
   cursor: pointer;
 }
 
+@media screen and (max-height: 600px) {
+  .dashboard-container {
+    display: none;
+  }
+}
+
 .dashboard-content {
   flex-grow: 1;
   width: 500px;
