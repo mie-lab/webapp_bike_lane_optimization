@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="parent-container">
     <button class="close-btn" @click="toggleTabsVisibility">
       <i class="fa-solid fa-times" style="font-size: 20px"></i>
     </button>
@@ -78,5 +78,7 @@ export default {
 
 <style scoped>
 @import "../styles/UserInputStyles.css";
+@import "../styles/UserInputStylesMobile.css";
 @import "../styles/SideBarStyle.css";
+@import "../styles/SideBarStyleMobile.css";
 </style>

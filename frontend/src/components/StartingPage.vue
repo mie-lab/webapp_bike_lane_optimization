@@ -1,5 +1,5 @@
 <template>
-  <div class="mobile-warning">
+  <div class="starting-page">
     <div class="inner-container">
       <h1 class="warning">Welcome to E-BIKE CITY</h1>
       <h2 class="h2-warning"></h2>
@@ -36,7 +36,7 @@ export default {
 };
 </script>
 <style scoped>
-.mobile-warning {
+.starting-page {
   position: fixed;
   top: 0;
   left: 0;

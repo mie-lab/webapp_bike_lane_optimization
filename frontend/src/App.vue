@@ -2,7 +2,7 @@
   <div class="container">
     <div class="sidebar-container"><SideBar /></div>
     <div class="map-container"><MapVue /></div>
-    <div class="dashboard-container"><DashboardVue /></div>
+    <div class="dashboard-container-outer"><DashboardVue /></div>
     <div class="help-details-container" v-show="isHelpDetailsVisible">
       <HelpDetails />
     </div>

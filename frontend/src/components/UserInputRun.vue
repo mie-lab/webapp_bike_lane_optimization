@@ -339,7 +339,9 @@ export default {
 
 <style scoped>
 @import "../styles/UserInputStyles.css";
+@import "../styles/UserInputStylesMobile.css";
 @import "../styles/SideBarStyle.css";
+@import "../styles/SideBarStyleMobile.css";
 @import "../styles/UserInputRunStyle.css";
 .selected {
   color: var(--pink-color);

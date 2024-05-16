@@ -34,8 +34,8 @@
       <i
         :class="
           statusStore.dashboard
-            ? 'fa-solid fa-angle-right'
-            : 'fa-solid fa-angle-left'
+            ? 'fa-solid fa-angle-right dashboard-angle-icon'
+            : 'fa-solid fa-angle-left dashboard-angle-icon'
         "
       ></i>
     </div>
@@ -285,7 +285,8 @@
                   v-show="compareRunStore.compare"
                   style="
                     text-align: center;
-                    font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+                    font-family: &quot;Helvetica Neue&quot;,
+                      &quot;Helvetica&quot;, &quot;Arial&quot;, sans-serif;
                     font-size: 14px;
                     font-weight: bold;
                     color: #666;
@@ -386,7 +387,8 @@
                         colspan="2"
                         style="
                           text-align: center;
-                          font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+                          font-family: &quot;Helvetica Neue&quot;,
+                            &quot;Helvetica&quot;, &quot;Arial&quot;, sans-serif;
                           font-size: 14px;
                           font-weight: bold;
                           color: #666;
@@ -785,4 +787,5 @@ export default {
 
 <style scoped>
 @import "../styles/dashboardStyle.css";
+@import "../styles/dashboardStyleMobile.css";
 </style>

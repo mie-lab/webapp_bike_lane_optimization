@@ -1,0 +1,166 @@
+@media screen and (max-width: 600px) {
+  .parent-container {
+    width: 100vw;
+  }
+
+  .slide-container {
+    margin-right: 20px;
+  }
+
+  .slider:hover {
+    opacity: 1;
+    cursor: pointer;
+  }
+
+  .slider {
+    width: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 8px;
+    background: var(--darkgrey-bg);
+    border-radius: 5px;
+    outline: none;
+  }
+
+  .slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    background: var(--pink-color);
+    border-radius: 50%;
+    cursor: pointer;
+  }
+
+  .slider:hover::-webkit-slider-thumb {
+    background: var(--pink-color);
+  }
+
+  .slider:active::-webkit-slider-thumb {
+    background: var(--blue-color);
+  }
+
+  .enablerectangle {
+    background-color: var(--pink-bright);
+  }
+
+  .disablerectangle {
+    background-color: var(--pink-color);
+  }
+
+  .enablepolygon {
+    background-color: var(--pink-bright);
+  }
+
+  .disablepolygon {
+    background-color: var(--pink-color);
+  }
+
+  .button-container {
+    display: flex;
+  }
+
+  .draw-button {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+    padding: 0%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .draw-square-icon {
+    width: 15px;
+    height: 15px;
+    cursor: pointer;
+  }
+
+  .project-name-input {
+    width: 95%;
+    height: 15px;
+    display: flex;
+    border: 1.5px solid var(--darkgrey-bg);
+    border-radius: 8px;
+    background-color: var(--lightgrey-bg);
+    color: var(--darkgrey-2-bg);
+    padding: 5px;
+  }
+
+  .user-input-container {
+    margin-left: 5vw;
+    margin-right: 5vw;
+  }
+
+  .info-text {
+    padding-bottom: 15px;
+  }
+
+  .text-pink {
+    color: var(--pink-color);
+    padding-top: 80px;
+    text-align: left;
+    margin-left: 5vw;
+  }
+  .text-blue {
+    color: var(--blue-color);
+  }
+  .bg-lightgrey {
+    background-color: var(--lightgrey-bg);
+  }
+  .bg-darkgrey {
+    background-color: var(--darkgrey-bg);
+  }
+
+  .divider {
+    height: 1px;
+    background-color: var(--darkgrey-bg);
+    border: none;
+    margin-top: 5px;
+  }
+
+  .divider-big {
+    height: 2px;
+    background-color: var(--darkgrey-bg);
+    border: none;
+    margin-top: 15px;
+  }
+
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
+
+  li {
+    color: var(--darkgrey-2-bg);
+    margin-bottom: 5px;
+    cursor: pointer;
+    margin-left: 0%;
+  }
+
+  .project-list {
+    width: 100%;
+    margin-left: 0px;
+    max-height: 250px;
+    overflow-y: scroll;
+    position: relative; /* Ensure relative positioning */
+    padding-right: 4px;
+  }
+
+  /* Adjust the scrollbar position */
+  .project-list::-webkit-scrollbar {
+    background-color: #0000;
+    width: 8px;
+    position: absolute;
+  }
+
+  /* Rest of your scrollbar styles */
+  .project-list::-webkit-scrollbar-thumb {
+    background-color: var(--darkgrey-bg);
+    border-radius: 5px;
+  }
+
+  .project-list::-webkit-scrollbar-thumb:hover {
+    background: var(--pink-color);
+  }
+}

@@ -1,0 +1,39 @@
+@media screen and (max-width: 600px) {
+  .container {
+    display: flex;
+    position: absolute;
+    justify-content: space-between;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    overflow: hidden;
+  }
+
+  .map-container {
+    width: 100%;
+    background-color: #f0f0f0;
+    position: relative; /* Ensure relative positioning */
+    z-index: 0;
+  }
+  .sidebar-container {
+    position: relative;
+    z-index: 1;
+  }
+
+  .help-details-container {
+    z-index: 999;
+    position: absolute;
+    left: 50px;
+    background-color: var(--lightgrey-bg);
+    width: calc(100% - 50px);
+    height: 100%;
+  }
+
+  .base-layer-switch-container {
+    z-index: 999;
+    /* Adjust top, left, right, and bottom values as needed */
+    top: 20px;
+    left: 70px;
+  }
+}

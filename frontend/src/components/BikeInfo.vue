@@ -44,6 +44,7 @@ export default {
 
 <style scoped>
 @import "../styles/SideBarStyle.css";
+@import "../styles/SideBarStyleMobile.css";
 
 .justified-text {
   text-align: justify;

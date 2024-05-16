@@ -151,4 +151,5 @@ export default {
 
 <style scoped>
 @import "../styles/SideBarStyle.css";
+@import "../styles/SideBarStyleMobile.css";
 </style>
