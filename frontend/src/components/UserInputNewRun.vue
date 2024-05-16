@@ -38,11 +38,13 @@
         v-model="runName"
         @input="setRunName($event.target.value)"
       />
-      <p class="missing-input" v-show="nameIsEmpty">* Enter a run name!</p>
+      <p class="missing-input" v-show="nameIsEmpty">* Enter a run name</p>
 
       <br />
       <div class="scrollable-input-container">
       <h4 class="text-blue"><i class="fa-solid fa-gears"></i> Algorithm</h4>
+      
+
       <div class="dropdown" ref="dropdown" @click="toggleDropdown">
         <button
           class="dropbtn"
@@ -63,6 +65,7 @@
           >
         </div>
       </div>
+      <p class="missing-input" v-show="algorithmIsEmtpy">* Select an Algorithm</p>
 
       <div class="bike-ratio" style="margin-top: 35px">
         <h4 class="text-blue"><i class="fa-solid fa-bicycle"></i> How many lanes should become bike lanes?</h4>
@@ -233,13 +236,14 @@ export default {
       size: "25px",
       isLoading: false,
       isOpen: false,
-      selectedOption: null,
+      selectedOption: "",
       showInfoBox: false,
       infoBoxTexts: infoBoxTexts,
       statusStore,
       inputStore,
       prjStore,
       nameIsEmpty: false,
+      algorithmIsEmtpy: false,
       calculationTime: null,
       algorithms: [
         {
@@ -326,6 +330,8 @@ export default {
       const carWeight = this.inputStore.timeWeighting;
       const bikeSafetyPenatly = this.inputStore.bikeSafetyPenalty;
       const optimizeFrequency = this.inputStore.optimizeFrequency;
+      var carWeightString = carWeight.toString();
+      var optimizeFrequencyString = optimizeFrequency.toString();
 
 
       // check if project name is empty
@@ -333,6 +339,19 @@ export default {
         this.nameIsEmpty = true;
         return;
       }
+
+      console.log("Algorithm: ", algorithm);
+
+      if (this.selectedOption == "" || this.selectedOption === null) {
+        this.algorithmIsEmtpy = true;
+        return;
+      }
+
+      // Set car_weight and optimize_frequency to "-" if algorithm is BB or BC
+    if (algorithm === "betweenness_biketime" || algorithm === "betweenness_cartime") {
+        carWeightString = " - ";
+        optimizeFrequencyString = " - ";
+    }
 
       
 
@@ -343,9 +362,9 @@ export default {
         name: this.runName,
         algorithm: algorithm,
         bike_ratio: bikeRatio,
-        car_weight: carWeight,
+        car_weight: carWeightString,
         bike_safety_penalty: bikeSafetyPenatly,
-        optimize_frequency: optimizeFrequency,
+        optimize_frequency: optimizeFrequencyString,
         status: "pending",
       });
 

@@ -45,9 +45,7 @@ export async function loadWFS(layerID, layerSource) {
       return await fetch(wfsURL);
     })();
 
-    console.log(response);
     const data = await response.json();
-    console.log(data.features);
 
     // Convert GeoJSON coordinates from LV95 to WGS84
     const features = data.features.map((feature) => {
