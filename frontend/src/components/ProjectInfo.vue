@@ -5,7 +5,7 @@
     </button>
     <h1 class="text-pink">Project Info</h1>
     <div class="sidebar-content-container">
-      <p class="text-blue">Project info goes here</p>
+      <p class="info-text">Project info goes here</p>
     </div>
   </div>
 </template>

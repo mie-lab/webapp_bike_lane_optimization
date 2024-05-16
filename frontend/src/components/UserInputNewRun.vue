@@ -164,7 +164,7 @@
 import { runOptimization } from "../scripts/api.js";
 import { userInputStore } from "../stores/userInputStore.js";
 import { statusVariablesStore } from "../stores/statusVariablesStore.js";
-import { useResultsStore } from "../stores/algorithmResultsStore.js";
+import { useResultsStore } from "../stores/runResultsStore.js";
 import { projectsStore } from "../stores/projectsStore.js";
 import { runningProcessStore } from "../stores/processListStore.js";
 import RingLoader from "vue-spinner/src/RingLoader.vue";
@@ -172,7 +172,7 @@ import { ref } from "vue";
 import { createView, getRunList, getNewRunID } from "../scripts/api.js";
 import { loadWMS } from "../scripts/map.js";
 import ProcessList from "./ProcessList.vue";
-import { infoBoxTexts } from "../scripts/infoBoxText.js";
+import { infoBoxTexts } from "../strings/infoBoxText.js";
 
 export default {
   name: "UserInputNewRun",

@@ -136,7 +136,7 @@
 <script>
 import { userInputStore } from "../stores/userInputStore.js";
 import { statusVariablesStore } from "../stores/statusVariablesStore.js";
-import { useResultsStore } from "../stores/algorithmResultsStore.js";
+import { useResultsStore } from "../stores/runResultsStore.js";
 import { projectsStore } from "../stores/projectsStore.js";
 import RingLoader from "vue-spinner/src/RingLoader.vue";
 import { ref, watch , computed} from "vue";
@@ -150,7 +150,7 @@ import {
 } from "../scripts/api.js";
 import { loadWFS, loadWMS } from "../scripts/map.js";
 import UserInputNewRun from "./UserInputNewRun.vue";
-import { useCompareRunEvaluation } from "../stores/compareRunStore.js";
+import { useCompareRunEvaluation } from "../stores/compareRunResultStore.js";
 
 export default {
   name: "UserInputRun",

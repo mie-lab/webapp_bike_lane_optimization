@@ -260,8 +260,7 @@
                   v-show="compareRunStore.compare"
                   style="
                     text-align: center;
-                    font-family: &quot;Helvetica Neue&quot;,
-                      &quot;Helvetica&quot;, &quot;Arial&quot;, sans-serif;
+                    font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
                     font-size: 14px;
                     font-weight: bold;
                     color: #666;
@@ -286,8 +285,7 @@
                   v-show="compareRunStore.compare"
                   style="
                     text-align: center;
-                    font-family: &quot;Helvetica Neue&quot;,
-                      &quot;Helvetica&quot;, &quot;Arial&quot;, sans-serif;
+                    font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
                     font-size: 14px;
                     font-weight: bold;
                     color: #666;
@@ -344,8 +342,7 @@
                         colspan="2"
                         style="
                           text-align: center;
-                          font-family: &quot;Helvetica Neue&quot;,
-                            &quot;Helvetica&quot;, &quot;Arial&quot;, sans-serif;
+                          font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
                           font-size: 14px;
                           font-weight: bold;
                           color: #666;
@@ -389,8 +386,7 @@
                         colspan="2"
                         style="
                           text-align: center;
-                          font-family: &quot;Helvetica Neue&quot;,
-                            &quot;Helvetica&quot;, &quot;Arial&quot;, sans-serif;
+                          font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
                           font-size: 14px;
                           font-weight: bold;
                           color: #666;
@@ -438,11 +434,11 @@
 <script>
 import Chart from "chart.js/auto";
 import "chartjs-plugin-datalabels";
-import { useResultsStore } from "../stores/algorithmResultsStore.js";
+import { useResultsStore } from "../stores/runResultsStore.js";
 import { statusVariablesStore } from "../stores/statusVariablesStore.js";
 import { userInputStore } from "../stores/userInputStore.js";
 import { projectsStore } from "../stores/projectsStore.js";
-import { useCompareRunEvaluation } from "../stores/compareRunStore.js";
+import { useCompareRunEvaluation } from "../stores/compareRunResultStore.js";
 import { ref, watch } from "vue";
 import {
   getPareto,

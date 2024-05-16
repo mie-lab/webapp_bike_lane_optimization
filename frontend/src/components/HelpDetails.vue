@@ -15,7 +15,7 @@
 
 <script>
 import { watch } from "vue";
-import { helpText } from "../scripts/helpText.js";
+import { helpText } from "../strings/helpText.js";
 import { statusVariablesStore } from "../stores/statusVariablesStore.js";
 export default {
   name: "HelpDetails",

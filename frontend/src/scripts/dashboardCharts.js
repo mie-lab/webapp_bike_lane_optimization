@@ -3,15 +3,15 @@ import Chart from "chart.js/auto";
 export function createPieChartComplexity(resultStore,compareRunStore,isOpenComplexity,canvasBike,canvasCar,canvasCompareBike,canvasCompareCar){
   let purpleShades = [
     '#da5268', // Original color
-    '#daa068',
+    '#DB6668',
     '#da5868', 
-    '#da9a68', 
+    '#D3667C', 
     '#da5e68', 
-    '#da9468', 
+    '#B74F7C', 
     '#da6468',
-    '#da8e68', 
+    '#B7709D', 
     '#da6a68', 
-    '#da7068', 
+    '#B77076', 
     '#da7668',
     '#da8868', 
     '#da8268', 
@@ -74,40 +74,64 @@ export function createPieChartComplexity(resultStore,compareRunStore,isOpenCompl
     ];
 
         if (isOpenComplexity) {
-          
+            let {dataset,labels} = filter10NodeDegree(resultStore.complexity.bike);
             // Bike pie chart
-            createSinglePieChart(Object.keys(resultStore.complexity.bike).map(value => value +" degree intersections"),
-                Object.values(resultStore.complexity.bike).map(value => value * 100),
-                canvasBike,
-                "Bike Complexity",
-                purpleShades);
-            
+            createSinglePieChart(
+              labels,
+              dataset,
+              canvasBike,
+              "Bike Network",
+              purpleShades
+            );
+
+
+            let {dataset: carDataset, labels: carLabels} = filter10NodeDegree(resultStore.complexity.car);
             // Car pie chart
-               createSinglePieChart(Object.keys(resultStore.complexity.car).map(value => value +" degree intersections"),
-                Object.values(resultStore.complexity.car).map(value => value * 100),
-                canvasCar,
-                "Car Complexity",
-                blueShades);
+            createSinglePieChart(
+              carLabels,
+              carDataset,
+              canvasCar,
+              "Car Network",
+              blueShades
+            );
 
 
             if (compareRunStore.compare) {
+                let {dataset: compareBikeDataset, labels: compareBikeLabels} = filter10NodeDegree(compareRunStore.complexity.bike);
                 // Bike pie chart
-                createSinglePieChart(Object.keys(compareRunStore.complexity.bike).map(value => value +" degree intersections"),
-                    Object.values(compareRunStore.complexity.bike).map(value => value * 100),
+                createSinglePieChart(
+                    compareBikeLabels,
+                    compareBikeDataset,
                     canvasCompareBike,
-                    "Bike Complexity",
+                    "Bike Network",
                     lightGreenShades);
                 
+                let {dataset: compareCarDataset, labels: compareCarLabels} = filter10NodeDegree(compareRunStore.complexity.car);
                 // Car pie chart
-                createSinglePieChart(Object.keys(compareRunStore.complexity.car).map(value => value +" degree intersections"),
-                    Object.values(compareRunStore.complexity.car).map(value => value * 100),
+                createSinglePieChart(
+                    compareCarLabels,
+                    compareCarDataset,
                     canvasCompareCar,
-                    "Car Complexity",
+                    "Car Network",
                     darkGreenShades);
             }
         }
 
 };
+
+function filter10NodeDegree(data) {
+  // filters out all to complex intersection percentages that have a higer node degree than 10
+  let keys = Object.keys(data);
+  let values = Object.values(data);
+
+  let filteredKeys = keys.filter((key) => parseInt(key) <= 10);
+  let filteredValues = values.filter((value, index) => parseInt(keys[index]) <= 10);
+
+  let dataset = filteredValues.map(value => (value * 100).toFixed(1));
+  let labels = filteredKeys.map(value => value + " degree intersections");
+
+  return { dataset, labels };
+}
 
 function createSinglePieChart(labels,dataset,canvas,chartTitle,colorShades){
     let ctx = canvas.getContext("2d");
@@ -200,7 +224,7 @@ export function createBarChart(labels, dataValues, colors, canvas) {
             datasets: [
                 {
                     label: "Change in percentage of travel time",
-                    data: dataValues,
+                    data: dataValues.map(value => parseFloat(value.toFixed(1))), // round to 1 decimal
                     backgroundColor: colors,
                 },
             ],
@@ -251,7 +275,7 @@ export function createDoughnutChart(labels, dataset, colors, canvas, chartTitle)
                 {
                   label: "[km]",
                   backgroundColor: colors,
-                  data: dataset,
+                  data: dataset.map(value => parseFloat(value.toFixed(1))), // round to 1 decimal
                 },
             ],
         },
