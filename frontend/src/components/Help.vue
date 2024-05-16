@@ -54,7 +54,7 @@
 
 <script>
 import { statusVariablesStore } from "../stores/statusVariablesStore.js";
-import { helpText } from "../scripts/helpText.js";
+import { helpText } from "../strings/helpText.js";
 
 export default {
   name: "Help",

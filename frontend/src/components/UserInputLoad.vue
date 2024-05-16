@@ -80,7 +80,7 @@ import { createView, getRunList, getProjectList } from "../scripts/api.js";
 import { storeToRefs } from "pinia";
 import RingLoader from "vue-spinner/src/RingLoader.vue";
 import { remove } from "ol/array";
-import { useResultsStore } from "../stores/algorithmResultsStore.js";
+import { useResultsStore } from "../stores/runResultsStore.js";
 
 export default {
   name: "UserInputLoad",
