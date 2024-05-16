@@ -12,7 +12,7 @@
 </template>
 
 <script setup>
-import warningImage from "../assets/warning5.png";
+import warningImage from "../assets/ebikecity_logo.png";
 </script>
 
 <style scoped>

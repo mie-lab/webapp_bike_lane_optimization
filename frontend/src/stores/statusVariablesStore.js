@@ -12,6 +12,7 @@ export const statusVariablesStore = defineStore("statusVariables", {
     createNewRunPage: false,
     processList: false,
     helpDetailsPage: false,
+    startingPage: false,
   }),
   actions: {
     toggleCreateNewRunPage() {
@@ -69,6 +70,9 @@ export const statusVariablesStore = defineStore("statusVariables", {
     },
     setDrawingRectangle(enabled) {
       this.drawingRectangleEnabled = enabled;
+    },
+    toggleStartingPage() {
+      this.startingPage = !this.startingPage;
     },
   },
 });

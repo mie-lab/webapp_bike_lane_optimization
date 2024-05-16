@@ -12,6 +12,9 @@
     >
       <baseLayerSwitch />
       <MobileWarning v-show="isMobile" />
+      <div v-show="isStartingPageVisible">
+        <StartingPage v-show="!isMobile" />
+      </div>
     </div>
   </div>
 </template>
@@ -26,6 +29,7 @@ import BaseLayerSwitch from "./components/BaseLayerSwitch.vue";
 import { statusVariablesStore } from "./stores/statusVariablesStore.js";
 import HelpDetails from "./components/HelpDetails.vue";
 import MobileWarning from "./components/MobileWarning.vue";
+import StartingPage from "./components/StartingPage.vue";
 import { watch, ref, onMounted, onUnmounted } from "vue";
 
 if (import.meta.hot) {
@@ -37,11 +41,19 @@ if (import.meta.hot) {
 
 const statusStore = statusVariablesStore();
 const isHelpDetailsVisible = ref(false);
+const isStartingPageVisible = ref(true);
 watch(
   () => statusStore.helpDetailsPage,
   (newProcesses, oldProcesses) => {
     console.log("Open help details");
     isHelpDetailsVisible.value = !isHelpDetailsVisible.value;
+  }
+);
+
+watch(
+  () => statusStore.startingPage,
+  (newProcesses, oldProcesses) => {
+    isStartingPageVisible.value = !isStartingPageVisible.value;
   }
 );
 
