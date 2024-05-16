@@ -6,7 +6,7 @@ export const projectsStore = defineStore("projects", {
   state: () => ({
     projects: [],
     runs: [],
-    selectedRun:null,
+    selectedRun: null,
   }),
   actions: {
     setProjects(projects) {
@@ -17,6 +17,15 @@ export const projectsStore = defineStore("projects", {
     },
     setSelectedRun(run) {
       this.selectedRun = run;
+    },
+  },
+
+  getters: {
+    getRuntimeMin: (state) => (projectId) => {
+      const project = state.projects.projects.find(
+        (project) => project.id === projectId
+      );
+      return project ? project.runtime_min : null;
     },
   },
 });

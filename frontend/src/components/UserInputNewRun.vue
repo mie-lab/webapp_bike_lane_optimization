@@ -42,7 +42,7 @@
 
       <br />
       <div class="scrollable-input-container">
-      <h4 class="text-blue">Algorithm</h4>
+      <h4 class="text-blue"><i class="fa-solid fa-gears"></i> Algorithm</h4>
       <div class="dropdown" ref="dropdown" @click="toggleDropdown">
         <button
           class="dropbtn"
@@ -65,7 +65,7 @@
       </div>
 
       <div class="bike-ratio" style="margin-top: 35px">
-        <h4 class="text-blue">How many lanes should become bike lanes?</h4>
+        <h4 class="text-blue"><i class="fa-solid fa-bicycle"></i> How many lanes should become bike lanes?</h4>
         <div class="slide-container">
           <input
             class="slider"
@@ -80,7 +80,7 @@
       </div>
 
       <div class="bike-safety-penalty" style="margin-top: 35px">
-        <h4 class="text-blue">
+        <h4 class="text-blue"><i class="fa-solid fa-shield-heart"></i> 
           Factor by how much the perceived bike travel time increases if cycling
           on a car lane
         </h4>
@@ -103,7 +103,7 @@
         v-if="selectedOption && selectedOption.algorithm === 'optimize'"
         style="margin-top: 35px"
       >
-        <h4 class="text-blue">
+        <h4 class="text-blue"><i class="fa-solid fa-car"></i> 
           What should be the importance of the car travel time
         </h4>
         <div class="slide-container">
@@ -125,7 +125,7 @@
         v-if="selectedOption && selectedOption.algorithm === 'optimize'"
         style="margin-top: 35px"
       >
-        <h4 class="text-blue">How often to re-run the optimization</h4>
+        <h4 class="text-blue"><i class="fa-solid fa-arrow-up-short-wide"></i> How often to re-run the optimization</h4>
         <div class="slide-container">
           <input
             class="slider"
@@ -140,8 +140,13 @@
       </div>
 
       <br />
+      <div>
+      <h4 class="text-blue">Expected calculation time: {{runtimeMin}}s</h4>
     </div>
 
+    </div>
+
+    
       
       
       
@@ -165,10 +170,10 @@ import { runOptimization } from "../scripts/api.js";
 import { userInputStore } from "../stores/userInputStore.js";
 import { statusVariablesStore } from "../stores/statusVariablesStore.js";
 import { useResultsStore } from "../stores/algorithmResultsStore.js";
-import { projectsStore } from "../stores/projectsStore.js";
+import { projectsStore} from "../stores/projectsStore.js";
 import { runningProcessStore } from "../stores/processListStore.js";
 import RingLoader from "vue-spinner/src/RingLoader.vue";
-import { ref } from "vue";
+import { ref , computed} from "vue";
 import { createView, getRunList, getNewRunID } from "../scripts/api.js";
 import { loadWMS } from "../scripts/map.js";
 import ProcessList from "./ProcessList.vue";
@@ -186,6 +191,8 @@ export default {
     const resultsStore = useResultsStore();
     const prjStore = projectsStore();
     const processStore = runningProcessStore();
+    const projectId = inputStore.projectID;
+    const runtimeMin = computed(() => prjStore.getRuntimeMin(projectId))
 
     var filteredRuns = prjStore.runs.runs;
     const runs = ref([]);
@@ -206,11 +213,13 @@ export default {
       filteredRuns,
       updateRuns,
       processStore,
+      runtimeMin
     };
   },
   data() {
     const inputStore = userInputStore();
     const statusStore = statusVariablesStore();
+    const prjStore = projectsStore();
     return {
       timeWeighting: 0.7,
       laneAllocation: 10,
@@ -229,7 +238,9 @@ export default {
       infoBoxTexts: infoBoxTexts,
       statusStore,
       inputStore,
+      prjStore,
       nameIsEmpty: false,
+      calculationTime: null,
       algorithms: [
         {
           algorithm: "optimize",
@@ -266,6 +277,8 @@ export default {
       this.isLoading = false;
     },
 
+    
+
     toggleActiveTab(tab) {
       const storedTab = this.activeTab;
       if (tab == storedTab) {
@@ -278,7 +291,9 @@ export default {
       
       this.statusStore.toggleRunPage();
     },
-    toggleUserInputPreviousSide() {
+    async toggleUserInputPreviousSide() {
+      const response = await getRunList(this.inputStore.projectID);
+      this.prjStore.setRuns(response);
       this.statusStore.toggleCreateNewRunPage();
 
     },
@@ -303,6 +318,8 @@ export default {
 
 
     async callOptimization() {
+      const startTime = performance.now();
+
       const project_id = this.inputStore.projectID;
       const algorithm = this.inputStore.algorithm;
       const bikeRatio = this.inputStore.laneAllocation;
@@ -355,6 +372,9 @@ export default {
       } finally {
         this.processStore.markProcessAsDone(responseRunID.run_id);
       }
+      const endTime = performance.now();
+      this.calculationTime = endTime - startTime;
+      console.log("Calculation time: ", this.calculationTime);
     },
 
     toggleDropdown() {

@@ -77,25 +77,25 @@
                   <tr>
                       <td><i class="fa-solid fa-gears"></i></td>
                       <td>Algorithm</td>
-                      <td class="bold">BC</td> <!--{{ convertAlgName(run.algorithm) }}-->
+                      <td class="bold">{{ convertAlgName(run.algorithm) }}</td> 
                     </tr>
                     
                     <tr>
                       <td><i class="fa-solid fa-bicycle"></i></td>
                       <td>Bike ratio</td>
-                      <td class="bold">{{ run.bike_ratio }}</td>
+                      <td class="bold">{{ run.bike_ratio * 100 }}%</td>
                     </tr>
                     <tr>
                       <td><i class="fa-solid fa-shield-heart"></i></td>
                       <td>Safety penalty</td>
                       <td class="bold">{{ run.bike_safety_penalty }}</td>
                     </tr>
-                    <tr v-if="convertAlgName(run.algorithm) === 'BC'">
+                    <tr v-if="convertAlgName(run.algorithm) === 'O'">
                       <td><i class="fa-solid fa-car"></i></td>
                       <td>Car weight:</td>
                       <td class="bold">{{ run.car_weight }}</td>
                     </tr>
-                    <tr v-if="convertAlgName(run.algorithm) === 'BC'">
+                    <tr v-if="convertAlgName(run.algorithm) === 'O'">
                       <td><i class="fa-solid fa-arrow-up-short-wide"></i></td>
                       <td>Optimize Frequency</td>
                       <td class="bold">{{ run.optimize_frequency }}</td>
