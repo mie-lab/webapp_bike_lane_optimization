@@ -24,11 +24,11 @@
       <h4 class="text-blue">
         Run name
         <i
-          class="fa-regular fa-circle-question"
-          @mouseover="showInfoBox = true"
-          @mouseleave="showInfoBox = false"
+          class="fa-regular fa-circle-question help-icon" 
+          @mouseover="showInfoBoxName = true"
+          @mouseleave="showInfoBoxName = false"
         ></i>
-        <div v-show="showInfoBox" class="info-box">
+        <div v-show="showInfoBoxName" class="info-box">
           {{ infoBoxTexts.run_name }}
         </div>
       </h4>
@@ -42,7 +42,14 @@
 
       <br />
       <div class="scrollable-input-container">
-      <h4 class="text-blue"><i class="fa-solid fa-gears"></i> Algorithm</h4>
+      <h4 class="text-blue"><i class="fa-solid fa-gears "></i> Algorithm <i
+          class="fa-regular fa-circle-question help-icon"
+          @mouseover="showInfoBoxAlgorithm = true"
+          @mouseleave="showInfoBoxAlgorithm = false"
+        ></i>
+        <div v-show="showInfoBoxAlgorithm" class="info-box">
+          {{ infoBoxTexts.run_algorithm }}
+        </div></h4>
       
 
       <div class="dropdown" ref="dropdown" @click="toggleDropdown">
@@ -68,7 +75,14 @@
       <p class="missing-input" v-show="algorithmIsEmtpy">* Select an Algorithm</p>
 
       <div class="bike-ratio" style="margin-top: 35px">
-        <h4 class="text-blue"><i class="fa-solid fa-bicycle"></i> How many lanes should become bike lanes?</h4>
+        <h4 class="text-blue"><i class="fa-solid fa-bicycle"></i> How many lanes should become bike lanes? <i
+          class="fa-regular fa-circle-question help-icon"
+          @mouseover="showInfoBoxBikeRatio = true"
+          @mouseleave="showInfoBoxBikeRatio = false"
+        ></i>
+        <div v-show="showInfoBoxBikeRatio" class="info-box">
+          {{ infoBoxTexts.run_bike_ratio }}
+        </div></h4>
         <div class="slide-container">
           <input
             class="slider"
@@ -85,7 +99,14 @@
       <div class="bike-safety-penalty" style="margin-top: 35px">
         <h4 class="text-blue"><i class="fa-solid fa-shield-heart"></i> 
           Factor by how much the perceived bike travel time increases if cycling
-          on a car lane
+          on a car lane <i
+          class="fa-regular fa-circle-question help-icon"
+          @mouseover="showInfoBoxSafetyPenalty = true"
+          @mouseleave="showInfoBoxSafetyPenalty = false"
+        ></i>
+        <div v-show="showInfoBoxSafetyPenalty" class="info-box">
+          {{ infoBoxTexts.run_bike_safety_penalty }}
+        </div>
         </h4>
         <div class="slide-container">
           <input
@@ -107,7 +128,14 @@
         style="margin-top: 35px"
       >
         <h4 class="text-blue"><i class="fa-solid fa-car"></i> 
-          What should be the importance of the car travel time
+          What should be the importance of the car travel time <i
+          class="fa-regular fa-circle-question help-icon"
+          @mouseover="showInfoBoxCarWeight = true"
+          @mouseleave="showInfoBoxCarWeight = false"
+        ></i>
+        <div v-show="showInfoBoxCarWeight" class="info-box">
+          {{ infoBoxTexts.run_car_weight }}
+        </div>
         </h4>
         <div class="slide-container">
           <input
@@ -128,7 +156,14 @@
         v-if="selectedOption && selectedOption.algorithm === 'optimize'"
         style="margin-top: 35px"
       >
-        <h4 class="text-blue"><i class="fa-solid fa-arrow-up-short-wide"></i> How often to re-run the optimization</h4>
+        <h4 class="text-blue"><i class="fa-solid fa-arrow-up-short-wide"></i> How often to re-run the optimization <i
+          class="fa-regular fa-circle-question help-icon"
+          @mouseover="showInfoBoxOptimizeFrequency = true"
+          @mouseleave="showInfoBoxOptimizeFrequency = false"
+        ></i>
+        <div v-show="showInfoBoxOptimizeFrequency" class="info-box">
+          {{ infoBoxTexts.run_optimize_frequency }}
+        </div></h4>
         <div class="slide-container">
           <input
             class="slider"
@@ -237,7 +272,12 @@ export default {
       isLoading: false,
       isOpen: false,
       selectedOption: "",
-      showInfoBox: false,
+      showInfoBoxName: false,
+      showInfoBoxAlgorithm: false,
+      showInfoBoxBikeRatio: false,
+      showInfoBoxSafetyPenalty: false,
+      showInfoBoxCarWeight: false,
+      showInfoBoxOptimizeFrequency: false,
       infoBoxTexts: infoBoxTexts,
       statusStore,
       inputStore,
@@ -508,6 +548,10 @@ export default {
 
 .text-blue {
   margin-top: 2px;
+}
+
+.help-icon {
+  color: var(--darkgrey-3-bg);
 }
 
 

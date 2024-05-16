@@ -83,7 +83,7 @@
                     <tr>
                       <td><i class="fa-solid fa-bicycle"></i></td>
                       <td>Bike ratio</td>
-                      <td class="bold">{{ run.bike_ratio * 100 }}%</td>
+                      <td class="bold">{{ (run.bike_ratio*100).toFixed() }}%</td>
                     </tr>
                     <tr>
                       <td><i class="fa-solid fa-shield-heart"></i></td>
