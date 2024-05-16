@@ -14,7 +14,7 @@
 
       <div class="header-item"><i class="fa-solid fa-spinner"></i></div>
     </div>
-    <ul>
+    <ul class="listContent">
       <li v-for="process in runningProcesses" :key="process.id">
         <div class="process-details">
           <div class="process-name">{{ process.name }}</div>
@@ -90,6 +90,8 @@ export default {
 <style scoped>
 .running-requests-list {
   margin-left: 30px;
+  max-height: 80%;
+  overflow-y: scroll;
 }
 .rotated-beat-loader {
   transform: scale(0.4) rotate(90deg);
@@ -108,6 +110,26 @@ export default {
   font-size: 0.8em;
   color: var(--black);
   font-weight: bold;
+}
+.listContent {
+  max-height: 170px;
+  overflow-y: scroll;
+}
+
+.listContent::-webkit-scrollbar {
+  background-color: #0000;
+  width: 8px;
+  position: absolute;
+}
+
+/* Rest of your scrollbar styles */
+.listContent::-webkit-scrollbar-thumb {
+  background-color: var(--darkgrey-bg);
+  border-radius: 5px;
+}
+
+.listContent::-webkit-scrollbar-thumb:hover {
+  background: var(--pink-color);
 }
 
 .process-details {
