@@ -11,10 +11,10 @@
       :style="calculateBaseLayerSwitchPosition()"
     >
       <baseLayerSwitch />
-      <MobileWarning v-show="isMobile" />
-      <div v-show="isStartingPageVisible">
-        <StartingPage v-show="!isMobile" />
-      </div>
+    </div>
+    <MobileWarning v-show="isMobile" />
+    <div v-show="isStartingPageVisible">
+      <StartingPage v-show="!isMobile" />
     </div>
   </div>
 </template>
@@ -91,34 +91,6 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-.container {
-  display: flex;
-  position: absolute;
-  justify-content: space-between;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  overflow: hidden;
-}
-
-.map-container {
-  width: 100%;
-  background-color: #f0f0f0;
-  position: relative;
-  z-index: 0;
-}
-.sidebar-container {
-  position: relative;
-  z-index: 1;
-}
-
-.help-details-container {
-  z-index: 999;
-  position: absolute;
-  left: 50px;
-  background-color: var(--lightgrey-bg);
-  width: calc(100% - 50px);
-  height: 100%;
-}
+@import "./styles/app.css";
+@import "./styles/appMobile.css";
 </style>

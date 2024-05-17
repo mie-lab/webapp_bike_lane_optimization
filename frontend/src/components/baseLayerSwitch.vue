@@ -157,4 +157,18 @@ export default {
 .layer-button:not(:hover) {
   transform: translateY(5px); /* Move the non-hovered buttons down */
 }
+
+/* Media query for mobile screens */
+@media (max-width: 600px) {
+  .button-container {
+    flex-direction: column; /* Stack buttons in a column */
+    gap: 10px; /* Adjust gap between buttons */
+  }
+
+  .layer-button {
+    width: 100%; /* Full width for buttons in the column layout */
+    max-width: 50px; /* Maintain a max width to keep buttons the same size */
+    margin: 0 auto; /* Center the buttons */
+  }
+}
 </style>

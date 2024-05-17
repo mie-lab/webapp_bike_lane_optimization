@@ -1,22 +1,26 @@
 @media screen and (max-width: 600px) {
   .dashboard-container {
-    display: flex;
-    width: 100vw;
     position: absolute;
+    top: 0;
     right: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease;
+  }
+
+  .dashboard-container.hidden {
+    transform: translateX(100%); /* Move it off-screen */
+    pointer-events: none; /* Make it non-interactive */
   }
 
   .dashboard-navigation {
-    position: absolute;
-    z-index: 1000;
-    top: 95vh;
-    background-color: rgba(149, 149, 149, 0.5);
-    height: 5vh;
-    width: 100%;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: none;
+  }
+
+  .dashboard-navigation.hidden {
+    transform: translateX(100%);
   }
 
   .dashboard-angle-icon {
@@ -94,7 +98,7 @@
 
   .dashboard-content {
     flex-grow: 1;
-    width: 500px;
+    width: 100%;
     height: 100%;
   }
 

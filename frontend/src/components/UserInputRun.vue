@@ -242,6 +242,12 @@ export default {
       this.runName = run.run_name;
       this.inputStore.setRunName(this.runName);
 
+      // on mobile screen, toggle the page
+      if (window.innerWidth <= 600) {
+          this.statusStore.toggleTabsVisibility();
+          this.statusStore.closeDashboard();
+        }
+
       // create view on the map for the selected run
       const response = await createView(
         this.inputStore.projectID,

@@ -138,7 +138,7 @@ li {
 .project-list {
   width: 390px;
   margin-left: 0px;
-  max-height: 250px;
+  max-height: 450px;
   overflow-y: scroll;
   position: relative; /* Ensure relative positioning */
   padding-right: 4px;

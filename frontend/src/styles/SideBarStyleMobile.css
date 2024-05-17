@@ -70,3 +70,14 @@
     z-index: 1000;
   }
 }
+
+.mobile-only {
+  display: none; /* Hide the button by default */
+}
+
+@media screen and (max-width: 768px) {
+  /* Show the button on screens smaller than 768px */
+  .mobile-only {
+    display: block;
+  }
+}

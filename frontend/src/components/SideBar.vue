@@ -54,6 +54,13 @@
               style="font-size: 24px"
             ></i>
           </button>
+          <button
+            class="nav-button mobile-only"
+            :class="{ active: isDashboardActive }"
+            @click="toggleDashboard()"
+          >
+            <i class="fa-solid fa-chart-line" style="font-size: 24px"></i>
+          </button>
         </div>
       </div>
 
@@ -104,6 +111,7 @@ export default {
         Info: "#000",
         None: "#000",
       },
+      isDashboardActive: false,
     };
   },
   computed: {
@@ -144,6 +152,10 @@ export default {
     toggleContainer() {
       this.isContainerVisible = !this.isContainerVisible;
     },
+    toggleDashboard() {
+      this.isDashboardActive = !this.isDashboardActive;
+      this.statusStore.toggleDashboard();
+    },
   },
   mounted() {},
 };
@@ -152,4 +164,8 @@ export default {
 <style scoped>
 @import "../styles/SideBarStyle.css";
 @import "../styles/SideBarStyleMobile.css";
+
+.active {
+  color: var(--pink-color);
+}
 </style>

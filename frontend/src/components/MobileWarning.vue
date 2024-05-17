@@ -4,7 +4,8 @@
       <h1 class="warning">Welcome!</h1>
       <h2 class="h2-warning">
         This page is not developed for vertical mobile screens. Please visit on
-        a computer screen or rotate your phone.
+        a computer screen or rotate your phone
+        <i class="fa-solid fa-rotate-right" style="font-size: medium"></i>
       </h2>
       <img :src="warningImage" alt="Warning" class="warning-image" />
     </div>

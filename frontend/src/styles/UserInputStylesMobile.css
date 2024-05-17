@@ -94,6 +94,7 @@
 
   .info-text {
     padding-bottom: 15px;
+    display: none;
   }
 
   .text-pink {
@@ -141,7 +142,7 @@
   .project-list {
     width: 100%;
     margin-left: 0px;
-    max-height: 250px;
+    max-height: 200px;
     overflow-y: scroll;
     position: relative; /* Ensure relative positioning */
     padding-right: 4px;
