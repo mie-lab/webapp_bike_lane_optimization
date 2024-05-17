@@ -131,3 +131,16 @@ li {
   margin-top: 2px;
   font-size: 12px;
 }
+
+@media screen and (max-width: 600px) {
+  .parent-container {
+    width: 100vw;
+  }
+
+  .text-pink {
+    color: var(--pink-color);
+    padding-top: 80px;
+    text-align: left;
+    margin-left: 5vw;
+  }
+}

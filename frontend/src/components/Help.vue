@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="parent-container">
     <button class="close-btn" @click="toggleTabsVisibility">
       <i class="fa-solid fa-times" style="font-size: 20px"></i>
     </button>
