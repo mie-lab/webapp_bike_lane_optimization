@@ -258,3 +258,13 @@
 h3 {
   margin: 7px;
 }
+
+.ring-loader-container {
+  position: relative;
+}
+
+.ring-loader {
+  position: absolute;
+  top: 6px;
+  left: 4px;
+}

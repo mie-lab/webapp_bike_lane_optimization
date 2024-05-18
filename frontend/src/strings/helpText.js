@@ -2,7 +2,7 @@
 
 export const helpText = {
   introduction:
-    "Welcome to the Zurich Bike Lane Optimizer! Transform the street network of Zurich city, reallocating lanes from cars to bikes while ensuring full connectivity for vehicles",
+    "Transform the street network of Zurich city, reallocating lanes from cars to bikes while ensuring full connectivity for vehicles",
   howTo1:
     "to define a perimeter where the optimization will take place by drawing a polygon or a rectangle on the map",
   howTo2:

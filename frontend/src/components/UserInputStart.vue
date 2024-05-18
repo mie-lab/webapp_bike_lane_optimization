@@ -5,13 +5,13 @@
     </button>
     <h1 class="text-pink">User Input</h1>
     <div
-      v-show="!statusStore.createPage && !statusStore.loadPage"
+      v-show="!this.statusStore.createPage && !this.statusStore.loadPage"
       class="user-input-container"
     ></div>
-    <div v-show="statusStore.createPage">
+    <div v-show="this.statusStore.createPage">
       <UserInputCreate />
     </div>
-    <div v-show="statusStore.loadPage">
+    <div v-show="this.statusStore.loadPage">
       <UserInputLoad />
     </div>
   </div>
@@ -34,15 +34,17 @@ export default {
   setup() {
     const statusStore = statusVariablesStore();
     const inputStore = userInputStore();
+    const prjStore = projectsStore();
 
     return {
       statusStore,
       projectName: inputStore.projectName,
+      prjStore,
     };
   },
   data() {
     const inputStore = userInputStore();
-    const statusStore = statusVariablesStore();
+
     return {
       isButtonDisabled: true,
       projectName: inputStore.projectName,
@@ -56,21 +58,15 @@ export default {
 
   methods: {
     async openLoad() {
-      const prjStore = projectsStore();
-      //statusStore.toggleLoadPage();
-
       try {
         const response = await getProjectList();
-        //console.log("response: ", response);
-        prjStore.setProjects(response);
-        //console.log("projects: ", prjStore.projects);
+        this.prjStore.setProjects(response);
       } catch (error) {
         console.log("error: ", error.message);
       }
     },
     toggleTabsVisibility() {
-      const statusStore = statusVariablesStore();
-      statusStore.toggleTabsVisibility();
+      this.statusStore.toggleTabsVisibility();
     },
   },
 };

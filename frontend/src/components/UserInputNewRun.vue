@@ -179,7 +179,7 @@
 
       <br />
       <div>
-      <h4 class="text-blue">Expected calculation time: {{runtimeMin}}s</h4>
+      <h4 class="text-blue">Expected calculation time: ~{{runtimeMin.toFixed()}} min</h4>
     </div>
 
     </div>
@@ -288,15 +288,15 @@ export default {
       algorithms: [
         {
           algorithm: "optimize",
-          displayName: "Optimize",
+          displayName: "Optimize (O)",
         },
         {
           algorithm: "betweenness_biketime",
-          displayName: "Betweenness Biketime",
+          displayName: "Betweenness Biketime (BB)",
         },
         {
           algorithm: "betweenness_cartime",
-          displayName: "Betweenness Cartime",
+          displayName: "Betweenness Cartime (BC)",
         },
       ],
     };

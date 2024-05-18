@@ -10,6 +10,9 @@
     <p>{{ betweenessBiketimeContent }}</p>
     <h3>Betweeness Cartime (BC)</h3>
     <p>{{ betweenessCartimeContent }}</p>
+    <div class="button-div">
+      <button @click="toggleTabsVisibility" class="back-button">Back</button>
+    </div>
   </div>
 </template>
 
@@ -39,6 +42,18 @@ export default {
 </script>
 
 <style scoped>
+@import "../styles/UserInputRunStyle.css";
+
+.button-div {
+  display: flex;
+  justify-content: left;
+  margin-top: 20px;
+}
+.back-button {
+  margin: 0;
+  padding: 5px;
+  font-size: small;
+}
 .help-details-container-inner {
   margin: 30px;
   box-shadow: none;

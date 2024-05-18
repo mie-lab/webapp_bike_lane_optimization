@@ -34,20 +34,7 @@
           </span>
         </h3>
 
-        <!---
-
-        <div class="list-header">
-          <div class="header-item-left"><p class="run_list_name">Name</p></div>
-          <i class="fa-solid fa-gears"></i>
-          <div class="header-item"><i class="far fa-clock"></i></div>
-          <div class="header-item"><i class="far fa-clock"></i></div>
-          <div class="header-item">
-            <i class="fa-solid fa-lines-leaning"></i>
-          </div>
-        </div>
-
-        -->
-
+        
         <input
         type="text"
         v-model="searchQuery"
@@ -82,7 +69,7 @@
                     
                     <tr>
                       <td><i class="fa-solid fa-bicycle"></i></td>
-                      <td>Bike ratio</td>
+                      <td>Bike lane ratio</td>
                       <td class="bold">{{ (run.bike_ratio*100).toFixed() }}%</td>
                     </tr>
                     <tr>
@@ -149,6 +136,7 @@ import {
   getNetworkBearing,
 } from "../scripts/api.js";
 import { loadWFS, loadWMS } from "../scripts/map.js";
+import {extractParetoEvaluation,extractDistancesPerLane, extractComplexity, extractBearing} from "../scripts/dashboard.js";
 import UserInputNewRun from "./UserInputNewRun.vue";
 import { useCompareRunEvaluation } from "../stores/compareRunResultStore.js";
 
@@ -163,27 +151,15 @@ export default {
     const inputStore = userInputStore();
     const resultsStore = useResultsStore();
     const prjStore = projectsStore();
-    //const filteredRuns = ref(null);
     const compareRunStore = useCompareRunEvaluation();
     const searchQuery = ref("");
 
-    /*
-    watch(
-      () => prjStore.runs.runs,
-      (newValue, oldValue) => {
-        //console.log("Filtered runs updated:", newValue);
-        filteredRuns.value = newValue;
-      }
-    );
-    */
-
+    // Sort projects by "created" timestamp in descending order
     const filteredRuns = computed(() => {
       const prjArray = prjStore.runs.runs
       if (prjArray) {
-        // Sort projects by "created" timestamp in descending order
         return prjArray
-          .slice() // Create a shallow copy to avoid mutating the original array
-          
+          .slice() 
           .filter((run) =>
             run.run_name
               .toLowerCase()
@@ -220,16 +196,13 @@ export default {
 
   methods: {
     toggleUserInputNextSide() {
-      const statusStore = statusVariablesStore();
-      statusStore.toggleLoadPage();
+      this.statusStore.toggleLoadPage();
     },
     toggleUserInputPreviousSide() {
-      const statusStore = statusVariablesStore();
-      statusStore.toggleRunPage();
+      this.statusStore.toggleRunPage();
     },
     openCreate() {
-      const statusStore = statusVariablesStore();
-      statusStore.toggleCreateNewRunPage();
+      this.statusStore.toggleCreateNewRunPage();
     },
     async loadRun(run) {
       this.statusStore.openDashboard();
@@ -260,46 +233,17 @@ export default {
 
 
       
-      // create evaluation for the selected run
-      const paretoEvaluation = await getPareto(
-        this.inputStore.projectID,
-        run.id_run
-      );
-      // Extracting data from paretoEvaluation
-      const projects = paretoEvaluation.projects;
-      const bikeTimes = projects.map((project) => project.bike_time_change);
-      const carTimes = projects.map((project) => project.car_time_change);
-
-      this.resultsStore.setTraveltimes(bikeTimes, carTimes);
       
 
-      // get km per bike / car lane
-      const distanceEvaluation = await getKmDistancePerLaneType(
-        this.inputStore.projectID,
-        run.id_run
-      );
-      this.resultsStore.setDistancesKM(
-        distanceEvaluation.distance_bike[0].total_bike_lane_distance,
-        distanceEvaluation.distance_car[0].total_car_lane_distance
-      );
-      this.resultsStore.setRunName(run.run_name);
+      
+      extractParetoEvaluation(run);
+      extractDistancesPerLane(run);
+      extractComplexity(run);
+      extractBearing(run);
+      
 
-      // get complexity
-      const complexityEvaluation = await getComplexity(
-        this.inputStore.projectID,
-        run.id_run
-      );
-      this.resultsStore.setComplexity(
-        complexityEvaluation.bike_degree_ratio,
-        complexityEvaluation.car_degree_ratios
-      );
+      
 
-      // get network bearing
-      const bearingEvaluation = await getNetworkBearing(
-        this.inputStore.projectID,
-        run.id_run
-      );
-      this.resultsStore.setNetworkBearing(bearingEvaluation.bike_network_bearings,bearingEvaluation.car_network_bearings);
       
       
     },

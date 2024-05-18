@@ -1,5 +1,5 @@
 <template>
-  <div class="dashboard-container">
+  <div :class="['dashboard-container', { hidden: !dashboard }]">
     <div class="legend-container bg-lightgrey" v-show="dashboard">
       <h3 class="legend-text">Legend</h3>
 
@@ -30,7 +30,11 @@
     </div>
 
     <!-- Dashboard Navigation -->
-    <div class="dashboard-navigation bg-darkgrey" @click="toggleDashboard">
+    <div
+      class="dashboard-navigation"
+      :class="{ hidden: !dashboard }"
+      @click="toggleDashboard"
+    >
       <i
         :class="
           statusStore.dashboard
@@ -101,7 +105,17 @@
                   class="fa-solid fa-info-circle small-icon"
                   @mouseover="showInfoBox = true"
                   @mouseleave="showInfoBox = false"
+                  v-if="!paretoIsLoading"
                 ></i>
+                <span class="ring-loader-container">
+                  <div class="ring-loader">
+                    <RingLoader
+                      v-if="paretoIsLoading"
+                      :size="'60'"
+                      :color="'#123abc'"
+                    />
+                  </div>
+                </span>
                 <div v-show="showInfoBox" class="info-box">
                   This plot shows the pareto frontier from the chosen linear
                   formulation.
@@ -144,7 +158,17 @@
                   class="fa-solid fa-info-circle small-icon"
                   @mouseover="showInfoBoxTravelTimes = true"
                   @mouseleave="showInfoBoxTravelTimes = false"
+                  v-if="!distancesIsLoading"
                 ></i>
+                <span class="ring-loader-container">
+                  <div class="ring-loader">
+                    <RingLoader
+                      v-if="distancesIsLoading"
+                      :size="'60'"
+                      :color="'#123abc'"
+                    />
+                  </div>
+                </span>
                 <div v-show="showInfoBoxTravelTimes" class="info-box">
                   This is the relative change of travel times for the chosen
                   run.
@@ -174,7 +198,17 @@
                   class="fa-solid fa-info-circle small-icon"
                   @mouseover="showInfoBoxDistances = true"
                   @mouseleave="showInfoBoxDistances = false"
+                  v-if="!distancesIsLoading"
                 ></i>
+                <span class="ring-loader-container">
+                  <div class="ring-loader">
+                    <RingLoader
+                      v-if="distancesIsLoading"
+                      :size="'60'"
+                      :color="'#123abc'"
+                    />
+                  </div>
+                </span>
                 <div v-show="showInfoBoxDistances" class="info-box">
                   Your optimizations contains
                   {{ Math.round(ResultsStore.kmBike * 100) / 100 }} km of bike
@@ -239,7 +273,17 @@
                   class="fa-solid fa-info-circle small-icon"
                   @mouseover="showInfoBoxComplexity = true"
                   @mouseleave="showInfoBoxComplexity = false"
+                  v-if="!complexityIsLoading"
                 ></i>
+                <span class="ring-loader-container">
+                  <div class="ring-loader">
+                    <RingLoader
+                      v-if="complexityIsLoading"
+                      :size="'60'"
+                      :color="'#123abc'"
+                    />
+                  </div>
+                </span>
                 <div v-show="showInfoBoxComplexity" class="info-box">
                   Network Info Text
                 </div>
@@ -260,7 +304,8 @@
                   v-show="compareRunStore.compare"
                   style="
                     text-align: center;
-                    font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+                    font-family: &quot;Helvetica Neue&quot;,
+                      &quot;Helvetica&quot;, &quot;Arial&quot;, sans-serif;
                     font-size: 14px;
                     font-weight: bold;
                     color: #666;
@@ -320,7 +365,17 @@
                   class="fa-solid fa-info-circle small-icon"
                   @mouseover="showInfoBoxBearing = true"
                   @mouseleave="showInfoBoxBearing = false"
+                  v-if="!bearingIsLoading"
                 ></i>
+                <span class="ring-loader-container">
+                  <div class="ring-loader">
+                    <RingLoader
+                      v-if="bearingIsLoading"
+                      :size="'60'"
+                      :color="'#123abc'"
+                    />
+                  </div>
+                </span>
                 <div v-show="showInfoBoxBearing" class="info-box">
                   Bearing Info Text
                 </div>
@@ -343,7 +398,8 @@
                         colspan="2"
                         style="
                           text-align: center;
-                          font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+                          font-family: &quot;Helvetica Neue&quot;,
+                            &quot;Helvetica&quot;, &quot;Arial&quot;, sans-serif;
                           font-size: 14px;
                           font-weight: bold;
                           color: #666;
@@ -438,6 +494,7 @@ import Chart from "chart.js/auto";
 import "chartjs-plugin-datalabels";
 import { useResultsStore } from "../stores/runResultsStore.js";
 import { statusVariablesStore } from "../stores/statusVariablesStore.js";
+import { loadingStore } from "../stores/loadingStore.js";
 import { userInputStore } from "../stores/userInputStore.js";
 import { projectsStore } from "../stores/projectsStore.js";
 import { useCompareRunEvaluation } from "../stores/compareRunResultStore.js";
@@ -455,9 +512,14 @@ import {
   createScatterPlot,
 } from "../scripts/dashboardCharts.js";
 import { create } from "ol/transform.js";
+import RingLoader from "vue-spinner/src/RingLoader.vue";
+import { distance } from "ol/coordinate";
 
 export default {
   name: "Dashboard",
+  components: {
+    RingLoader,
+  },
 
   setup() {
     const ResultsStore = useResultsStore();
@@ -467,6 +529,7 @@ export default {
     const prjStore = projectsStore();
     const filteredRuns = ref(null);
     const compareRunStore = useCompareRunEvaluation();
+    const loadingStoreInstance = loadingStore();
 
     watch(
       () => statusStore.dashboard,
@@ -499,6 +562,7 @@ export default {
       prjStore,
       compareRunStore,
       dashboard,
+      loadingStoreInstance,
     };
   },
   data() {
@@ -514,6 +578,10 @@ export default {
       showInfoBoxComplexity: false,
       isOpenBearing: false,
       showInfoBoxBearing: false,
+      distancesIsLoading: false,
+      travelTimesIsLoading: false,
+      complexityIsLoading: false,
+      bearingIsLoading: false,
     };
   },
 
@@ -526,6 +594,24 @@ export default {
         this.createBarChartTT();
         this.createDoughnutChartDistances();
         this.createPieChartComplexityAll();
+      }
+    );
+
+    watch(
+      () => [
+        this.loadingStoreInstance.paretoIsLoading,
+        this.loadingStoreInstance.distancesIsLoading,
+        this.loadingStoreInstance.complexityIsLoading,
+        this.loadingStoreInstance.bearingIsLoading,
+      ],
+      (
+        [newPareto, newDistances, newComplexity, newBearing],
+        [oldPareto, oldDistances, oldComplexity, oldBearing]
+      ) => {
+        this.distancesIsLoading = newDistances;
+        this.travelTimesIsLoading = newPareto;
+        this.complexityIsLoading = newComplexity;
+        this.bearingIsLoading = newBearing;
       }
     );
   },
