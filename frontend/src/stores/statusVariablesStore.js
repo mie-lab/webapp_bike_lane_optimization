@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 
 export const statusVariablesStore = defineStore("statusVariables", {
   state: () => ({
-    activeTab: "UserInput",
+    activeTab: "None",
     drawingPolygonEnabled: false,
     drawingRectangleEnabled: false,
     createPage: false,

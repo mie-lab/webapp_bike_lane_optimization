@@ -97,6 +97,13 @@ export default {
       }
     );
 
+    watch(
+      () => statusStore.startingPage,
+      (newProcesses, oldProcesses) => {
+        statusStore.setActiveTab("UserInput");
+      }
+    );
+
     return {
       statusStore,
       isContainerVisible,
