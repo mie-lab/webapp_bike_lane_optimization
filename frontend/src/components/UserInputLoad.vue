@@ -176,7 +176,6 @@ export default {
         );
 
         loadWMS("v_bound", "wms_bound");
-        //statusStore.toggleLoadPage();
       } catch (error) {
         console.log("error: ", error.message);
       } finally {

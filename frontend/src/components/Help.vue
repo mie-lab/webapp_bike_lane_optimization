@@ -90,39 +90,5 @@ export default {
 <style scoped>
 @import "../styles/SideBarStyle.css";
 @import "../styles/SideBarStyleMobile.css";
-
-.content {
-  margin-left: 30px;
-}
-
-.numbered-circles {
-  display: flex;
-  flex-direction: column;
-}
-
-.numbered-circle {
-  width: 25px;
-  height: 25px;
-  border: 2.2px solid black;
-  border-radius: 50%;
-  color: white;
-  font-size: 16px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-right: 7px;
-}
-
-.numbered-circle:nth-child(even) {
-  background-color: var(--pink-color);
-}
-
-.numbered-circles p {
-  margin: 0;
-}
-
-.numbered-circle p {
-  color: black;
-  font-weight: bold;
-}
+@import "../styles/help.css";
 </style>

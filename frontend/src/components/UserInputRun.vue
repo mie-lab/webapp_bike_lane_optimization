@@ -231,19 +231,11 @@ export default {
       loadWMS("v_optimized_arrows", "wms_optimized_arrows");
       loadWFS("v_optimized_wfs", "wfs_optimized");
 
-
-      
-      
-
-      
+      // get the evaluations for the selected run
       extractParetoEvaluation(run);
       extractDistancesPerLane(run);
       extractComplexity(run);
       extractBearing(run);
-      
-
-      
-
       
       
     },

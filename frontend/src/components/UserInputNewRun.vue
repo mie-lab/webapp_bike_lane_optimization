@@ -362,7 +362,6 @@ export default {
 
 
     async callOptimization() {
-      const startTime = performance.now();
 
       const project_id = this.inputStore.projectID;
       const algorithm = this.inputStore.algorithm;
@@ -380,23 +379,23 @@ export default {
         return;
       }
 
-      console.log("Algorithm: ", algorithm);
-
+      // check if algorithm is empty
       if (this.selectedOption == "" || this.selectedOption === null) {
         this.algorithmIsEmtpy = true;
         return;
       }
 
       // Set car_weight and optimize_frequency to "-" if algorithm is BB or BC
-    if (algorithm === "betweenness_biketime" || algorithm === "betweenness_cartime") {
-        carWeightString = " - ";
-        optimizeFrequencyString = " - ";
-    }
+      if (algorithm === "betweenness_biketime" || algorithm === "betweenness_cartime") {
+          carWeightString = " - ";
+          optimizeFrequencyString = " - ";
+      }
 
       
-
+      // Get a new run ID
       const responseRunID = await getNewRunID(project_id);
 
+      // Add the process to the process list
       this.processStore.addProcess({
         id: responseRunID.run_id,
         name: this.runName,
@@ -408,11 +407,11 @@ export default {
         status: "pending",
       });
 
+      // Toggle the process list
       this.statusStore.toggleProcessList();
 
     
-      
-
+      // Run the optimization
       try {
         const response = await runOptimization(
           project_id,
@@ -423,7 +422,6 @@ export default {
           bikeSafetyPenatly,
           this.runName
         );
-        console.log("Response: ", response);
         // Load the newly created run
         await this.loadRun(response);
       } catch (error) {
@@ -431,9 +429,6 @@ export default {
       } finally {
         this.processStore.markProcessAsDone(responseRunID.run_id);
       }
-      const endTime = performance.now();
-      this.calculationTime = endTime - startTime;
-      console.log("Calculation time: ", this.calculationTime);
     },
 
     toggleDropdown() {

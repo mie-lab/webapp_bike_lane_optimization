@@ -147,7 +147,6 @@ export default {
       this.boundingBoxIsEmpty = false;
 
       const mapStoreInstance = mapStore();
-
       const inputStore = userInputStore();
       const drawObjectRectangle = mapStoreInstance.drawRectangleObject;
       const drawObjectPolygon = mapStoreInstance.drawPolygonObject;
