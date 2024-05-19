@@ -16,6 +16,9 @@ import { projectInfoText } from "../strings/projectInfoText.js";
 
 export default {
   name: "ProjectInfo",
+  data: () => ({
+    projectInfoText,
+  }),
   methods: {
     toggleTabsVisibility() {
       const statusStore = statusVariablesStore();
