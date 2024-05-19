@@ -10,6 +10,13 @@
     <p>{{ betweenessBiketimeContent }}</p>
     <h3>Betweeness Cartime (BC)</h3>
     <p>{{ betweenessCartimeContent }}</p>
+
+    <h2 class="legend-text">Evaluation</h2>
+    <h3>Network Complexity</h3>
+    <p>{{ complexityContent }}</p>
+    <h3>Network Bearing</h3>
+    <p>{{ bearingContent }}</p>
+
     <div class="button-div">
       <button @click="toggleTabsVisibility" class="back-button">Back</button>
     </div>
@@ -27,6 +34,8 @@ export default {
       optimizeContent: helpText.optimize,
       betweenessBiketimeContent: helpText.betweenessBiketime,
       betweenessCartimeContent: helpText.betweenessCartime,
+      complexityContent: helpText.networkComplexity,
+      bearingContent: helpText.networkBearing,
     };
   },
 

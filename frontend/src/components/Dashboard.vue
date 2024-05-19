@@ -117,8 +117,7 @@
                   </div>
                 </span>
                 <div v-show="showInfoBox" class="info-box">
-                  This plot shows the pareto frontier from the chosen linear
-                  formulation.
+                  {{infoBoxTexts.evaluation_pareto}}
                 </div>
               </h3>
               <i
@@ -170,8 +169,7 @@
                   </div>
                 </span>
                 <div v-show="showInfoBoxTravelTimes" class="info-box">
-                  This is the relative change of travel times for the chosen
-                  run.
+                  {{infoBoxTexts.evaluation_travel_time_changes}}
                 </div>
               </h3>
               <i
@@ -210,10 +208,7 @@
                   </div>
                 </span>
                 <div v-show="showInfoBoxDistances" class="info-box">
-                  Your optimizations contains
-                  {{ Math.round(ResultsStore.kmBike * 100) / 100 }} km of bike
-                  lanes and {{ Math.round(ResultsStore.kmCar * 100) / 100 }} km
-                  of car lanes.
+                  {{ infoBoxTexts.evaluation_distances_per_type }}
                 </div>
               </h3>
               <i
@@ -285,7 +280,7 @@
                   </div>
                 </span>
                 <div v-show="showInfoBoxComplexity" class="info-box">
-                  Network Info Text
+                  {{infoBoxTexts.evaluation_network_complexity}}
                 </div>
               </h3>
               <i
@@ -377,7 +372,7 @@
                   </div>
                 </span>
                 <div v-show="showInfoBoxBearing" class="info-box">
-                  Bearing Info Text
+                  {{infoBoxTexts.evaluation_network_bearing}}
                 </div>
               </h3>
               <i
@@ -514,6 +509,7 @@ import {
 import { create } from "ol/transform.js";
 import RingLoader from "vue-spinner/src/RingLoader.vue";
 import { distance } from "ol/coordinate";
+import { infoBoxTexts } from "../strings/infoBoxText.js";
 
 export default {
   name: "Dashboard",
@@ -582,6 +578,7 @@ export default {
       travelTimesIsLoading: false,
       complexityIsLoading: false,
       bearingIsLoading: false,
+      infoBoxTexts: infoBoxTexts,
     };
   },
 

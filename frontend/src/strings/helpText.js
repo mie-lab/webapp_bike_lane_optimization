@@ -14,4 +14,10 @@ export const helpText = {
     "Starting from a car network with no cycle lanes, edges are iteratively allocated to cycling, starting with the lanes with the lowest betweenness centrality in the car network. The reasoning is that the lanes that are least important for car travel can easily be converted into cycle lanes.",
   betweenessCartime:
     "Starting with a car network without cycle lanes, edges are iteratively allocated to cycling, starting with the lanes with the highest betweenness centrality in the cycle network. The edges that are most central for cyclists are converted first.",
+
+  networkBearing:
+  "The network bearing, reflecting the average turn angle across all shortest paths in the optimized network, impacts safety, speed, and flow. A smaller average turn angle can lead to a steadier speed and a better cycling experience.",
+
+  networkComplexity:
+  "The percentage distribution of intersection sizes based on node degree in the optimized network offers insight into network complexity, known to influence travel behavior.",
 };
