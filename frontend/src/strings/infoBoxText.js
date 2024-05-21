@@ -17,6 +17,6 @@ export const infoBoxTexts = {
   evaluation_travel_time_changes:"Shows the relative change in travel time for cars and bikes compared to the initial network.",
   evaluation_distances_per_type:"Shows the distribution of distances in kilometers for cars and bikes in the optimized network.",
   evaluation_network_bearing : "Average turn angle between two connected edges in the optimized network.",
-  evaluation_network_complexity: " Illustrates the percentage of intersection sizes in the optimized bike network, categorized by node degree.",
+  evaluation_network_complexity: " Illustrates the percentage of intersection sizes in the optimized network, categorized by node degree.",
 
 };

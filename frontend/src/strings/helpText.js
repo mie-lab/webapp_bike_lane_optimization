@@ -8,6 +8,8 @@ export const helpText = {
   howTo2:
     "for your defined perimeter with different optimization algorithms and parameters",
   howTo3: "of the different runs on the map and in the dashboard",
+
+  // algorithm descriptions
   optimize:
     "The Optimize-algorithm is a linear programming (LP) formulation that minimises a weighted sum of car and bike travel times. A post-processing algorithm iteratively allocates bike lanes, prioritising those with the highest values according to the LP solution.",
   betweenessBiketime:
@@ -15,6 +17,17 @@ export const helpText = {
   betweenessCartime:
     "Starting with a car network without cycle lanes, edges are iteratively allocated to cycling, starting with the lanes with the highest betweenness centrality in the cycle network. The edges that are most central for cyclists are converted first.",
 
+// Input Parameter description
+  bikeLaneRatio: "",
+  safetyPenalty: "",
+  carWeight: "",
+  optimizeFrequency: "",
+
+
+  // evaluation descriptions
+  pareto: "The Pareto front shows the trade-off between car and bike travel times. The points on the Pareto front are the solutions that are not dominated by any other solution. The Pareto front is a useful tool to understand the trade-offs between different objectives.",
+  travelTimeChanges: "The travel time changes for cars and bikes are calculated as the difference between the travel times in the original and optimized networks. The travel time changes are a useful metric to understand the impact of the optimization on car and bike travel times.",
+  distancesPerLaneType: "The distances per lane type show the amount of kilometers that are allocated to cars and bikes in the optimized network.",
   networkBearing:
   "The network bearing, reflecting the average turn angle across all shortest paths in the optimized network, impacts safety, speed, and flow. A smaller average turn angle can lead to a steadier speed and a better cycling experience.",
 
