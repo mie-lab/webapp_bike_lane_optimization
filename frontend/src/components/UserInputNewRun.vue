@@ -74,7 +74,7 @@
       </div>
       <p class="missing-input" v-show="algorithmIsEmtpy">* Select an Algorithm</p>
 
-      <div class="bike-ratio" style="margin-top: 35px">
+      <div class="bike-ratio" style="margin-top: 35px; position: relative;">
         <h4 class="text-blue"><i class="fa-solid fa-bicycle"></i> How many lanes should become bike lanes? <i
           class="fa-regular fa-circle-question help-icon"
           @mouseover="showInfoBoxBikeRatio = true"
@@ -96,7 +96,7 @@
         <p>{{ laneAllocation }} % of the lanes</p>
       </div>
 
-      <div class="bike-safety-penalty" style="margin-top: 35px">
+      <div class="bike-safety-penalty" style="margin-top: 35px; position: relative;">
         <h4 class="text-blue"><i class="fa-solid fa-shield-heart"></i> 
           Factor by how much the perceived bike travel time increases if cycling
           on a car lane <i
@@ -125,7 +125,7 @@
       <div
         class="car-weight"
         v-if="selectedOption && selectedOption.algorithm === 'optimize'"
-        style="margin-top: 35px"
+        style="margin-top: 35px; position: relative;"
       >
         <h4 class="text-blue"><i class="fa-solid fa-car"></i> 
           What should be the importance of the car travel time <i
@@ -154,7 +154,7 @@
       <div
         class="optimize-frequency"
         v-if="selectedOption && selectedOption.algorithm === 'optimize'"
-        style="margin-top: 35px"
+        style="margin-top: 35px; position: relative;"
       >
         <h4 class="text-blue"><i class="fa-solid fa-arrow-up-short-wide"></i> How often to re-run the optimization <i
           class="fa-regular fa-circle-question help-icon"
@@ -179,7 +179,7 @@
 
       <br />
       <div>
-      <h4 class="text-blue">Expected calculation time: ~{{runtimeMin.toFixed()}} min</h4>
+      <h4 class="text-blue">Expected calculation time: ~{{runtimeMin}} min</h4>
     </div>
 
     </div>

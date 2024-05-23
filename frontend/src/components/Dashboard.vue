@@ -579,6 +579,7 @@ export default {
       complexityIsLoading: false,
       bearingIsLoading: false,
       infoBoxTexts: infoBoxTexts,
+      paretoIsLoading:false,
     };
   },
 

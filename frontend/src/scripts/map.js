@@ -178,7 +178,6 @@ export async function loadWMS(layerID, layerSource) {
     paint: {},
   });
 
-  console.log("WMS layer loaded: ", tile);
 
   const userInput = userInputStore();
 
@@ -245,7 +244,6 @@ function createTooltip(map, layerID, layerSource) {
   if (layerID === "v_optimized_wfs") {
     map.on("mouseenter", layerID, (e) => {
       const feature = e.features[0];
-      console.log("Feature:", feature);
       const featureId = feature.id;
 
       // Highlight the feature
