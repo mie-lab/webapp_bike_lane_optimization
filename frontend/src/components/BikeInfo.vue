@@ -28,7 +28,7 @@
 
 <script>
 import { statusVariablesStore } from "../stores/statusVariablesStore.js";
-import algorithmIllustration from "../assets/algorithm-illustration.png";
+import algorithmIllustration from "../assets/ebc_sub_e_editorial.png";
 import { EBikeCityInfoText } from "../strings/EBikeCityInfoText.js";
 
 export default {
