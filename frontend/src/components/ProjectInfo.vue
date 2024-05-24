@@ -20,7 +20,7 @@
 <script>
 import { statusVariablesStore } from "../stores/statusVariablesStore.js";
 import { projectInfoText } from "../strings/projectInfoText.js";
-import logoImage from "../assets/ikg_logo.png";
+import logoImage from "../assets/GIS-Logo_RGB.png";
 
 export default {
   name: "ProjectInfo",
