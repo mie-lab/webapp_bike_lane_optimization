@@ -76,7 +76,7 @@ import UserInputRun from "./UserInputRun.vue";
 import { projectsStore } from "../stores/projectsStore.js";
 import { computed, ref } from "vue";
 import { loadWMS, removeLayer } from "../scripts/map.js";
-import { createView, getRunList, getProjectList } from "../scripts/api.js";
+import { getBoundingBox, getRunList, getProjectList } from "../scripts/api.js";
 import { storeToRefs } from "pinia";
 import RingLoader from "vue-spinner/src/RingLoader.vue";
 import { remove } from "ol/array";
@@ -169,13 +169,10 @@ export default {
         inputStore.setProjectName(project.prj_name);
         inputStore.setProjectID(project.id);
 
-        const responseCreateView = await createView(
-          inputStore.projectID,
-          1,
-          "v_bound"
-        );
+        //const responseCreateView = await createView(inputStore.projectID,1,"v_bound");
+        await getBoundingBox(inputStore.projectID);
 
-        loadWMS("v_bound", "wms_bound");
+        loadWMS("v_bound", "wms_bound", inputStore.projectID);
       } catch (error) {
         console.log("error: ", error.message);
       } finally {
@@ -193,7 +190,6 @@ export default {
       inputStore.resetRuns();
       statusStore.closeDashboard();
       removeLayer("v_optimized", "wms_optimized");
-      removeLayer("v_optimized_arrows", "wms_optimized_arrows");
     },
 
     async reloadProjects() {

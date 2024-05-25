@@ -128,12 +128,8 @@ import { projectsStore } from "../stores/projectsStore.js";
 import RingLoader from "vue-spinner/src/RingLoader.vue";
 import { ref, watch , computed} from "vue";
 import {
-  createView,
+  getBoundingBox,
   getRunList,
-  getPareto,
-  getKmDistancePerLaneType,
-  getComplexity,
-  getNetworkBearing,
 } from "../scripts/api.js";
 import { loadWFS, loadWMS } from "../scripts/map.js";
 import {extractParetoEvaluation,extractDistancesPerLane, extractComplexity, extractBearing} from "../scripts/dashboard.js";
@@ -222,14 +218,13 @@ export default {
         }
 
       // create view on the map for the selected run
-      const response = await createView(
-        this.inputStore.projectID,
-        run.id_run,
-        "v_optimized"
-      );
-      loadWMS("v_optimized", "wms_optimized");
-      loadWMS("v_optimized_arrows", "wms_optimized_arrows");
-      loadWFS("v_optimized_wfs", "wfs_optimized");
+      //const response = await createView(this.inputStore.projectID,run.id_run,"v_optimized");
+      await getBoundingBox(this.inputStore.projectID);
+      console.log("test 1 ");
+      loadWMS("v_optimized", "wms_optimized",this.inputStore.projectID, run.id_run);
+      console.log("test 2 ");
+      loadWFS("v_optimized_wfs", "wfs_optimized",this.inputStore.projectID, run.id_run);
+      console.log("test 3 ");
 
       // get the evaluations for the selected run
       extractParetoEvaluation(run);

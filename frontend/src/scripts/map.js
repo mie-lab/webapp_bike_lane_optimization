@@ -15,9 +15,10 @@ export async function removeLayer(layerID, layerSource) {
   }
 }
 
-export async function loadWFS(layerID, layerSource) {
+export async function loadWFS(layerID, layerSource, projectID, runID) {
   const mapStoreInstance = mapStore();
   const map = mapStoreInstance.map;
+  var wfsURL = "";
 
   if (map.getLayer(layerID)) {
     map.removeLayer(layerID);
@@ -27,11 +28,22 @@ export async function loadWFS(layerID, layerSource) {
     map.removeSource(layerSource);
   }
 
-  const wfsURL =
-    "https://baug-ikg-gis-01.ethz.ch:8443/geoserver/GMP_EBC/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=GMP_EBC:layername&outputFormat=application/json".replace(
-      "layername",
-      layerID.replace("_wfs", "")
-    );
+  if (layerID === "v_optimized_wfs") {
+    if (projectID === undefined || runID === undefined) {
+      throw new Error("Project ID and Run ID are required for v_optimized_wfs");
+    }
+    wfsURL =
+      "https://baug-ikg-gis-01.ethz.ch:8443/geoserver/GMP_EBC/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=GMP_EBC:layername&outputFormat=application/json&prj=projectID&run=runID"
+        .replace("layername", layerID.replace("_wfs", ""))
+        .replace("projectID", projectID)
+        .replace("runID", runID);
+  } else {
+    wfsURL =
+      "https://baug-ikg-gis-01.ethz.ch:8443/geoserver/GMP_EBC/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=GMP_EBC:layername&outputFormat=application/json".replace(
+        "layername",
+        layerID.replace("_wfs", "")
+      );
+  }
 
   // Define projection definitions for LV95 and WGS84
   proj4.defs(
@@ -147,9 +159,10 @@ export async function loadWFS(layerID, layerSource) {
   });
 }
 
-export async function loadWMS(layerID, layerSource) {
+export async function loadWMS(layerID, layerSource, projectID, runID) {
   const mapStoreInstance = mapStore();
   const map = mapStoreInstance.map;
+  var tile = "";
 
   if (map.getLayer(layerID)) {
     map.removeLayer(layerID);
@@ -159,11 +172,37 @@ export async function loadWMS(layerID, layerSource) {
     map.removeSource(layerSource);
   }
 
-  const tile =
-    "https://baug-ikg-gis-01.ethz.ch:8443/geoserver/GMP_EBC/wms?REQUEST=GetMap&SERVICE=WMS&layers=GMP_EBC:layername&bbox={bbox-epsg-3857}&transparent=true&width=256&height=256&srs=EPSG:3857&styles=&format=image/png".replace(
-      "layername",
-      layerID
-    );
+  if (layerID === "v_optimized") {
+    if (projectID === undefined || runID === undefined) {
+      throw new Error("Project ID and Run ID are required for v_optimized");
+    }
+    tile =
+      "https://baug-ikg-gis-01.ethz.ch:8443/geoserver/GMP_EBC/wms?REQUEST=GetMap&SERVICE=WMS&layers=GMP_EBC:layername&bbox={bbox-epsg-3857}&transparent=true&width=256&height=256&srs=EPSG:3857&styles=&format=image/png&viewparams=prj:projectID;run:runID"
+        .replace("layername", layerID)
+        .replace("projectID", projectID)
+        .replace("runID", runID);
+
+    console.log("WMS layer loaded: ", tile);
+  }
+  if (layerID === "v_bound") {
+    if (projectID === undefined) {
+      throw new Error("Project ID is required for v_optimized");
+    }
+    tile =
+      "https://baug-ikg-gis-01.ethz.ch:8443/geoserver/GMP_EBC/wms?REQUEST=GetMap&SERVICE=WMS&layers=GMP_EBC:layername&bbox={bbox-epsg-3857}&transparent=true&width=256&height=256&srs=EPSG:3857&styles=&format=image/png&viewparams=prj:projectID"
+        .replace("layername", layerID)
+        .replace("projectID", projectID);
+
+    console.log("WMS layer loaded: ", tile);
+  }
+  if (layerID !== "v_optimized" && layerID !== "v_bound") {
+    console.log("LOADING WRONG LAYER");
+    tile =
+      "https://baug-ikg-gis-01.ethz.ch:8443/geoserver/GMP_EBC/wms?REQUEST=GetMap&SERVICE=WMS&layers=GMP_EBC:layername&bbox={bbox-epsg-3857}&transparent=true&width=256&height=256&srs=EPSG:3857&styles=&format=image/png".replace(
+        "layername",
+        layerID
+      );
+  }
 
   map.addSource(layerSource, {
     type: "raster",
@@ -178,7 +217,7 @@ export async function loadWMS(layerID, layerSource) {
     paint: {},
   });
 
-  console.log("WMS layer loaded: ", tile);
+  //console.log("WMS layer loaded: ", tile);
 
   const userInput = userInputStore();
 
@@ -230,8 +269,6 @@ function createTooltip(map, layerID, layerSource) {
       originalStyle = map.getPaintProperty(layerID, "line-color");
       const coordinates = e.lngLat;
 
-      console.log("Feature --> ", feature);
-
       tooltip
         .setLngLat(coordinates)
         .setHTML(`<h3>Feature</h3><p>ID: ${feature.properties.id}</p>`)
@@ -245,7 +282,8 @@ function createTooltip(map, layerID, layerSource) {
   if (layerID === "v_optimized_wfs") {
     map.on("mouseenter", layerID, (e) => {
       const feature = e.features[0];
-      console.log("Feature:", feature);
+      //console.log("Feature:", feature);
+
       const featureId = feature.id;
 
       // Highlight the feature

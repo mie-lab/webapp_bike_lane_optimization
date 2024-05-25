@@ -260,3 +260,35 @@ export async function getNetworkBearing(projectID, runID) {
     throw error; // Rethrow error for handling in the Vue component
   }
 }
+
+export async function getBoundingBox(projectID) {
+  const url =
+    `${import.meta.env.VITE_BACKEND_URL}/getBoundingBox?` +
+    `project_id=${encodeURIComponent(projectID)}`;
+
+  const params = {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  try {
+    const response = await fetch(url, params);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const responseData = await response.json();
+
+    // Store bounding box in userInputStore if layer is "v_bound"
+    if (responseData.bounding_box) {
+      const userInput = userInputStore();
+      userInput.setBoundingBox(responseData.bounding_box);
+    }
+
+    return responseData;
+  } catch (error) {
+    console.error("Error:", error);
+    throw error;
+  }
+}

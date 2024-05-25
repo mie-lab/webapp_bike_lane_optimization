@@ -90,7 +90,7 @@ import { mapStore } from "../stores/mapStore.js";
 import UserInputRun from "./UserInputRun.vue";
 import { create } from "ol/transform";
 import { loadWMS } from "../scripts/map.js";
-import { createView, runConstructGraph } from "../scripts/api.js";
+import { getBoundingBox, runConstructGraph } from "../scripts/api.js";
 import { watch, ref } from "vue";
 import RingLoader from "vue-spinner/src/RingLoader.vue";
 import { projectsStore } from "../stores/projectsStore.js";
@@ -185,7 +185,8 @@ export default {
       }
 
       try {
-        const response = await createView(inputStore.projectID, 1, "v_bound");
+        //const response = await createView(inputStore.projectID, 1, "v_bound");
+        const response = await getBoundingBox(inputStore.projectID);
 
         if (drawObjectRectangle !== null) {
           removeDrawFromMap(mapObject, drawObjectRectangle);
@@ -195,7 +196,7 @@ export default {
           removeDrawFromMap(mapObject, drawObjectPolygon);
         }
 
-        loadWMS("v_bound", "wms_bound");
+        loadWMS("v_bound", "wms_bound", inputStore.projectID);
       } catch (error) {
         console.error(error);
       } finally {

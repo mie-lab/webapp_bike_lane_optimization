@@ -212,7 +212,7 @@ import { projectsStore } from "../stores/projectsStore.js";
 import { runningProcessStore } from "../stores/processListStore.js";
 import RingLoader from "vue-spinner/src/RingLoader.vue";
 import { ref , computed} from "vue";
-import { createView, getRunList, getNewRunID } from "../scripts/api.js";
+import { getRunList, getNewRunID } from "../scripts/api.js";
 import { loadWMS } from "../scripts/map.js";
 import ProcessList from "./ProcessList.vue";
 import { infoBoxTexts } from "../strings/infoBoxText.js";
@@ -315,7 +315,8 @@ export default {
       this.runName = run.run_name;
       this.inputStore.setRunName(this.runName);
 
-      loadWMS("v_optimized", "wms_optimized");
+
+      loadWMS("v_optimized", "wms_optimized",this.inputStore.projectID, run.run_id);
 
       this.statusStore.openDashboard();
       this.isLoading = false;
