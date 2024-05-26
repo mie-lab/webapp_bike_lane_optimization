@@ -12,7 +12,7 @@
       <h2 class="h2_override">{{ inputStore.projectName }} | {{ runName }}</h2>
 
       <p class="info-text">
-        Change your network according to your preferences.
+        To design a new bike network, please specify which planning algorithm you would like to use and set the parameters according to your preferences.
       </p>
       <p class="link-style-p">
         <a class="link-style" href="#" @click="toggleActiveTab('Help')"

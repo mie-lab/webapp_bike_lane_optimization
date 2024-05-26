@@ -9,12 +9,8 @@
         </h2>
 
         <p class="info-text">
-          This is your project overview. Make multiple runs with different
-          paramters for the chosen area.
-          <br />
-          <br />
-          Create a new Run for the project, or click on already existing runs to
-          see their results.
+          This is the overview of the project <i>{{ inputStore.projectName }}</i>. For planning a new bike network in the specified area, create a new run. For viewing a bike network from an existing run, select from the list below.
+          
         </p>
 
         <h3 class="runs-header">
