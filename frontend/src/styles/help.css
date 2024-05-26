@@ -7,6 +7,12 @@
   flex-direction: column;
 }
 
+@media (max-width: 600px) {
+  .numbered-circles {
+    margin-bottom: 50px;
+  }
+}
+
 .numbered-circle {
   width: 25px;
   height: 25px;

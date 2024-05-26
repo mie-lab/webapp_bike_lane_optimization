@@ -510,7 +510,12 @@ export default {
 
 .link-style-p {
   margin: 0;
+ 
 }
+
+
+
+
 
 .info-text {
   padding-bottom: 2px;

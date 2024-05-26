@@ -241,10 +241,16 @@ export async function loadWMS(layerID, layerSource, projectID, runID) {
   // Create MapboxGL Bounds object
   const bounds = new mapboxgl.LngLatBounds(swLngLat, neLngLat);
 
-  map.fitBounds(bounds, {
-    padding: 300, // Adjust padding as needed
-    offset: [50, 0],
-  });
+  console.log("Bounds: ", bounds);
+
+  if (window.innerWidth > 768) {
+    map.fitBounds(bounds, {
+      padding: 300,
+      offset: [50, 0],
+    });
+  } else {
+    map.fitBounds(bounds, {});
+  }
 }
 
 function createTooltip(map, layerID, layerSource) {

@@ -23,6 +23,7 @@
   }
 
   .nav-button {
+    color: black;
     background-color: transparent;
     border: none;
     padding: 10px;
@@ -44,7 +45,8 @@
 
   .sidebar-content {
     width: 100%;
-    overflow: hidden;
+
+    overflow-y: auto;
   }
 
   .process-container {

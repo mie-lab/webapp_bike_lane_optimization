@@ -150,6 +150,11 @@ export default {
       } else {
         this.statusStore.setActiveTab(tab);
       }
+
+      if (window.innerWidth <= 768) {
+        this.statusStore.closeDashboard();
+        this.isDashboardActive = false;
+      }
     },
     getIconColor(icon) {
       return this.activeTab === icon
@@ -162,6 +167,10 @@ export default {
     toggleDashboard() {
       this.isDashboardActive = !this.isDashboardActive;
       this.statusStore.toggleDashboard();
+
+      if (window.innerWidth <= 768) {
+        this.statusStore.setActiveTab("None");
+      }
     },
   },
   mounted() {},

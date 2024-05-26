@@ -220,11 +220,8 @@ export default {
       // create view on the map for the selected run
       //const response = await createView(this.inputStore.projectID,run.id_run,"v_optimized");
       await getBoundingBox(this.inputStore.projectID);
-      console.log("test 1 ");
       loadWMS("v_optimized", "wms_optimized",this.inputStore.projectID, run.id_run);
-      console.log("test 2 ");
-      loadWFS("v_optimized_wfs", "wfs_optimized",this.inputStore.projectID, run.id_run);
-      console.log("test 3 ");
+      //loadWFS("v_optimized_wfs", "wfs_optimized",this.inputStore.projectID, run.id_run);
 
       // get the evaluations for the selected run
       extractParetoEvaluation(run);
