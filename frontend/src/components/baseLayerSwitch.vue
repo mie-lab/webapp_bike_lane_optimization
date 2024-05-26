@@ -10,7 +10,7 @@
       >
         <div class="button-mask">
           <img src="../assets/map_thumbnails/dark.png" alt="Dark" />
-          <div v-if="showButtonOverlay" class="overlay">
+          <div v-if="showButtonOverlay && hoveredButton === 'Dark'" class="overlay">
             <div class="overlay-text">{{ overlayText }}</div>
           </div>
         </div>
@@ -24,7 +24,7 @@
       >
         <div class="button-mask">
           <img src="../assets/map_thumbnails/bright.png" alt="Bright" />
-          <div v-if="showButtonOverlay" class="overlay">
+          <div v-if="showButtonOverlay && hoveredButton === 'Bright'" class="overlay">
             <div class="overlay-text">{{ overlayText }}</div>
           </div>
         </div>
@@ -46,6 +46,7 @@ export default {
       overlayText: "",
       activeLayer: null,
       mapStoreInstance,
+      hoveredButton:null,
     };
   },
 
@@ -64,6 +65,7 @@ export default {
     },
     showOverlay(value, text = "") {
       this.showButtonOverlay = value;
+      this.hoveredButton = text;
 
       this.overlayText = text;
     },

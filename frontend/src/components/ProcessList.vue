@@ -21,13 +21,15 @@
           <div class="process-algorithm">
             {{ convertAlgName(process.algorithm) }}
           </div>
-          <div class="process-bike-ratio">{{ process.bike_ratio * 100 }}%</div>
+          <div class="process-bike-ratio">{{ process.bike_ratio.toFixed(2) * 100 }}%</div>
           <div class="process-safety-penalty">
-            {{ process.bike_safety_penalty }}
+            {{ parseFloat(process.bike_safety_penalty).toFixed(1) }}
           </div>
-          <div class="process-car_weight">{{ process.car_weight }}</div>
+          <div class="process-car_weight">
+            {{ isNaN(parseFloat(process.car_weight)) ? ' -' : parseFloat(process.car_weight).toFixed(1) }} 
+          </div>
           <div class="process-optimize-frequency">
-            {{ process.optimize_frequency }}
+            {{ isNaN(parseFloat(process.optimize_frequency)) ? ' -' : parseFloat(process.optimize_frequency).toFixed(1) }} 
           </div>
           <div class="process-status">
             <template v-if="process.status === 'pending'">

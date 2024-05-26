@@ -50,7 +50,7 @@
         </table>
         <p class="link-style-p">
           <a class="link-style" href="#" @click="openHelpDetails()"
-            >more details</a
+            >more Information about the algorithms, the possible input parameters, and their evaluations</a
           >
         </p>
       </div>

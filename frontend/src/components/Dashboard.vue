@@ -386,7 +386,7 @@
             </div>
             <div class="dropdown-eval-content" v-if="isOpenBearing">
               <div class="pieChartContainer" style="height: 80px">
-                <div class="column">
+                <div class="column" style="height: 100%;">
                   <table>
                     <tr v-show="compareRunStore.compare">
                       <td
@@ -431,7 +431,7 @@
                   </table>
                 </div>
 
-                <div class="column" v-show="compareRunStore.compare">
+                <div class="column" style="height: 100%;" v-show="compareRunStore.compare">
                   <table>
                     <tr>
                       <td
@@ -579,6 +579,7 @@ export default {
       complexityIsLoading: false,
       bearingIsLoading: false,
       infoBoxTexts: infoBoxTexts,
+      paretoIsLoading:false,
     };
   },
 
