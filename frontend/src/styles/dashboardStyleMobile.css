@@ -36,8 +36,8 @@
     width: 100%;
   }
   .dashboard-content-evaluation {
-    overflow-y: auto;
     height: 80vh;
+    margin-bottom: 200px;
   }
   .dropdown-header {
     display: flex;
@@ -100,6 +100,7 @@
     flex-grow: 1;
     width: 100%;
     height: 100%;
+    overflow-y: auto;
   }
 
   .pieChartContainer {

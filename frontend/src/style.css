@@ -136,6 +136,7 @@ li {
 @media screen and (max-width: 600px) {
   .parent-container {
     width: 100vw;
+    margin-bottom: 200px;
   }
 
   .text-pink {
