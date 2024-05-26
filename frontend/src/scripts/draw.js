@@ -65,6 +65,19 @@ export function removeDrawFromMap(map, draw) {
   map.removeControl(draw);
 }
 
+export function cancleDrawing() {
+  const statusStore = statusVariablesStore();
+  const mapStoreInstance = mapStore();
+
+  if (mapStoreInstance.drawRectangleObject) {
+    mapStoreInstance.drawRectangleObject.deleteAll();
+  }
+
+  if (mapStoreInstance.drawPolygonObject) {
+    mapStoreInstance.drawPolygonObject.deleteAll();
+  }
+}
+
 export function drawRectangle() {
   const userInput = userInputStore();
   const statusStore = statusVariablesStore();

@@ -55,6 +55,13 @@
             alt="Draw Polygon"
           />
         </button>
+        <button
+          @click="deleteDrawing"
+          class="delete-button"
+          :class="{ 'button-disabled': isButtonDisabled }"
+        >
+          <i class="fa-regular fa-trash-can"></i>
+        </button>
         <p class="missing-input" v-show="boundingBoxIsEmpty">
           *Draw an area of interest!
         </p>
@@ -62,6 +69,7 @@
       <br />
 
       <br />
+
       <button @click="toggleUserInputPreviousSide" class="back-button">
         Back
       </button>
@@ -84,6 +92,7 @@ import {
   drawRectangle,
   drawPolygon,
   removeDrawFromMap,
+  cancleDrawing,
 } from "../scripts/draw.js";
 import { statusVariablesStore } from "../stores/statusVariablesStore.js";
 import { mapStore } from "../stores/mapStore.js";
@@ -208,12 +217,25 @@ export default {
     toggleUserInputNextSide() {
       const statusStore = statusVariablesStore();
       statusStore.toggleRunPage();
+      cancleDrawing();
     },
     toggleUserInputPreviousSide() {
       const statusStore = statusVariablesStore();
       statusStore.toggleCreatePage();
       statusStore.toggleLoadPage();
+      cancleDrawing();
+      statusStore.setDrawingRectangle(false);
+      statusStore.setDrawingPolygon(false);
+      this.isButtonDisabled = true;
     },
+
+    deleteDrawing() {
+      cancleDrawing();
+      this.isButtonDisabled = true;
+      statusStore.setDrawingRectangle(false);
+      statusStore.setDrawingPolygon(false);
+    },
+
     toggleTabsVisibility() {
       const statusStore = statusVariablesStore();
       statusStore.toggleTabsVisibility();
@@ -264,5 +286,24 @@ export default {
 
 .draw-square-icon-active {
   filter: invert(1);
+}
+
+.delete-button {
+  background-color: transparent;
+  color: black;
+  padding: 0;
+  margin: 0;
+  margin-left: 5px;
+}
+
+.delete-button:hover {
+  border-radius: 0;
+  border-color: transparent;
+  color: var(--pink-color);
+}
+
+.button-disabled {
+  color: var(--darkgrey-3-bg);
+  cursor: not-allowed;
 }
 </style>
