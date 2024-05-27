@@ -510,6 +510,7 @@ import { create } from "ol/transform.js";
 import RingLoader from "vue-spinner/src/RingLoader.vue";
 import { distance } from "ol/coordinate";
 import { infoBoxTexts } from "../strings/infoBoxText.js";
+import {extractParetoEvaluation,extractDistancesPerLane, extractComplexity, extractBearing} from "../scripts/dashboard.js";
 
 export default {
   name: "Dashboard",
@@ -608,6 +609,7 @@ export default {
       ) => {
         this.distancesIsLoading = newDistances;
         this.travelTimesIsLoading = newPareto;
+        this.paretoIsLoading = newPareto;
         this.complexityIsLoading = newComplexity;
         this.bearingIsLoading = newBearing;
       }
@@ -657,43 +659,14 @@ export default {
       // create evaluation for the selected run
       this.compareRunStore.setRunName(run.run_name);
 
-      const paretoEvaluation = await getPareto(run.id_prj, run.id_run);
-      // Extracting data from paretoEvaluation
-      const projects = paretoEvaluation.projects;
-      const bikeTimes = projects.map((project) => project.bike_time_change);
-      const carTimes = projects.map((project) => project.car_time_change);
+      extractParetoEvaluation(run,true);
 
-      this.compareRunStore.setTraveltimes(bikeTimes, carTimes);
+      extractDistancesPerLane(run,true);
 
-      // get km per bike / car lane
-      const distanceEvaluation = await getKmDistancePerLaneType(
-        this.inputStore.projectID,
-        run.id_run
-      );
-      this.compareRunStore.setDistancesKM(
-        distanceEvaluation.distance_bike[0].total_bike_lane_distance,
-        distanceEvaluation.distance_car[0].total_car_lane_distance
-      );
+      extractComplexity(run,true);
 
-      // get complexity
-      const complexityEvaluation = await getComplexity(
-        this.inputStore.projectID,
-        run.id_run
-      );
-      this.compareRunStore.setComplexity(
-        complexityEvaluation.bike_degree_ratio,
-        complexityEvaluation.car_degree_ratios
-      );
+      extractBearing(run,true);
 
-      // get network bearing
-      const bearingEvaluation = await getNetworkBearing(
-        this.inputStore.projectID,
-        run.id_run
-      );
-      this.compareRunStore.setNetworkBearing(
-        bearingEvaluation.bike_network_bearings,
-        bearingEvaluation.car_network_bearings
-      );
 
       this.createBarChartTT();
       this.createScatterPlotPareto();

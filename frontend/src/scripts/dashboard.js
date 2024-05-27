@@ -1,14 +1,24 @@
 import { useResultsStore } from "../stores/runResultsStore.js";
 import { userInputStore } from "../stores/userInputStore.js";
 import { loadingStore } from "../stores/loadingStore.js";
+import { useCompareRunEvaluation } from "../stores/compareRunResultStore.js";
 import {
   getPareto,
   getKmDistancePerLaneType,
   getComplexity,
   getNetworkBearing,
 } from "../scripts/api.js";
-export async function extractParetoEvaluation(run) {
-  const resultsStore = useResultsStore();
+
+export async function extractParetoEvaluation(run,compareMode=false) {
+
+  // save in result store or in compare result store
+  let resultsStore;
+  if (compareMode){
+     resultsStore = useCompareRunEvaluation();
+  } else {
+     resultsStore = useResultsStore();
+  };
+  
   const inputStore = userInputStore();
   const loading = loadingStore();
 
@@ -27,8 +37,16 @@ export async function extractParetoEvaluation(run) {
   loading.setParetoIsLoading(false);
 }
 
-export async function extractDistancesPerLane(run) {
-  const resultsStore = useResultsStore();
+
+
+export async function extractDistancesPerLane(run,compareMode=false) {
+  // save in result store or in compare result store
+  let resultsStore;
+  if (compareMode){
+     resultsStore = useCompareRunEvaluation();
+  } else {
+     resultsStore = useResultsStore();
+  };
   const inputStore = userInputStore();
   const loading = loadingStore();
 
@@ -49,8 +67,16 @@ export async function extractDistancesPerLane(run) {
   loading.setDistancesIsLoading(false);
 }
 
-export async function extractComplexity(run) {
-  const resultsStore = useResultsStore();
+
+
+export async function extractComplexity(run,compareMode=false) {
+  // save in result store or in compare result store
+  let resultsStore;
+  if (compareMode){
+     resultsStore = useCompareRunEvaluation();
+  } else {
+     resultsStore = useResultsStore();
+  };
   const inputStore = userInputStore();
   const loading = loadingStore();
 
@@ -69,8 +95,16 @@ export async function extractComplexity(run) {
   loading.setComplexityIsLoading(false);
 }
 
-export async function extractBearing(run) {
-  const resultsStore = useResultsStore();
+
+
+export async function extractBearing(run,compareMode=false) {
+  // save in result store or in compare result store
+  let resultsStore;
+  if (compareMode){
+      resultsStore = useCompareRunEvaluation();
+  } else {
+      resultsStore = useResultsStore();
+  };
   const inputStore = userInputStore();
   const loading = loadingStore();
 
