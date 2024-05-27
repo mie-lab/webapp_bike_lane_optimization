@@ -12,8 +12,8 @@
       <h3>Betweeness Cartime (BC)</h3>
       <p>{{ betweenessCartimeContent }}</p>
 
-      <h2 class="legend-text" style="margin-top: 40px;">Input Paramters</h2>
-      <h3 >Bike lane ratio</h3>
+      <h2 class="legend-text" style="margin-top: 40px">Input Paramters</h2>
+      <h3>Bike lane ratio</h3>
       <p>{{ bikeLaneRatio }}</p>
       <h3>Safety Penalty</h3>
       <p>{{ safetyPenalty }}</p>
@@ -22,7 +22,7 @@
       <h3>Optimize Frequency</h3>
       <p>{{ optimizeFrequency }}</p>
 
-      <h2 class="legend-text" style="margin-top: 40px;">Evaluation</h2>
+      <h2 class="legend-text" style="margin-top: 40px">Evaluation</h2>
       <h3>Pareto</h3>
       <p>{{ pareto }}</p>
       <h3>Travel Times Changes</h3>
@@ -33,9 +33,7 @@
       <p>{{ complexityContent }}</p>
       <h3>Network Bearing</h3>
       <p>{{ bearingContent }}</p>
-
     </div>
-    
 
     <div class="button-div">
       <button @click="toggleTabsVisibility" class="back-button">Back</button>
@@ -63,7 +61,6 @@ export default {
       safetyPenalty: helpText.safetyPenalty,
       carWeight: helpText.carWeight,
       optimizeFrequency: helpText.optimizeFrequency,
-
     };
   },
 
@@ -100,8 +97,26 @@ export default {
   overflow-y: auto;
 }
 
-h3{
+h3 {
   margin-bottom: 0px;
   padding-bottom: 0pxs;
+}
+
+@media screen and (max-width: 600px) {
+  .button-div {
+    justify-content: flex-end;
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin-top: 20px;
+    margin-right: 20px;
+  }
+
+  .back-button {
+    margin: 0;
+    padding: 7px;
+    font-size: small;
+    color: black;
+  }
 }
 </style>

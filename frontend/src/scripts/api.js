@@ -131,40 +131,6 @@ export async function getNewRunID(projectID) {
   }
 }
 
-export async function createView(projectID, runID, layerName) {
-  const url =
-    `${import.meta.env.VITE_BACKEND_URL}/create_view?` +
-    `project_id=${encodeURIComponent(projectID)}` +
-    `&run_id=${encodeURIComponent(runID)}` +
-    `&layer=${encodeURIComponent(layerName)}`;
-
-  const params = {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  };
-
-  try {
-    const response = await fetch(url, params);
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const responseData = await response.json();
-
-    // Store bounding box in userInputStore if layer is "v_bound"
-    if (layerName === "v_bound" && responseData.bounding_box) {
-      const userInput = userInputStore();
-      userInput.setBoundingBox(responseData.bounding_box);
-    }
-
-    return responseData;
-  } catch (error) {
-    console.error("Error:", error);
-    throw error;
-  }
-}
-
 export async function getKmDistancePerLaneType(projectID, runID) {
   const url =
     `${import.meta.env.VITE_BACKEND_URL}/get_distance_per_lane_type?` +

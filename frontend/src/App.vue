@@ -45,7 +45,6 @@ const isStartingPageVisible = ref(true);
 watch(
   () => statusStore.helpDetailsPage,
   (newProcesses, oldProcesses) => {
-
     isHelpDetailsVisible.value = !isHelpDetailsVisible.value;
   }
 );
