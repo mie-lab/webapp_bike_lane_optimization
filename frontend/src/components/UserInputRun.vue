@@ -202,10 +202,8 @@ export default {
       this.selectedRun = run;
 
       this.compareRunStore.reset(); // reset all comparisons
-
       this.inputStore.setRunID(run.id_run);
-      this.runName = run.run_name;
-      this.inputStore.setRunName(this.runName);
+      
 
       // on mobile screen, toggle the page
       if (window.innerWidth <= 600) {
@@ -224,6 +222,9 @@ export default {
       extractDistancesPerLane(run);
       extractComplexity(run);
       extractBearing(run);
+
+      this.runName = run.run_name;
+      this.inputStore.setRunName(this.runName);
       
       
     },
