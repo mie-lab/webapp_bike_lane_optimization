@@ -27,5 +27,8 @@ export const projectsStore = defineStore("projects", {
       );
       return project ? project.runtime_min : null;
     },
+    getSelectedRun() {
+      return this.selectedRun;
+    },
   },
 });

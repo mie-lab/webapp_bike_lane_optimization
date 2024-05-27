@@ -585,16 +585,72 @@ export default {
   },
 
   mounted() {
-    // reload Plots when new run is selected
+    // reload data behind evaluation when run name changes
     watch(
-      () => this.ResultsStore.runName,
-      (newRunName, oldRunName) => {
+      () => this.inputStore.runName,
+      async (newRunName, oldRunName) => {
+        const run = this.prjStore.getSelectedRun;
+
+        // get the evaluation data for the selected run
+        extractParetoEvaluation(run);
+        extractDistancesPerLane(run);
+        extractComplexity(run);
+        extractBearing(run);
+      }
+    );
+  
+    watch(
+      () => this.ResultsStore.paretoBikeTTArray,
+      (newValue, oldValue) => {
         this.createScatterPlotPareto();
         this.createBarChartTT();
+      }
+    );
+    watch(
+      () => this.ResultsStore.kmBike,
+      (newValue, oldValue) => {
         this.createDoughnutChartDistances();
+      }
+    );
+    watch(
+      () => this.ResultsStore.complexity.bike,
+      (newValue, oldValue) => {
         this.createPieChartComplexityAll();
       }
     );
+
+    ///// compare run ////////////
+    
+    watch(
+      () => this.compareRunStore.paretoBikeTTArray,
+      (newValue, oldValue) => {
+        if (this.compareRunStore.compare){
+          this.createScatterPlotPareto();
+          this.createBarChartTT();
+        }
+        
+      }
+    );
+    watch(
+      () => this.compareRunStore.kmBike,
+      (newValue, oldValue) => {
+        if (this.compareRunStore.compare){
+          this.createDoughnutChartDistances();
+        }
+  
+      }
+    );
+    watch(
+      () => this.compareRunStore.complexity.bike,
+      (newValue, oldValue) => {
+        if (this.compareRunStore.compare){
+          this.createPieChartComplexityAll();
+        }
+        
+      }
+    );
+    
+
 
     watch(
       () => [
@@ -659,19 +715,11 @@ export default {
       // create evaluation for the selected run
       this.compareRunStore.setRunName(run.run_name);
 
+      // get the evaluation data for the selected run
       extractParetoEvaluation(run,true);
-
       extractDistancesPerLane(run,true);
-
       extractComplexity(run,true);
-
       extractBearing(run,true);
-
-
-      this.createBarChartTT();
-      this.createScatterPlotPareto();
-      this.createDoughnutChartDistances();
-      this.createPieChartComplexityAll();
     },
 
     createPieChartComplexityAll() {

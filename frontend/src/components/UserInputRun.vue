@@ -217,16 +217,9 @@ export default {
       loadWMS("v_optimized", "wms_optimized",this.inputStore.projectID, run.id_run);
       //loadWFS("v_optimized_wfs", "wfs_optimized",this.inputStore.projectID, run.id_run);
 
-      // get the evaluations for the selected run
-      extractParetoEvaluation(run);
-      extractDistancesPerLane(run);
-      extractComplexity(run);
-      extractBearing(run);
-
       this.runName = run.run_name;
       this.inputStore.setRunName(this.runName);
-      
-      
+
     },
 
     toggleUserInputNextSide() {
