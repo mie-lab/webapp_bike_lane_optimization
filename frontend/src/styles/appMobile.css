@@ -31,9 +31,8 @@
   .help-details-container {
     z-index: 999;
     position: absolute;
-    left: 50px;
     background-color: var(--lightgrey-bg);
-    width: calc(100% - 50px);
+    width: 100%;
     height: 100%;
   }
 
