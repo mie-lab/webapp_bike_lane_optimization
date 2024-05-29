@@ -288,7 +288,7 @@ function createTooltip(map, layerID, layerSource) {
   if (layerID === "v_optimized_wfs") {
     map.on("mouseenter", layerID, (e) => {
       const feature = e.features[0];
-      //console.log("Feature:", feature);
+      console.log("Feature:", feature);
 
       const featureId = feature.id;
 
@@ -301,8 +301,9 @@ function createTooltip(map, layerID, layerSource) {
 
       // Extract properties from the feature
       const lanetype = feature.properties.lanetype;
-      const speedLimit = feature.properties.speed_limit;
+      const speedLimit = feature.properties.maxspeed;
       const gradient = feature.properties.gradient;
+      const lanes = feature.properties.lanes;
 
       // Process lanetype
       let laneTypeText;
@@ -330,6 +331,7 @@ function createTooltip(map, layerID, layerSource) {
             <col style="width: 40%;">
             <col style="width: 60%;">
         </colgroup>
+       
         <tr>
             <td><b>Lanetype:</b></td>
             <td>${laneTypeText}</td>

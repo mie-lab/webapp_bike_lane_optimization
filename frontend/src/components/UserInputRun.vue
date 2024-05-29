@@ -215,7 +215,7 @@ export default {
       //const response = await createView(this.inputStore.projectID,run.id_run,"v_optimized");
       await getBoundingBox(this.inputStore.projectID);
       loadWMS("v_optimized", "wms_optimized",this.inputStore.projectID, run.id_run);
-      //loadWFS("v_optimized_wfs", "wfs_optimized",this.inputStore.projectID, run.id_run);
+      loadWFS("v_optimized_wfs", "wfs_optimized",this.inputStore.projectID, run.id_run);
 
       this.runName = run.run_name;
       this.inputStore.setRunName(this.runName);
