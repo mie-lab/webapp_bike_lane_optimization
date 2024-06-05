@@ -1,4 +1,5 @@
 <template>
+  <!-- Components that show all runs within a project -->
   <div>
     <!-- Run list -->
     <div v-if="!statusStore.createNewRunPage">
@@ -29,15 +30,14 @@
             </div>
           </span>
         </h3>
-
-        
+    
         <input
         type="text"
         v-model="searchQuery"
         placeholder="Search runs..."
         class="project-name-input"
       />
-
+        <!-- List of all runs -->
         <div class="project-list">
           <ul>
             <li
@@ -94,7 +94,6 @@
         </div>
       </div>
 
-      <!-- User input container -->
       <button class="close-btn" @click="toggleTabsVisibility">
         <i
           class="fa-solid fa-times"
@@ -102,6 +101,7 @@
         ></i>
       </button>
 
+       <!-- Button for going back and for creating a new run -->
       <div class="buttons">
         <button @click="toggleUserInputPreviousSide" class="back-button">
           Back
@@ -122,13 +122,12 @@ import { statusVariablesStore } from "../stores/statusVariablesStore.js";
 import { useResultsStore } from "../stores/runResultsStore.js";
 import { projectsStore } from "../stores/projectsStore.js";
 import RingLoader from "vue-spinner/src/RingLoader.vue";
-import { ref, watch , computed} from "vue";
+import { ref, computed} from "vue";
 import {
   getBoundingBox,
   getRunList,
 } from "../scripts/api.js";
 import { loadWFS, loadWMS } from "../scripts/map.js";
-import {extractParetoEvaluation,extractDistancesPerLane, extractComplexity, extractBearing} from "../scripts/dashboard.js";
 import UserInputNewRun from "./UserInputNewRun.vue";
 import { useCompareRunEvaluation } from "../stores/compareRunResultStore.js";
 
@@ -212,7 +211,6 @@ export default {
         }
 
       // create view on the map for the selected run
-      //const response = await createView(this.inputStore.projectID,run.id_run,"v_optimized");
       await getBoundingBox(this.inputStore.projectID);
       loadWMS("v_optimized", "wms_optimized",this.inputStore.projectID, run.id_run);
       loadWFS("v_optimized_wfs", "wfs_optimized",this.inputStore.projectID, run.id_run);
@@ -270,7 +268,6 @@ export default {
 .selected {
   color: var(--pink-color);
 }
-
 
 .buttons {
   margin-top: 20px;

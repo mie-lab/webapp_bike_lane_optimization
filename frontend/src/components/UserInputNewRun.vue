@@ -1,4 +1,5 @@
 <template>
+    <!-- Components to set all parameters for a new run -->
   <div>
     <button class="close-btn" @click="toggleTabsVisibility">
       <i
@@ -20,7 +21,7 @@
         >
       </p>
       <br></br>
-
+      <!-- Set run name-->
       <h4 class="text-blue">
         Run name
         <i
@@ -51,7 +52,7 @@
           {{ infoBoxTexts.run_algorithm }}
         </div></h4>
       
-
+      <!-- Chose an algorithm -->
       <div class="dropdown" ref="dropdown" @click="toggleDropdown">
         <button
           class="dropbtn"
@@ -74,6 +75,7 @@
       </div>
       <p class="missing-input" v-show="algorithmIsEmtpy">* Select an Algorithm</p>
 
+      <!-- Percentage of lane allocation -->
       <div class="bike-ratio" style="margin-top: 35px; position: relative;">
         <h4 class="text-blue"><i class="fa-solid fa-bicycle"></i> How many lanes should become bike lanes? <i
           class="fa-regular fa-circle-question help-icon"
@@ -96,6 +98,7 @@
         <p>{{ laneAllocation }} % of the lanes</p>
       </div>
 
+      <!-- Bike safety penalty -->
       <div class="bike-safety-penalty" style="margin-top: 35px; position: relative;">
         <h4 class="text-blue"><i class="fa-solid fa-shield-heart"></i> 
           Factor by how much the perceived bike travel time increases if cycling
@@ -122,6 +125,7 @@
         <p>{{ bikeSafetyPenalty }} times</p>
       </div>
 
+      <!-- Weight of car travel time -->
       <div
         class="car-weight"
         v-if="selectedOption && selectedOption.algorithm === 'optimize'"
@@ -151,6 +155,7 @@
         <p>Chosen weighting: {{ timeWeighting }}</p>
       </div>
 
+      <!-- Optimize frequency -->
       <div
         class="optimize-frequency"
         v-if="selectedOption && selectedOption.algorithm === 'optimize'"
@@ -195,11 +200,6 @@
       </button>
 
       <button @click="callOptimization">Run</button>
-    <!--
-    <div class="process_list">
-      <ProcessList />
-    </div>
-  -->
   </div>
 </template>
 
@@ -309,12 +309,11 @@ export default {
   },
   methods: {
     async loadRun(run) {
+      // show network of run on map and open dashboard
       this.isLoading = true;
-
       this.inputStore.setRunID(run.run_id);
       this.runName = run.run_name;
       this.inputStore.setRunName(this.runName);
-
 
       loadWMS("v_optimized", "wms_optimized",this.inputStore.projectID, run.run_id);
 
@@ -332,8 +331,7 @@ export default {
         this.statusStore.setActiveTab(tab);
       }
     },
-    toggleUserInputNextSide() {
-      
+    toggleUserInputNextSide() { 
       this.statusStore.toggleRunPage();
     },
     async toggleUserInputPreviousSide() {
@@ -478,8 +476,8 @@ export default {
   text-align: left;
   padding-left: 10px;
   padding-right: 10px;
-  display: flex; /* Use flexbox */
-  justify-content: space-between; /* Align items with space between */
+  display: flex; 
+  justify-content: space-between; 
   align-items: center;
 }
 
@@ -513,16 +511,10 @@ export default {
  
 }
 
-
-
-
-
 .info-text {
   padding-bottom: 2px;
   margin: 0;
 }
-
-
 
 .user-input-container {
   padding-right: 10px;
@@ -541,12 +533,12 @@ export default {
 }
 
 .scrollable-input-container::-webkit-scrollbar-thumb {
-  background: var(--lightgrey-2-bg); /* Color of the scroll thumb */
-  border-radius: 5px; /* Radius of the scroll thumb */
+  background: var(--lightgrey-2-bg); 
+  border-radius: 5px; 
 }
 
 .scrollable-input-container::-webkit-scrollbar-thumb:hover {
-  background:var(--pink-color); /* Color of the scroll thumb when hovered */
+  background:var(--pink-color); 
 }
 
 .text-blue {
@@ -556,6 +548,5 @@ export default {
 .help-icon {
   color: var(--darkgrey-3-bg);
 }
-
 
 </style>

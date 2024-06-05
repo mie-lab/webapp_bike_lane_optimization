@@ -75,7 +75,7 @@ import { ref, watch } from "vue";
 import ProjectInfo from "./ProjectInfo.vue";
 import UserInput from "./UserInputCreate.vue";
 import UserInputStart from "./UserInputStart.vue";
-import BikeInfo from "./BikeInfo.vue";
+import EBikeCityInfo from "./EBikeCityInfo.vue";
 import Help from "./Help.vue";
 import { statusVariablesStore } from "../stores/statusVariablesStore.js";
 import ProcessList from "./ProcessList.vue";
@@ -132,7 +132,7 @@ export default {
         case "UserInput":
           return UserInputStart;
         case "Bike":
-          return BikeInfo;
+          return EBikeCityInfo;
         case "Help":
           return Help;
         default:

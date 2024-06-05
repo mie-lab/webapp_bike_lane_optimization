@@ -4,10 +4,9 @@
       <i class="fa-solid fa-times" style="font-size: 20px"></i>
     </button>
     <h1 class="text-pink">Help</h1>
-
     <div class="sidebar-content-container">
       <p>{{ introductionContent }}</p>
-
+      <!-- Step by step description, how to use web application -->
       <h2 class="legend-text">How to use</h2>
       <div class="numbered-circles">
         <table>
@@ -49,6 +48,7 @@
           </tr>
         </table>
         <p class="link-style-p">
+          <!-- Button to get more Details, get to HelpDetails component-->
           <a class="link-style" href="#" @click="openHelpDetails()"
             >more Information about the algorithms, the possible input parameters, and their evaluations</a
           >

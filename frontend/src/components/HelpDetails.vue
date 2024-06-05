@@ -42,7 +42,6 @@
 </template>
 
 <script>
-import { watch } from "vue";
 import { helpText } from "../strings/helpText.js";
 import { statusVariablesStore } from "../stores/statusVariablesStore.js";
 export default {
@@ -93,7 +92,7 @@ export default {
   box-shadow: none;
 }
 .content {
-  max-height: 90vh; /* Adjust this value as needed */
+  max-height: 90vh; 
   overflow-y: auto;
 }
 

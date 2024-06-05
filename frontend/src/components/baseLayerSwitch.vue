@@ -1,6 +1,7 @@
 <template>
   <div class="layer-switcher">
     <div class="button-container">
+      <!-- dark base map button -->  
       <button
         @click="switchToDarkMap"
         class="layer-button"
@@ -15,6 +16,7 @@
           </div>
         </div>
       </button>
+      <!-- bright base map button -->  
       <button
         @click="switchToBrightMap"
         class="layer-button"

@@ -8,7 +8,7 @@ export const infoBoxTexts = {
     "Select on of the available algorithms. Each algorithm is described in the help tab.",
   run_bike_ratio:
     "The ratio of edges that is converted into bike lanes. The actual number of bike edges might be lower than your input.",
-  run_bike_safety_penalty: "The assumption is that cyclists prefer to ride on bike lanes und wenn sie dies nicht können, dann verschlechtert sich ihre Experience, was sich mit .",
+  run_bike_safety_penalty: "The assumption is that cyclists prefer to ride on dedicated bike lanes. When this is not possible, their experience deteriorates, which manifests as an increased perceived travel time.",
   run_car_weight: "Importance of car travel times in relation to the bike travel time. ",
   run_optimize_frequency: "The more the optimization is re-run, the better the results are. But the runtime increases as well.",
 

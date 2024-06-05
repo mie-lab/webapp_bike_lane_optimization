@@ -5,6 +5,7 @@
     </button>
     <h1 class="text-pink">E-Bike City Zurich</h1>
     <div class="sidebar-content-container">
+      <!-- Information Text about E Bike City from pinia store -->  
       <p class="info-text">{{ EBikeCityInfoText.GeneralText }}
         <br />
         More information about the 
@@ -32,7 +33,7 @@ import algorithmIllustration from "../assets/ebc_sub_e_editorial.png";
 import { EBikeCityInfoText } from "../strings/EBikeCityInfoText.js";
 
 export default {
-  name: "BikeInfo",
+  name: "EBikeCityInfo",
   data: () => ({
     algorithmIllustration,
     EBikeCityInfoText,
@@ -41,7 +42,7 @@ export default {
   methods: {
     toggleTabsVisibility() {
       const statusStore = statusVariablesStore();
-      statusStore.toggleTabsVisibility(); // Toggle the visibility of the tabs using the Pinia store
+      statusStore.toggleTabsVisibility(); 
     },
     openHelpDetails() {
       const statusStore = statusVariablesStore();

@@ -485,7 +485,6 @@
 </template>
 
 <script>
-import Chart from "chart.js/auto";
 import "chartjs-plugin-datalabels";
 import { useResultsStore } from "../stores/runResultsStore.js";
 import { statusVariablesStore } from "../stores/statusVariablesStore.js";
@@ -495,20 +494,12 @@ import { projectsStore } from "../stores/projectsStore.js";
 import { useCompareRunEvaluation } from "../stores/compareRunResultStore.js";
 import { ref, watch } from "vue";
 import {
-  getPareto,
-  getKmDistancePerLaneType,
-  getComplexity,
-  getNetworkBearing,
-} from "../scripts/api.js";
-import {
   createPieChartComplexity,
   createBarChart,
   createDoughnutChart,
   createScatterPlot,
 } from "../scripts/dashboardCharts.js";
-import { create } from "ol/transform.js";
 import RingLoader from "vue-spinner/src/RingLoader.vue";
-import { distance } from "ol/coordinate";
 import { infoBoxTexts } from "../strings/infoBoxText.js";
 import {extractParetoEvaluation,extractDistancesPerLane, extractComplexity, extractBearing} from "../scripts/dashboard.js";
 
@@ -519,6 +510,7 @@ export default {
   },
 
   setup() {
+    // setup all pinia stores
     const ResultsStore = useResultsStore();
     const statusStore = statusVariablesStore();
     const inputStore = userInputStore();

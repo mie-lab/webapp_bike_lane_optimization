@@ -53,8 +53,8 @@ export default {
     this.map = new mapboxgl.Map({
       container: this.$refs.mapContainer,
       style: mapStoreInstance.mapStyle,
-      center: [8.5417, 47.3769], // Zurich's coordinates
-      zoom: 12, // Adjust zoom level to your preference
+      center: [8.5417, 47.3769], 
+      zoom: 12, 
     });
 
     mapStoreInstance.setMap(this.map);

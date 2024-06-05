@@ -1,4 +1,5 @@
 <template>
+  <!-- Components that shows all projects in a list-->
   <div>
     <button class="close-btn" @click="toggleTabsVisibility">
       <i class="fa-solid fa-times" style="font-size: 20px"></i>
@@ -57,11 +58,8 @@
           </li>
         </ul>
       </div>
-
       <br />
-
       <br />
-
       <button @click="openCreate">Create new Project</button>
     </div>
     <div v-show="statusStore.runPage">
@@ -77,9 +75,7 @@ import { projectsStore } from "../stores/projectsStore.js";
 import { computed, ref } from "vue";
 import { loadWMS, removeLayer } from "../scripts/map.js";
 import { getBoundingBox, getRunList, getProjectList } from "../scripts/api.js";
-import { storeToRefs } from "pinia";
 import RingLoader from "vue-spinner/src/RingLoader.vue";
-import { remove } from "ol/array";
 import { useResultsStore } from "../stores/runResultsStore.js";
 
 export default {
@@ -157,6 +153,7 @@ export default {
       this.ResultsStore.reset();
     },
     async openProject(project) {
+      // opens a selected project and shows the bounding box on the map 
       this.resetProject();
       this.isLoading = true;
       const prjStore = projectsStore();
@@ -169,7 +166,6 @@ export default {
         inputStore.setProjectName(project.prj_name);
         inputStore.setProjectID(project.id);
 
-        //const responseCreateView = await createView(inputStore.projectID,1,"v_bound");
         await getBoundingBox(inputStore.projectID);
 
         loadWMS("v_bound", "wms_bound", inputStore.projectID);
@@ -222,7 +218,7 @@ export default {
 }
 
 .created-date {
-  margin-left: 20px; /* Adjust as needed */
+  margin-left: 20px; 
 }
 
 .project-list-item:hover {

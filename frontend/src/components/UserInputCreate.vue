@@ -1,4 +1,5 @@
 <template>
+  <!-- Component to create a new project -->
   <div>
     <button class="close-btn" @click="toggleTabsVisibility">
       <i class="fa-solid fa-times" style="font-size: 20px"></i>
@@ -26,6 +27,7 @@
       />
       <p class="missing-input" v-show="nameIsEmpty">* Enter a project name!</p>
 
+      <!-- define the area with a bounding box-->
       <h3 class="text-blue">Area of interest</h3>
       <div class="button-container">
         <button
@@ -69,7 +71,7 @@
       <br />
 
       <br />
-
+      <!-- buttons to go back or to continue-->
       <button @click="toggleUserInputPreviousSide" class="back-button">
         Back
       </button>
@@ -97,7 +99,6 @@ import {
 import { statusVariablesStore } from "../stores/statusVariablesStore.js";
 import { mapStore } from "../stores/mapStore.js";
 import UserInputRun from "./UserInputRun.vue";
-import { create } from "ol/transform";
 import { loadWMS } from "../scripts/map.js";
 import { getBoundingBox, runConstructGraph } from "../scripts/api.js";
 import { watch, ref } from "vue";
@@ -125,7 +126,6 @@ export default {
 
     return {
       statusStore,
-
       projectName: inputStore.projectName,
       setProjectName: inputStore.setProjectName,
       continue: statusStore.runPage,
@@ -146,6 +146,8 @@ export default {
       prjStore,
       nameIsEmpty: false,
       boundingBoxIsEmpty: false,
+      inputStore,
+      statusStore,
     };
   },
 
@@ -156,7 +158,6 @@ export default {
       this.boundingBoxIsEmpty = false;
 
       const mapStoreInstance = mapStore();
-      const inputStore = userInputStore();
       const drawObjectRectangle = mapStoreInstance.drawRectangleObject;
       const drawObjectPolygon = mapStoreInstance.drawPolygonObject;
       const mapObject = mapStoreInstance.map;
@@ -168,7 +169,7 @@ export default {
       mapStoreInstance.setDrawRectangle(null);
 
       // check if project name is empty
-      if (inputStore.projectName == "" || inputStore.projectName == null) {
+      if (this.inputStore.projectName == "" || this.inputStore.projectName == null) {
         this.isLoading = false;
         this.nameIsEmpty = true;
         return;
@@ -183,19 +184,17 @@ export default {
 
       try {
         const response = await runConstructGraph(
-          inputStore.boundingBox,
-          inputStore.projectName
+          this.inputStore.boundingBox,
+          this.inputStore.projectName
         );
-        //console.log("Construct Graph respose: ", response);
 
-        inputStore.setProjectID(response.project_id);
+        this.inputStore.setProjectID(response.project_id);
       } catch (error) {
         console.error(error);
       }
 
       try {
-        //const response = await createView(inputStore.projectID, 1, "v_bound");
-        const response = await getBoundingBox(inputStore.projectID);
+        const response = await getBoundingBox(this.inputStore.projectID);
 
         if (drawObjectRectangle !== null) {
           removeDrawFromMap(mapObject, drawObjectRectangle);
@@ -204,8 +203,8 @@ export default {
         if (drawObjectPolygon !== null) {
           removeDrawFromMap(mapObject, drawObjectPolygon);
         }
-
-        loadWMS("v_bound", "wms_bound", inputStore.projectID);
+        // draw the bounding box on the map
+        loadWMS("v_bound", "wms_bound", this.inputStore.projectID);
       } catch (error) {
         console.error(error);
       } finally {
@@ -215,30 +214,27 @@ export default {
     },
 
     toggleUserInputNextSide() {
-      const statusStore = statusVariablesStore();
-      statusStore.toggleRunPage();
+      this.statusStore.toggleRunPage();
       cancleDrawing();
     },
     toggleUserInputPreviousSide() {
-      const statusStore = statusVariablesStore();
-      statusStore.toggleCreatePage();
-      statusStore.toggleLoadPage();
+      this.statusStore.toggleCreatePage();
+      this.statusStore.toggleLoadPage();
       cancleDrawing();
-      statusStore.setDrawingRectangle(false);
-      statusStore.setDrawingPolygon(false);
+      this.statusStore.setDrawingRectangle(false);
+      this.statusStore.setDrawingPolygon(false);
       this.isButtonDisabled = true;
     },
 
     deleteDrawing() {
       cancleDrawing();
       this.isButtonDisabled = true;
-      statusStore.setDrawingRectangle(false);
-      statusStore.setDrawingPolygon(false);
+      this.statusStore.setDrawingRectangle(false);
+      this.statusStore.setDrawingPolygon(false);
     },
 
     toggleTabsVisibility() {
-      const statusStore = statusVariablesStore();
-      statusStore.toggleTabsVisibility();
+      this.statusStore.toggleTabsVisibility();
     },
     enableDrawRectangle() {
       drawRectangle();

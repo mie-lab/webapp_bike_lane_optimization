@@ -60,7 +60,7 @@ export default {
   setup() {
     const runningProcessesStore = runningProcessStore();
 
-    // Use a watcher to keep the list up to date
+    // watcher keeps list up to date
     watch(
       () => runningProcessesStore.runningProcesses,
       (newProcesses, oldProcesses) => {

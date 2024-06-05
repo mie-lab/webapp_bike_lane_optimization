@@ -55,6 +55,6 @@ export default {
 }
 .header-container {
   display: flex;
-  align-items: center; /* Optional: if you want to align items vertically */
+  align-items: center; 
 }
 </style>

@@ -10,7 +10,7 @@
       class="base-layer-switch-container"
       :style="calculateBaseLayerSwitchPosition()"
     >
-      <baseLayerSwitch />
+      <BaseLayerSwitch />
     </div>
     <MobileWarning v-show="isMobile" />
     <div v-show="isStartingPageVisible">
