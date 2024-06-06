@@ -43,7 +43,7 @@
   .nav-button {
     display: flex;
     align-items: center;
-    justify-content: center; /* Add this line to horizontally center the content */
+    justify-content: center; 
     background-color: transparent;
     border: none;
 
@@ -84,7 +84,7 @@
     width: 450px;
     flex-grow: 1;
     box-shadow: 0px 20px 20px rgba(0, 0, 0, 0.05);
-    overflow: hidden; /* Add this line to prevent scrolling */
+    overflow: hidden; 
   }
 
   .process-container {

@@ -144,18 +144,16 @@
     margin-left: 0px;
     max-height: 200px;
     overflow-y: scroll;
-    position: relative; /* Ensure relative positioning */
+    position: relative; 
     padding-right: 4px;
   }
 
-  /* Adjust the scrollbar position */
   .project-list::-webkit-scrollbar {
     background-color: #0000;
     width: 8px;
     position: absolute;
   }
 
-  /* Rest of your scrollbar styles */
   .project-list::-webkit-scrollbar-thumb {
     background-color: var(--darkgrey-bg);
     border-radius: 5px;
