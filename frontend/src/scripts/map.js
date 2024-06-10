@@ -1,3 +1,7 @@
+// map.js
+// --------------------------
+// This file contains functions to load WFS and WMS layers on the map.
+
 import { mapStore } from "../stores/mapStore.js";
 import mapboxgl from "mapbox-gl";
 import { userInputStore } from "../stores/userInputStore.js";
@@ -33,10 +37,12 @@ export async function loadWFS(layerID, layerSource, projectID, runID) {
       throw new Error("Project ID and Run ID are required for v_optimized_wfs");
     }
     wfsURL =
-      "https://baug-ikg-gis-01.ethz.ch:8443/geoserver/GMP_EBC/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=GMP_EBC:layername&outputFormat=application/json&prj=projectID&run=runID"
+      "https://baug-ikg-gis-01.ethz.ch:8443/geoserver/GMP_EBC/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=GMP_EBC:layername&outputFormat=application/json&viewparams=prj:projectID;run:runID"
         .replace("layername", layerID.replace("_wfs", ""))
         .replace("projectID", projectID)
         .replace("runID", runID);
+
+    console.log("WFS layer loaded: ", wfsURL);
   } else {
     wfsURL =
       "https://baug-ikg-gis-01.ethz.ch:8443/geoserver/GMP_EBC/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=GMP_EBC:layername&outputFormat=application/json".replace(

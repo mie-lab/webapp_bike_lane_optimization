@@ -1,3 +1,7 @@
+// dashboard.js
+// -----------------
+// contains functions to extract evaluation data for a given run and update the appropriate result store.
+
 import { useResultsStore } from "../stores/runResultsStore.js";
 import { userInputStore } from "../stores/userInputStore.js";
 import { loadingStore } from "../stores/loadingStore.js";
@@ -9,16 +13,22 @@ import {
   getNetworkBearing,
 } from "../scripts/api.js";
 
-export async function extractParetoEvaluation(run,compareMode=false) {
-
+/**
+ * Extracts Pareto evaluation data for a given run and updates the appropriate result store.
+ *
+ * @param {Object} run - The run object containing run details.
+ * @param {boolean} compareMode - Indicates whether the function is in compare mode.
+ * @returns {Promise<void>} - The function does not return a value but updates the state.
+ */
+export async function extractParetoEvaluation(run, compareMode = false) {
   // save in result store or in compare result store
   let resultsStore;
-  if (compareMode){
-     resultsStore = useCompareRunEvaluation();
+  if (compareMode) {
+    resultsStore = useCompareRunEvaluation();
   } else {
-     resultsStore = useResultsStore();
-  };
-  
+    resultsStore = useResultsStore();
+  }
+
   const inputStore = userInputStore();
   const loading = loadingStore();
 
@@ -37,16 +47,21 @@ export async function extractParetoEvaluation(run,compareMode=false) {
   loading.setParetoIsLoading(false);
 }
 
-
-
-export async function extractDistancesPerLane(run,compareMode=false) {
+/**
+ * Extracts distances per lane type for a given run and updates the appropriate result store.
+ *
+ * @param {Object} run - The run object containing run details.
+ * @param {boolean} compareMode - Indicates whether the function is in compare mode.
+ * @returns {Promise<void>} - The function does not return a value but updates the state.
+ */
+export async function extractDistancesPerLane(run, compareMode = false) {
   // save in result store or in compare result store
   let resultsStore;
-  if (compareMode){
-     resultsStore = useCompareRunEvaluation();
+  if (compareMode) {
+    resultsStore = useCompareRunEvaluation();
   } else {
-     resultsStore = useResultsStore();
-  };
+    resultsStore = useResultsStore();
+  }
   const inputStore = userInputStore();
   const loading = loadingStore();
 
@@ -67,16 +82,21 @@ export async function extractDistancesPerLane(run,compareMode=false) {
   loading.setDistancesIsLoading(false);
 }
 
-
-
-export async function extractComplexity(run,compareMode=false) {
+/**
+ * Extracts complexity data for a given run and updates the appropriate result store.
+ *
+ * @param {Object} run - The run object containing run details.
+ * @param {boolean} compareMode - Indicates whether the function is in compare mode.
+ * @returns {Promise<void>} - The function does not return a value but updates the state.
+ */
+export async function extractComplexity(run, compareMode = false) {
   // save in result store or in compare result store
   let resultsStore;
-  if (compareMode){
-     resultsStore = useCompareRunEvaluation();
+  if (compareMode) {
+    resultsStore = useCompareRunEvaluation();
   } else {
-     resultsStore = useResultsStore();
-  };
+    resultsStore = useResultsStore();
+  }
   const inputStore = userInputStore();
   const loading = loadingStore();
 
@@ -95,16 +115,21 @@ export async function extractComplexity(run,compareMode=false) {
   loading.setComplexityIsLoading(false);
 }
 
-
-
-export async function extractBearing(run,compareMode=false) {
+/**
+ * Extracts network bearing data for a given run and updates the appropriate result store.
+ *
+ * @param {Object} run - The run object containing run details.
+ * @param {boolean} compareMode - Indicates whether the function is in compare mode.
+ * @returns {Promise<void>} - The function does not return a value but updates the state.
+ */
+export async function extractBearing(run, compareMode = false) {
   // save in result store or in compare result store
   let resultsStore;
-  if (compareMode){
-      resultsStore = useCompareRunEvaluation();
+  if (compareMode) {
+    resultsStore = useCompareRunEvaluation();
   } else {
-      resultsStore = useResultsStore();
-  };
+    resultsStore = useResultsStore();
+  }
   const inputStore = userInputStore();
   const loading = loadingStore();
 

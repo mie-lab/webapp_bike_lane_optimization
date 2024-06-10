@@ -1,3 +1,7 @@
+// draw.js
+// --------------------------
+// This file contains functions to draw on the map.
+
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import mapboxGLDrawRectangleDrag from "mapboxgl-draw-rectangle-drag";
 import mapboxgl from "mapbox-gl";
@@ -89,7 +93,6 @@ export function drawRectangle() {
   if (!mapStoreInstance.drawRectangleObject) {
     const drawRectangleObject = createDrawRectangleObject();
     mapStoreInstance.setDrawRectangle(drawRectangleObject);
-    //mapStoreInstance.setDrawPolygon(null);
   }
 
   const drawObjectRectangle = mapStoreInstance.drawRectangleObject;
