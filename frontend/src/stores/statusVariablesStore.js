@@ -1,3 +1,7 @@
+/**
+ * Store for managing the status active/inactive status of single components of the application. It used to manage the visibility of the different pages and tabs.
+ */
+
 import { defineStore } from "pinia";
 
 export const statusVariablesStore = defineStore("statusVariables", {

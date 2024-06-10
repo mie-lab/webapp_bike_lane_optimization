@@ -1,3 +1,8 @@
+/**
+ * @fileoverview This file contains the definition of the loadingStore, which is a Pinia store for managing loading states.
+ * The loadingStore contains state and actions for managing loading states for the Pareto chart, distances, complexity, and bearing.
+ */
+
 import { defineStore } from "pinia";
 
 export const loadingStore = defineStore("loadingStore", {

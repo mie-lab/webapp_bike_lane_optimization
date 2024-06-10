@@ -1,7 +1,9 @@
-// Import necessary modules
+/**
+ * This store is used to keep track of the processes that are currently running.
+ */
+
 import { defineStore } from "pinia";
 
-// Define a Pinia store
 export const runningProcessStore = defineStore({
   id: "runningProcesses",
   state: () => ({

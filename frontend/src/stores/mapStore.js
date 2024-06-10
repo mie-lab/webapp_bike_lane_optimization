@@ -1,3 +1,7 @@
+/**
+ * Store for managing the map and its related controls and objects.
+ */
+
 import { defineStore } from "pinia";
 
 export const mapStore = defineStore("mapStore", {

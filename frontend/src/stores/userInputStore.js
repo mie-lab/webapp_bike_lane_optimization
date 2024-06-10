@@ -1,4 +1,7 @@
-import { set } from "ol/transform";
+/**
+ * Store for user input data.
+ */
+
 import { defineStore } from "pinia";
 
 export const userInputStore = defineStore("variableStore", {

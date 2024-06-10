@@ -1,7 +1,10 @@
+/**
+ * Store for the results of the evaluation of a run
+ */
 
-import { defineStore } from 'pinia';
+import { defineStore } from "pinia";
 
-export const useResultsStore = defineStore("evaluation",{
+export const useResultsStore = defineStore("evaluation", {
   state: () => ({
     paretoBikeTTArray: [],
     paretoCarTTArray: [],
@@ -10,35 +13,34 @@ export const useResultsStore = defineStore("evaluation",{
     runName: null,
     complexity: {
       bike: null,
-      car: null
+      car: null,
     },
     networkBearing: {
       bike: null,
-      car: null
-    }
-   
+      car: null,
+    },
   }),
   actions: {
-    setNetworkBearing(bike,car){
+    setNetworkBearing(bike, car) {
       this.networkBearing.bike = bike;
       this.networkBearing.car = car;
     },
-    setTraveltimes(bikeTT,carTT) {
+    setTraveltimes(bikeTT, carTT) {
       this.paretoBikeTTArray = bikeTT;
       this.paretoCarTTArray = carTT;
     },
-    setDistancesKM(kmBike,kmCar){
+    setDistancesKM(kmBike, kmCar) {
       this.kmBike = kmBike;
       this.kmCar = kmCar;
     },
-    setRunName(runName){
+    setRunName(runName) {
       this.runName = runName;
     },
     setComplexity(complexityBike, complexityCar) {
       this.complexity.bike = complexityBike;
       this.complexity.car = complexityCar;
     },
-    reset(){
+    reset() {
       this.paretoBikeTTArray = [];
       this.paretoCarTTArray = [];
       this.kmBike = null;
@@ -48,6 +50,6 @@ export const useResultsStore = defineStore("evaluation",{
       this.complexity.car = null;
       this.networkBearing.bike = null;
       this.networkBearing.car = null;
-    }
+    },
   },
 });
