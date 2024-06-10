@@ -1,4 +1,4 @@
-**# webapp_bike_lane_optimization
+# webapp_bike_lane_optimization
 Web app for planning bike infrastructure
 
 
