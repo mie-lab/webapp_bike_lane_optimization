@@ -18,6 +18,14 @@ npm install
 npm run dev
 ````
 
+To build and test use
+
+````
+npm run build
+npm run preview
+````
+
+
 ### Files and directories
 
 The application is build with Vue.js 3, using Node.js as a runtime environment. Additional  and APIs used are `Pinia` and `Mapbox GL JS`.
