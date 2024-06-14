@@ -2,7 +2,7 @@
 Web app for planning bike infrastructure
 
 
-**# Webapp Bike Lane Optimization
+### Webapp Bike Lane Optimization
 
 Web app for planning bike infrastructure and accessing the algorithm of @NinaWie.
 
