@@ -2,7 +2,6 @@
 Web app for planning bike infrastructure
 
 
-dblogin_mielab.json with database login must be stored in backend folder
 **# Webapp Bike Lane Optimization
 
 Web app for planning bike infrastructure and accessing the algorithm of @NinaWie.
