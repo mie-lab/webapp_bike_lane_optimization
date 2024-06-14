@@ -1,8 +1,5 @@
-# webapp_bike_lane_optimization
-Web app for planning bike infrastructure
 
-
-### Webapp Bike Lane Optimization
+# Webapp Bike Lane Optimization
 
 Web app for planning bike infrastructure and accessing the algorithm of @NinaWie.
 
@@ -36,6 +33,16 @@ The application is build with Vue.js 3, using Node.js as a runtime environment. 
 * `strings`: JavaScript files containing text strings
 * `styles`: CSS files
 
+### Backend
+
+To pull the backend and start development server
+
+````
+cd backend
+git clone https://github.com/mie-lab/bike_lane_optimization.git
+pip install -r requirements.txt
+python app.py
+````
 
 
 
