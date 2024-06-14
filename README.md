@@ -18,7 +18,7 @@ npm install
 npm run dev
 ````
 
-To build and test use
+To build and test, use the following commands:
 
 ````
 npm run build
