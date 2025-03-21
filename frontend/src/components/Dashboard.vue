@@ -59,7 +59,7 @@
           >
 
           <!-- Dropdown for Comparison -->
-          <div class="dropdown">
+          <!-- <div class="dropdown">
             <button
               class="dropbtn-compare"
               @mouseover="toggleDropdown"
@@ -72,9 +72,9 @@
                 compareRunStore && compareRunStore.runName
                   ? compareRunStore.runName
                   : "Compare"
-              }}
+              }} 
 
-              <!-- Stop Comparing Button -->
+              Stop Comparing Button 
               <button
                 v-if="compareRunStore.compare"
                 style="color: var(--blue-color)"
@@ -92,8 +92,8 @@
                 @click="compareRun(run)"
                 >{{ run.run_name }}</a
               >
-            </div>
-          </div>
+            </div> 
+          </div> -->
         </div>
         <div class="dashboard-content-evaluation">
           <!-- Pareto -->
@@ -474,12 +474,19 @@
                       </td>
                     </tr>
                   </table>
+
                 </div>
+                      <!-- Button for switching to evaluation -->
+
               </div>
             </div>
           </div>
+          <div class="buttons">
+                    <button disabled>Detailed Evaluation</button>
+                  </div>
         </div>
       </div>
+
     </div>
   </div>
 </template>

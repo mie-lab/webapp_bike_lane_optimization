@@ -10,6 +10,16 @@
           <i class="fa-solid fa-sliders" style="font-size: 24px"></i>
         </button>
 
+        <!-- new: -->
+        <button
+          class="nav-button"
+          :style="{ color: getIconColor('Evaluation') }"
+          @click="toggleActiveTab('Evaluation')"
+        >
+          <i class="fa-solid fa-magnifying-glass-chart" style="font-size: 24px"></i>
+        </button>        
+
+
         <button
           class="nav-button"
           :style="{ color: getIconColor('Bike') }"
@@ -17,6 +27,8 @@
         >
           <i class="fa-solid fa-bicycle" style="font-size: 24px"></i>
         </button>
+
+
 
         <button
           class="nav-button"
@@ -77,6 +89,7 @@ import UserInput from "./UserInputCreate.vue";
 import UserInputStart from "./UserInputStart.vue";
 import EBikeCityInfo from "./EBikeCityInfo.vue";
 import Help from "./Help.vue";
+import EvaluationStart from "./EvaluationStart.vue";
 import { statusVariablesStore } from "../stores/statusVariablesStore.js";
 import ProcessList from "./ProcessList.vue";
 
@@ -114,6 +127,7 @@ export default {
       iconColors: {
         UserInput: "#000",
         Bike: "#000",
+        Evaluation: "#000",
         Help: "#000",
         Info: "#000",
         None: "#000",
@@ -129,10 +143,13 @@ export default {
       switch (this.activeTab) {
         case "Info":
           return ProjectInfo;
+        case "Evaluation":
+          return EvaluationStart;
         case "UserInput":
           return UserInputStart;
         case "Bike":
           return EBikeCityInfo;
+
         case "Help":
           return Help;
         default:

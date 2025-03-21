@@ -1,5 +1,4 @@
 <template>
-  <!-- Components that show all runs within a project -->
   <div>
     <!-- Run list -->
     <div v-if="!statusStore.createNewRunPage">
@@ -10,33 +9,36 @@
         </h2>
 
         <p class="info-text">
-          This is the overview of the project <i>{{ inputStore.projectName }}</i>. For planning a new bike network in the specified area, create a new run. For viewing a bike network from an existing run, select from the list below.
-          
+          This is the overview of the project <i>{{ inputStore.projectName }}</i>. For evaluating one or multiple runs, select them in the list below.
         </p>
 
-        <h3 class="runs-header">
-          <span class="runs-text">Runs</span>
-          <span class="refresh-container">
-            <i
-              v-if="!isLoading"
-              class="fa-solid fa-rotate-right refresh-button"
-              @click="reloadRuns"
-            >
-            </i>
-          </span>
-          <span class="ring-loader-container">
-            <div class="ring-loader">
-              <RingLoader v-if="isLoading" :size="'80'" :color="'#123abc'" />
-            </div>
-          </span>
-        </h3>
-    
+        <!-- Runs Header -->
+        <div class="runs-header-container">
+          <h3 class="runs-header">
+            <span class="runs-text">Runs</span>
+            <span class="refresh-container">
+              <i
+                v-if="!isLoading"
+                class="fa-solid fa-rotate-right refresh-button"
+                @click="reloadRuns"
+              ></i>
+            </span>
+            <span class="ring-loader-container">
+              <div class="ring-loader">
+                <RingLoader v-if="isLoading" :size="'80'" :color="'#123abc'" />
+              </div>
+            </span>
+          </h3>
+        </div>
+
+        <!-- Search Bar -->
         <input
-        type="text"
-        v-model="searchQuery"
-        placeholder="Search runs..."
-        class="project-name-input"
-      />
+          type="text"
+          v-model="searchQuery"
+          placeholder="Search runs..."
+          class="project-name-input"
+        />
+
         <!-- List of all runs -->
         <div class="project-list">
           <ul>
@@ -45,28 +47,26 @@
               :key="run.run_name"
               @click="loadRun(run)"
             >
-            <div :class="{ 'run-details2': true, 'selected': run === selectedRun }">
-                <div class="run-details-inner-container" style="color: black;">
-                  <div class="run_name" 
-              :class="{ selected: run === selectedRun }">{{ run.run_name }}</div>
+              <div :class="{ 'run-details2': true, 'selected': run === selectedRun }">
+                <div class="run-details-inner-container">
+                  <div class="run_name" :class="{ selected: run === selectedRun }">
+                    {{ run.run_name }}
+                  </div>
                   <table>
                     <colgroup>
-                    <col style="width: 30px;">
-                    <col style="width: 270px;">
-                    <col style="width: 20px;">
-                  
-                  </colgroup>
-
-                  <tr>
+                      <col style="width: 30px;">
+                      <col style="width: 270px;">
+                      <col style="width: 20px;">
+                    </colgroup>
+                    <tr>
                       <td><i class="fa-solid fa-gears"></i></td>
                       <td>Algorithm</td>
                       <td class="bold">{{ convertAlgName(run.algorithm) }}</td> 
                     </tr>
-                    
                     <tr>
                       <td><i class="fa-solid fa-bicycle"></i></td>
                       <td>Bike lane ratio</td>
-                      <td class="bold">{{ (run.bike_ratio*100).toFixed() }}%</td>
+                      <td class="bold">{{ (run.bike_ratio * 100).toFixed() }}%</td>
                     </tr>
                     <tr>
                       <td><i class="fa-solid fa-shield-heart"></i></td>
@@ -84,37 +84,57 @@
                       <td class="bold">{{ run.optimize_frequency }}</td>
                     </tr>
                   </table>
-                  
                 </div>
               </div>
-              <br></br>
-              
+              <br />
             </li>
           </ul>
         </div>
+        <div class="metrics-container">
+                <h3 class="metrics-header">
+                <span class="metrics-text">Visualized Metric</span>
+                </h3>
+
+                <p class="info-text">
+                Select a metric to visualize it on the map.
+                </p>
+                <!-- Dropdown for Metrics Selection -->
+                <div class="dropdown">
+                  <button class="dropdown-button" @click="toggleDropdown">
+                    {{ selectedMetric || 'Select a Metric' }}
+                    <i class="fa-solid fa-caret-down"></i>
+                  </button>
+                  <ul v-show="dropdownOpen" class="dropdown-menu">
+                    <li v-for="metric in metricsOptions" :key="metric" @click="selectMetric(metric)">
+                      {{ metric }}
+                    </li>
+                  </ul>
+                </div>
+
+              
+
+              </div>
+              <div class="button-container" style="margin-top: 30px;">
+  <button @click="toggleUserInputPreviousSide" class="back-button">
+    Back
+  </button>
+</div>
       </div>
 
       <button class="close-btn" @click="toggleTabsVisibility">
-        <i
-          class="fa-solid fa-times"
-          style="font-size: 20px; color: var(--darkgrey-bg)"
-        ></i>
+        <i class="fa-solid fa-times" style="font-size: 20px; color: var(--darkgrey-bg)"></i>
       </button>
-
-       <!-- Button for going back and for creating a new run -->
-      <div class="buttons">
-        <button @click="toggleUserInputPreviousSide" class="back-button">
-          Back
-        </button>
-        <button @click="openCreate">Create new Run</button>
-      </div>
     </div>
 
     <div v-if="statusStore.createNewRunPage">
       <UserInputNewRun />
     </div>
+
   </div>
 </template>
+
+
+
 
 <script>
 import { userInputStore } from "../stores/userInputStore.js";
@@ -144,6 +164,16 @@ export default {
     const prjStore = projectsStore();
     const compareRunStore = useCompareRunEvaluation();
     const searchQuery = ref("");
+    const dropdownOpen = ref(false);
+    const selectedMetric = ref(null);
+    const metricsOptions = [
+      "LTS (Level of Traffic Stress)",
+      "BCI (Bicycle Compatibility Index)",
+      "BSL (Bicycle Stress Level)",
+      "BLOS (Bicycle Level of Service)",
+      "Porter Index",
+      "Weikl Index"
+    ];
 
     // Sort projects by "created" timestamp in descending order
     const filteredRuns = computed(() => {
@@ -169,6 +199,9 @@ export default {
       projectName: inputStore.projectName,
       filteredRuns,
       compareRunStore,
+      dropdownOpen,
+      selectedMetric,
+      metricsOptions,
     };
   },
   data() {
@@ -196,7 +229,7 @@ export default {
       this.statusStore.toggleCreateNewRunPage();
     },
     async loadRun(run) {
-      this.statusStore.openDashboard("userinput");
+      this.statusStore.openDashboard("evaluation");
       this.prjStore.setSelectedRun(run);
       this.selectedRun = run;
 
@@ -254,7 +287,14 @@ export default {
      else {
         return algorithm;
     }
-    }
+    },
+    toggleDropdown() {
+      this.dropdownOpen = !this.dropdownOpen;
+    },
+    selectMetric(metric) {
+      this.selectedMetric = metric;
+      this.dropdownOpen = false;
+    },
   },
 };
 </script>
@@ -279,5 +319,68 @@ export default {
 
 .run-details2.selected {
   border-color: var(--pink-color);
+}
+
+.metrics-container {
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.metrics-header {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+/* Dropdown styling */
+.dropdown {
+  position: relative;
+  width: 250px;
+}
+
+.dropdown-button {
+  width: 100%;
+  padding: 10px;
+  background-color: lightgrey;
+  color: black;
+  border: 1px solid var(--darkgrey-bg);
+  cursor: pointer;
+  text-align: left;
+  font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 5px;
+}
+
+.dropdown-button i {
+  margin-left: 10px;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background-color: lightgrey;
+  border: 1px solid var(--darkgrey-bg);
+  border-radius: 5px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  z-index: 10;
+}
+
+.dropdown-menu li {
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.dropdown-menu li:hover {
+  background-color: var(--lightgrey-bg);
 }
 </style>
