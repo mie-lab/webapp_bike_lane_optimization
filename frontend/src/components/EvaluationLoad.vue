@@ -61,14 +61,14 @@
       <br />
     </div>
     <div v-show="statusStore.runPage">
-      <EvaluationRun />
+      <EvaluationRunSelection />
     </div>
   </div>
 </template>
 <script>
 import { userInputStore } from "../stores/userInputStore.js";
 import { statusVariablesStore } from "../stores/statusVariablesStore.js";
-import EvaluationRun from "./EvaluationRun.vue";
+import EvaluationRunSelection from "./EvaluationRunSelection.vue";
 import { projectsStore } from "../stores/projectsStore.js";
 import { computed, ref } from "vue";
 import { loadWMS, removeLayer } from "../scripts/map.js";
@@ -79,7 +79,7 @@ import { useResultsStore } from "../stores/runResultsStore.js";
 export default {
   name: "EvaluationLoad",
   components: {
-    EvaluationRun,
+    EvaluationRunSelection,
     RingLoader,
   },
   setup() {
@@ -91,7 +91,7 @@ export default {
 
     const activeComponent = computed(() => {
       // Determine which component to show based on status
-      return statusStore.runPage ? EvaluationRun : null;
+      return statusStore.runPage ? EvaluationRunSelection : null;
     });
 
     const filteredProjects = computed(() => {

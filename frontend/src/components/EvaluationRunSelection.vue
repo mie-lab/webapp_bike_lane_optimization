@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Run list -->
-    <div v-if="!statusStore.createNewRunPage">
+    <div v-if="!statusStore.evaluationrunPage">
       <div class="user-input-container">
         <h4 class="h4_override">Project:</h4>
         <h2 class="h2_override">
@@ -9,7 +9,7 @@
         </h2>
 
         <p class="info-text">
-          This is the overview of the project <i>{{ inputStore.projectName }}</i>. For evaluating one or multiple runs, select them in the list below.
+          This is the overview of the project <i>{{ inputStore.projectName }}</i>. For evaluating one or multiple runs, select them in the list below and press evaluate.
         </p>
 
         <!-- Runs Header -->
@@ -31,6 +31,14 @@
           </h3>
         </div>
 
+        <!-- Search Bar -->
+        <input
+          type="text"
+          v-model="searchQuery"
+          placeholder="Search runs..."
+          class="project-name-input"
+        />
+
         <!-- List of all runs -->
         <div class="project-list">
           <ul>
@@ -41,12 +49,9 @@
             >
               <div :class="{ 'run-details2': true, 'selected': run === selectedRun }">
                 <div class="run-details-inner-container">
-                  <button class="remove-button" title="Remove run">Remove</button>
-
                   <div class="run_name" :class="{ selected: run === selectedRun }">
                     {{ run.run_name }}
                   </div>
-
                   <table>
                     <colgroup>
                       <col style="width: 30px;">
@@ -85,131 +90,29 @@
             </li>
           </ul>
         </div>
-
-        <!-- Back Button -->
-        <div class="button-container" style="margin-top: 10px;">
-          <button @click="toggleUserInputPreviousSide" class="back-button">
-            Add runs
-          </button>
-        </div>
-
-        <!-- Evaluation Approach -->
-        <div style="margin-top: 30px;">
-          <h3 class="runs-header">
-            <span class="runs-text">Evaluation Approach</span>
-          </h3>
-
-          <div class="dropdown">
-            <button class="dropdown-button" @click="toggleModeDropdown">
-              {{ evaluationMode }}
-              <i class="fa-solid fa-caret-down"></i>
-            </button>
-            <ul v-show="modeDropdownOpen" class="dropdown-menu">
-              <li @click="setEvaluationMode('Basic')">Basic</li>
-              <li @click="setEvaluationMode('ANP')">ANP</li>
-            </ul>
-          </div>
-        </div>
-
-        <div v-if="evaluationMode === 'ANP'">
-          <!-- ANP Attribute Controls -->
-  <div class="anp-attributes" style="margin-top: 30px;">
-    <div
-      v-for="attr in anpAttributes"
-      :key="attr.key"
-      class="bike-ratio"
-      style="margin-top: 10px; display: flex; align-items: center; justify-content: space-between;"
-    >
-      <!-- Checkbox and Label -->
-      <div style="display: flex; align-items: center; gap: 10px;">
-        <input
-          type="checkbox"
-          v-model="attr.enabled"
-          :id="attr.key"
-        />
-        <label :for="attr.key" class="text-blue" style="margin: 0;">
-          {{ attr.label }}
-        </label>
-      </div>
-
-      <!-- Slider (only enabled if checkbox is checked) -->
-      <div class="slide-container" style="flex-grow: 1; margin-left: 20px;">
-        <input
-          class="slider"
-          type="range"
-          min="0"
-          max="100"
-          :disabled="!attr.enabled"
-          v-model="attr.value"
-          @input="updateANP(attr.key, attr.value)"
-        />
-      </div>
-
-      <!-- Value display -->
-      <p style="margin-left: 10px; width: 60px; text-align: right;">
-        {{ attr.value }}%
-      </p>
+        
+        <div class="buttons">
+        <button @click="toggleUserInputPreviousSide" class="back-button">
+          Back
+        </button>
+        <button @click="statusStore.toggleEvaluationRunPage">
+    Evaluate
+  </button>
+      
     </div>
-  </div>
-</div>
-
-
-        <!-- Visualization Section -->
-        <div class="metrics-container" style="margin-top: 30px;">
-          <h3 class="runs-header">
-            <span class="runs-text">Visualization</span>
-          </h3>
-
-          <!-- Run Selector -->
-          <div class="dropdown" style="margin-bottom: 15px;">
-            <button class="dropdown-button" @click="toggleRunDropdown">
-              {{ selectedRun || 'Select a Run' }}
-              <i class="fa-solid fa-caret-down"></i>
-            </button>
-            <ul v-show="runDropdownOpen" class="dropdown-menu">
-              <li @click="selectRun('Run 1')">Run 1</li>
-              <li @click="selectRun('Run 2')">Run 2</li>
-            </ul>
-          </div>
-
-          <!-- Metric Dropdown (only for Basic mode) -->
-          <div v-if="evaluationMode === 'Basic'" class="dropdown">
-            <button class="dropdown-button" @click="toggleDropdown">
-              {{ selectedMetric || 'Select a Metric' }}
-              <i class="fa-solid fa-caret-down"></i>
-            </button>
-            <ul v-show="dropdownOpen" class="dropdown-menu">
-              <li
-                v-for="metric in metricsOptions"
-                :key="metric"
-                @click="selectMetric(metric)"
-              >
-                {{ metric }}
-              </li>
-            </ul>
-          </div>
-          <div v-else-if="evaluationMode === 'ANP'">
-  
-</div>
-
-
-        </div>
       </div>
 
-      <!-- Close Button -->
       <button class="close-btn" @click="toggleTabsVisibility">
         <i class="fa-solid fa-times" style="font-size: 20px; color: var(--darkgrey-bg)"></i>
       </button>
     </div>
 
-    <!-- If New Run Page -->
-    <div v-if="statusStore.createNewRunPage">
-      <UserInputNewRun />
+    <div v-if="statusStore.evaluationrunPage">
+      <EvaluationRun />
     </div>
+
   </div>
 </template>
-
-
 
 
 
@@ -227,6 +130,7 @@ import {
 } from "../scripts/api.js";
 import { loadWFS, loadWMS } from "../scripts/map.js";
 import UserInputNewRun from "./UserInputNewRun.vue";
+import EvaluationRun from "./EvaluationRun.vue";
 import { useCompareRunEvaluation } from "../stores/compareRunResultStore.js";
 
 export default {
@@ -234,6 +138,7 @@ export default {
   components: {
     RingLoader,
     UserInputNewRun,
+    EvaluationRun
   },
   setup() {
     const statusStore = statusVariablesStore();
@@ -293,15 +198,6 @@ export default {
       size: "25px",
       isLoading: false,
       selectedRun: null,
-      evaluationMode: "Basic",
-      modeDropdownOpen: false,
-      selectedRun: null,
-      runDropdownOpen: false,
-      anpAttributes: [
-      { key: 'accessibility', label: 'Accessibility', value: 50, enabled: true },
-      { key: 'attractiveness', label: 'Attractiveness', value: 50, enabled: true },
-      { key: 'safety', label: 'Safety', value: 50, enabled: true }
-    ],
     };
   },
 
@@ -310,7 +206,7 @@ export default {
       this.statusStore.toggleLoadPage();
     },
     toggleUserInputPreviousSide() {
-      this.statusStore.toggleEvaluationRunPage();
+      this.statusStore.toggleRunPage();
     },
     openCreate() {
       this.statusStore.toggleCreateNewRunPage();
@@ -382,26 +278,6 @@ export default {
       this.selectedMetric = metric;
       this.dropdownOpen = false;
     },
-    toggleModeDropdown() {
-    this.modeDropdownOpen = !this.modeDropdownOpen;
-    },
-    setEvaluationMode(mode) {
-      this.evaluationMode = mode;
-      this.modeDropdownOpen = false;
-    },
-
-    toggleRunDropdown() {
-      this.runDropdownOpen = !this.runDropdownOpen;
-    },
-    selectRun(run) {
-      this.selectedRun = run;
-      this.runDropdownOpen = false;
-    },
-    updateANP(key, value) {
-    // Example handler — customize as needed
-    console.log(`Updated ${key} to ${value}`);
-    },
-
   },
 };
 </script>
@@ -490,37 +366,4 @@ export default {
 .dropdown-menu li:hover {
   background-color: var(--lightgrey-bg);
 }
-
-.remove-button {
-  position: relative;
-  top: -1px;     /* lower it a bit */
-  right: -280px;   /* move it slightly inward */
-  background-color: transparent;
-  color: #da5268;
-  border: 1px solid #da5268;
-  border-radius: 6px;
-  padding: 4px 10px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.remove-button:hover {
-  background-color: #da52681a;
-}
-
-.project-list {
-  width: 100%;
-  margin-left: 0px;
-  margin-top: 10px;
-  padding: 0;
-  overflow-y: scroll;
-  position: relative;
-  padding-right: 4px;
-  max-height: 400px;
-}
-
-
-
 </style>

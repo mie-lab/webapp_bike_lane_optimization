@@ -59,127 +59,75 @@
           >
         
         </div>
-        <div>
-        <h3 class="metrics-header">
-                <span class="metrics-text">Basic Metrics</span>
-                </h3>
-              </div>
 
 
         <div>
-        <table>
-                    <colgroup>
-                      <col style="width: 30px;">
-                      <col style="width: 270px;">
-                      <col style="width: 20px;">
-                    </colgroup>
-
-
-                    <tr>
-                      <td>Travel Time Changes</td>
-                      <td class="bold">...</td>
-                    </tr>
-                    <tr>
-                      <td>Distance per lane type</td>
-                      <td class="bold">...</td>
-                    </tr>
-                    <tr>
-                      <td>Average LTS</td>
-                      <td class="bold">...</td>
-                    </tr>
-                    <tr>
-                      <td>Average LTS</td>
-                      <td class="bold">...</td>
-                    </tr>
-                    <tr>
-                      <td>Average BCI</td>
-                      <td class="bold">...</td>
-                    </tr>
-                    <tr>
-                      <td>Average BSL</td>
-                      <td class="bold">...</td>
-                    </tr>
-                    <tr>
-                      <td>Average BLOS</td>
-                      <td class="bold">...</td>
-                    </tr>
-                    <tr>
-                      <td>Average Porter Index</td>
-                      <td class="bold">...</td>
-                    </tr>
-                    <tr>
-                      <td>Average Weikl Index</td>
-                      <td class="bold">...</td>
-                    </tr>
-                  </table>
-        </div>
-        <div>
-        <h3 class="metrics-header">
-                <span class="metrics-text">Advanced Metrics</span>
-        </h3>
         
-        <div class="bike-ratio" style="margin-top: 35px; position: relative;">
-        <h4 class="text-blue"> Accessibility  
-        </h4>
-        <div class="slide-container">
+<!-- Metrics Selection -->
+<div style="margin-top: 10px;">
+
+  <!-- Styled multi-select dropdown -->
+  <div class="dropdown" style="margin-bottom: 15px; position: relative;">
+    <button class="dropdown-button" @click="toggleMetricDropdown">
+      Choose Metrics
+      <i class="fa-solid fa-caret-down"></i>
+    </button>
+    <ul v-show="metricDropdownOpen" class="dropdown-menu" style="max-height: 200px; overflow-y: auto;">
+      <li v-for="metric in allMetrics" :key="metric.key" style="padding: 5px 10px;">
+        <label style="display: flex; align-items: center;">
           <input
-            class="slider"
-            type="range"
-            min="0"
-            max="100"
-            v-model="accessibility"
-            @click="setAcessibility(accessibility)"
+            type="checkbox"
+            v-model="metric.selected"
+            style="margin-right: 8px;"
           />
+          {{ metric.label }}
+        </label>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Calculate Button -->
+  <div>
+    <button class="calculate-button" @click="calculateMetrics">
+    Calculate Metrics
+  </button>
+</div>
+
+<!-- Metrics Results Table -->
+<div style="margin-top: 50px;"></div>
+<h3 class="runs-header">
+            <span class="runs-text">Metrics</span>
+</h3>
+
+<table
+  v-if="showMetricsTable"
+  style="margin-top: 10px; width: auto; margin-left: 0; margin-right: auto;"
+>
+  <thead>
+    <tr>
+      <th>Metric</th>
+      <th>Run 1</th>
+      <th>Run 2</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr v-for="metric in selectedMetrics" :key="metric.key">
+      <td>{{ metric.label }}</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+</div>
+
+
         </div>
-        <p>{{ laneAllocation }} % priority weight</p>
-      </div>
-      <div class="bike-ratio" style="margin-top: 35px; position: relative;">
-        <h4 class="text-blue"> Attractiveness  
-        </h4>
-        <div class="slide-container">
-          <input
-            class="slider"
-            type="range"
-            min="0"
-            max="100"
-            v-model="accessibility"
-            @click="setAcessibility(accessibility)"
-          />
-        </div>
-        <p>{{ laneAllocation }} % priority weight</p>
-      </div>
-      <div class="bike-ratio" style="margin-top: 35px; position: relative;">
-        <h4 class="text-blue"> Safety 
-        </h4>
-        <div class="slide-container">
-          <input
-            class="slider"
-            type="range"
-            min="0"
-            max="100"
-            v-model="accessibility"
-            @click="setAcessibility(accessibility)"
-          />
-        </div>
-        <p>{{ laneAllocation }} % priority weight</p>
-      </div>
-
-      <table>
-                    <colgroup>
-                      <col style="width: 30px;">
-                      <col style="width: 270px;">
-                      <col style="width: 20px;">
-                    </colgroup>
 
 
-                    <tr>
-                      <td>Evaluation</td>
-                      <td class="bold">...</td>
-                    </tr>
-
-                  </table>
-
-      </div>
+    
 
       </div>
     </div>
@@ -206,7 +154,17 @@ import { infoBoxTexts } from "../strings/infoBoxText.js";
 import {extractParetoEvaluation,extractDistancesPerLane, extractComplexity, extractBearing} from "../scripts/dashboard.js";
 
 export default {
-  name: "Dashboard",
+  
+
+  computed: {
+    selectedMetricLabels() {
+      return this.allMetrics.filter(m => m.selected).map(m => m.label);
+    },
+    selectedMetrics() {
+      return this.allMetrics.filter(m => m.selected);
+    }
+  },
+name: "Dashboard",
   components: {
     RingLoader,
   },
@@ -258,6 +216,15 @@ export default {
   },
   data() {
     return {
+      allMetrics: [
+        { key: 'travel_time', label: 'Travel Time Changes', selected: false },
+        { key: 'lane_type_distance', label: 'Distance per lane type', selected: false },
+        { key: 'network_bearing', label: 'Network Bearing', selected: false },
+        { key: 'complexity', label: 'Complexity Measure', selected: false }
+      ],
+      metricDropdownOpen: false,
+      showMetricsTable: false,
+
       showDropdown: false,
       showInfoBox: false,
       showInfoBoxTravelTimes: false,
@@ -367,6 +334,14 @@ export default {
   },
 
   methods: {
+
+    toggleMetricDropdown() {
+      this.metricDropdownOpen = !this.metricDropdownOpen;
+    },
+    calculateMetrics() {
+      this.showMetricsTable = true;
+    },
+
     toggleBearingDropdown() {
       this.isOpenBearing = !this.isOpenBearing;
     },
@@ -592,4 +567,54 @@ export default {
 @import "../styles/UserInputRunStyle.css";
 @import "../styles/dashboardStyle.css";
 @import "../styles/dashboardStyleMobile.css";
+
+/* Dropdown styling */
+.dropdown {
+  position: relative;
+  width: 250px;
+}
+
+.dropdown-button {
+  width: 100%;
+  padding: 10px;
+  background-color: lightgrey;
+  color: black;
+  border: 1px solid var(--darkgrey-bg);
+  cursor: pointer;
+  text-align: left;
+  font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 5px;
+}
+
+.dropdown-button i {
+  margin-left: 10px;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background-color: lightgrey;
+  border: 1px solid var(--darkgrey-bg);
+  border-radius: 5px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  z-index: 10;
+}
+
+.dropdown-menu li {
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.dropdown-menu li:hover {
+  background-color: var(--lightgrey-bg);
+}
 </style>

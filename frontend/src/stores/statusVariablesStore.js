@@ -17,6 +17,8 @@ export const statusVariablesStore = defineStore("statusVariables", {
     processList: false,
     helpDetailsPage: false,
     startingPage: false,
+    evaluationrunPage: false,
+    evaluationDashboard: false,
   }),
   actions: {
     toggleCreateNewRunPage() {
@@ -78,5 +80,11 @@ export const statusVariablesStore = defineStore("statusVariables", {
     toggleStartingPage() {
       this.startingPage = !this.startingPage;
     },
+    toggleEvaluationRunPage() {
+      this.evaluationrunPage = !this.evaluationrunPage;
+    },
+    toggleEvaluationDashboard() {
+      this.evaluationDashboard = !this.evaluationDashboard;
+    }
   },
 });
