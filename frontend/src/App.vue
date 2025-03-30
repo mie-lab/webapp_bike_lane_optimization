@@ -24,7 +24,7 @@
 // Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
 import SideBar from "./components/SideBar.vue";
 import MapVue from "./components/Map.vue";
-import DashboardVue from "./components/EvaluationDashboard.vue";
+import DashboardVue from "./components/Dashboard.vue";
 import BaseLayerSwitch from "./components/BaseLayerSwitch.vue";
 import { statusVariablesStore } from "./stores/statusVariablesStore.js";
 import HelpDetails from "./components/HelpDetails.vue";

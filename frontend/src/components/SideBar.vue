@@ -5,7 +5,7 @@
         <button
           class="nav-button"
           :style="{ color: getIconColor('UserInput') }"
-          @click="toggleActiveTab('UserInput')"
+          @click=" ()=> { toggleActiveTab('UserInput'); prjStore.clearEvaluationRuns();}"
         >
           <i class="fa-solid fa-sliders" style="font-size: 24px"></i>
         </button>
@@ -92,6 +92,7 @@ import Help from "./Help.vue";
 import EvaluationStart from "./EvaluationStart.vue";
 import { statusVariablesStore } from "../stores/statusVariablesStore.js";
 import ProcessList from "./ProcessList.vue";
+import { projectsStore } from "../stores/projectsStore.js";
 
 export default {
   name: "SideBar",
@@ -101,6 +102,7 @@ export default {
   setup() {
     const statusStore = statusVariablesStore();
     const isContainerVisible = ref(false);
+    const prjStore = projectsStore();
 
     // Use a watcher to keep the list up to date
     watch(
@@ -120,6 +122,7 @@ export default {
     return {
       statusStore,
       isContainerVisible,
+      prjStore,
     };
   },
   data() {

@@ -199,6 +199,7 @@ export default {
       this.statusStore.openDashboard("userinput");
       this.prjStore.setSelectedRun(run);
       this.selectedRun = run;
+      this.statusStore.DashboardMode = "UserInput";
 
       this.compareRunStore.reset(); // reset all comparisons
       this.inputStore.setRunID(run.id_run);

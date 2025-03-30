@@ -45,9 +45,11 @@
     </div>
     <div v-show="dashboard" class="dashboard-content bg-lightgrey">
       <h1 class="text-pink">Detailed Evaluation</h1>
-      <div class="text-align" v-if="inputStore.runName === ''">
-        <p>Please select a run to display the results.</p>
-      </div>
+      <div class="text-align" v-if="showEmptyMessage">
+  <p>{{ emptyMessage }}</p>
+</div>
+
+
       <div class="text-align" v-else>
         <!-- Title Button -->
         <div class="titel-inkl-button">
@@ -62,42 +64,18 @@
 
 
         <div>
-        
-<!-- Metrics Selection -->
+
+          <h3 class="runs-header">
+            <span class="runs-text">Average Metrics</span>
+</h3>
+
+
 <div style="margin-top: 10px;">
 
-  <!-- Styled multi-select dropdown -->
-  <div class="dropdown" style="margin-bottom: 15px; position: relative;">
-    <button class="dropdown-button" @click="toggleMetricDropdown">
-      Choose Metrics
-      <i class="fa-solid fa-caret-down"></i>
-    </button>
-    <ul v-show="metricDropdownOpen" class="dropdown-menu" style="max-height: 200px; overflow-y: auto;">
-      <li v-for="metric in allMetrics" :key="metric.key" style="padding: 5px 10px;">
-        <label style="display: flex; align-items: center;">
-          <input
-            type="checkbox"
-            v-model="metric.selected"
-            style="margin-right: 8px;"
-          />
-          {{ metric.label }}
-        </label>
-      </li>
-    </ul>
-  </div>
 
-  <!-- Calculate Button -->
-  <div>
-    <button class="calculate-button" @click="calculateMetrics">
-    Calculate Metrics
-  </button>
-</div>
 
 <!-- Metrics Results Table -->
 <div style="margin-top: 50px;"></div>
-<h3 class="runs-header">
-            <span class="runs-text">Metrics</span>
-</h3>
 
 <table
   v-if="showMetricsTable"
@@ -106,24 +84,111 @@
   <thead>
     <tr>
       <th>Metric</th>
-      <th>Run 1</th>
-      <th>Run 2</th>
+      <th v-for="run in prjStore.selectedEvaluationRuns" :key="run.run_name">
+        {{ run.run_name }}
+      </th>
     </tr>
   </thead>
   <tbody>
     <tr v-for="metric in selectedMetrics" :key="metric.key">
       <td>{{ metric.label }}</td>
-      <td>...</td>
-      <td>...</td>
+      <td v-for="run in prjStore.selectedEvaluationRuns" :key="run.run_name + '-' + metric.key">
+        ...
+      </td>
     </tr>
   </tbody>
 </table>
 
 
-
 </div>
 
 
+
+
+        <!-- Visualization Section -->
+        <div class="metrics-container" style="margin-top: 30px;">
+          <h3 class="runs-header">
+            <span class="runs-text">Visualization</span>
+          </h3>
+
+<!-- Run Selector -->
+<div class="dropdown" style="margin-bottom: 15px;">
+  <button class="dropdown-button" @click="toggleRunDropdown">
+    {{ selectedRun_dropdown?.run_name || 'Select a Run' }}
+    <i class="fa-solid fa-caret-down"></i>
+  </button>
+  <ul v-show="runDropdownOpen" class="dropdown-menu">
+    <li
+      v-for="run in prjStore.selectedEvaluationRuns"
+      :key="run.run_name"
+      @click="selectRun(run)"
+    >
+      {{ run.run_name }}
+    </li>
+  </ul>
+</div>
+
+<!-- Visualization Mode Selector -->
+<div class="visualization-mode-toggle">
+  <button
+    :class="['toggle-option', visualizationMode === 'evaluation' ? 'active' : '']"
+    @click="visualizationMode = 'evaluation'"
+  >
+    Evaluation
+  </button>
+  <button
+    :class="['toggle-option', visualizationMode === 'network' ? 'active' : '']"
+    @click="visualizationMode = 'network'"
+  >
+    Network
+  </button>
+</div>
+
+
+
+<!-- Conditionally render based on mode -->
+<div v-if="visualizationMode === 'evaluation'" class="dropdown" style="margin-bottom: 15px;">
+  <button class="dropdown-button" @click="dropdownOpen = !dropdownOpen">
+    {{ visualizedMetric?.label || 'Select a Metric to Visualize' }}
+    <i class="fa-solid fa-caret-down"></i>
+  </button>
+
+  <ul v-show="dropdownOpen" class="dropdown-menu">
+    <li
+      v-for="metric in selectedMetrics"
+      :key="metric.key"
+      @click="visualizeMetric(metric)"
+    >
+      {{ metric.label }}
+    </li>
+  </ul>
+</div>
+
+<div v-if="visualizationMode === 'network'" class="dropdown" style="margin-bottom: 15px;">
+  <button class="dropdown-button" @click="networkDropdownOpen = !networkDropdownOpen">
+    {{ selectedNetworkType || 'Select Network Type' }}
+    <i class="fa-solid fa-caret-down"></i>
+  </button>
+
+  <ul v-show="networkDropdownOpen" class="dropdown-menu">
+    <li @click="selectNetworkType('Bike')">Bike</li>
+    <li @click="selectNetworkType('Car')">Car</li>
+    <li @click="selectNetworkType('Both')">Both</li>
+  </ul>
+</div>
+
+
+  <!-- Calculate Button -->
+  <div>
+    <button class="calculate-button" @click="displayMap(selectedRun_dropdown)">
+    Display
+  </button>
+</div>
+
+
+
+        </div>
+        
         </div>
 
 
@@ -142,7 +207,13 @@ import { loadingStore } from "../stores/loadingStore.js";
 import { userInputStore } from "../stores/userInputStore.js";
 import { projectsStore } from "../stores/projectsStore.js";
 import { useCompareRunEvaluation } from "../stores/compareRunResultStore.js";
-import { ref, watch } from "vue";
+import { ref, watch, computed } from "vue";
+import { loadWFS, loadWMS } from "../scripts/map.js";
+import {
+  getBoundingBox,
+  getRunList,
+} from "../scripts/api.js";
+
 import {
   createPieChartComplexity,
   createBarChart,
@@ -162,7 +233,22 @@ export default {
     },
     selectedMetrics() {
       return this.allMetrics.filter(m => m.selected);
-    }
+    },
+    selectedMetrics() {
+    return this.inputStore.allMetrics.filter(m => m.selected);
+  },
+  showEmptyMessage() {
+    return this.prjStore.selectedEvaluationRuns.length === 0 || this.selectedMetrics.length === 0;
+  },
+  emptyMessage() {
+    const noRuns = this.prjStore.selectedEvaluationRuns.length === 0;
+    const noMetrics = this.selectedMetrics.length === 0;
+
+    if (noRuns && noMetrics) return "Please select runs and metrics to display the results.";
+    if (noRuns) return "Please select a run to display the results.";
+    if (noMetrics) return "Please select metrics to display the results.";
+    return "";
+  }
   },
 name: "Dashboard",
   components: {
@@ -179,6 +265,18 @@ name: "Dashboard",
     const filteredRuns = ref(null);
     const compareRunStore = useCompareRunEvaluation();
     const loadingStoreInstance = loadingStore();
+    const visualizedMetric = ref(null);
+    const dropdownOpen = ref(false);
+    const metricsOptions = [
+      "LTS (Level of Traffic Stress)",
+      "zed (Bicycle Compatibility Index)",
+      "BSL (Bicycle Stress Level)",
+      "BLOS (Bicycle Level of Service)",
+      "Porter Index",
+      "Weikl Index"
+    ];
+
+
 
     watch(
       () => statusStore.dashboard,
@@ -212,6 +310,9 @@ name: "Dashboard",
       compareRunStore,
       dashboard,
       loadingStoreInstance,
+      visualizedMetric,
+      metricsOptions,
+      dropdownOpen
     };
   },
   data() {
@@ -223,7 +324,7 @@ name: "Dashboard",
         { key: 'complexity', label: 'Complexity Measure', selected: false }
       ],
       metricDropdownOpen: false,
-      showMetricsTable: false,
+      showMetricsTable: true,
 
       showDropdown: false,
       showInfoBox: false,
@@ -242,6 +343,11 @@ name: "Dashboard",
       bearingIsLoading: false,
       infoBoxTexts: infoBoxTexts,
       paretoIsLoading:false,
+      selectedRun_dropdown: null,
+      runDropdownOpen: false,
+      visualizationMode: 'evaluation', // default
+      selectedNetworkType: null,
+      networkDropdownOpen: false,
     };
   },
 
@@ -332,6 +438,8 @@ name: "Dashboard",
       }
     );
   },
+
+
 
   methods: {
 
@@ -555,6 +663,41 @@ name: "Dashboard",
         }
       });
     },
+    toggleDropdown() {
+      this.dropdownOpen = !this.dropdownOpen;
+    },
+    visualizeMetric(metric) {
+      this.visualizedMetric = metric;
+      this.dropdownOpen = false;
+    },
+    toggleModeDropdown() {
+    this.modeDropdownOpen = !this.modeDropdownOpen;
+    },
+    setEvaluationMode(mode) {
+      this.statusStore.evaluationMode = mode;
+      this.modeDropdownOpen = false;
+    },
+
+    toggleRunDropdown() {
+      this.runDropdownOpen = !this.runDropdownOpen;
+    },
+    selectRun(run) {
+      this.selectedRun_dropdown = run;
+      this.runDropdownOpen = false;
+    },
+    updateANP(key, value) {
+    // Example handler — customize as needed
+    console.log(`Updated ${key} to ${value}`);
+    },
+    selectNetworkType(type) {
+      this.selectedNetworkType = type;
+      this.networkDropdownOpen = false;
+    },
+    async displayMap(run) {
+      await getBoundingBox(this.inputStore.projectID);
+      loadWMS("v_eval_pivoted", "wms_eval_pivoted",this.inputStore.projectID, run.id_run);
+      loadWFS("v_eval_pivoted_wfs", "wfs_eval_pivoted",this.inputStore.projectID, run.id_run);
+    }
   },
 };
 </script>
@@ -571,7 +714,7 @@ name: "Dashboard",
 /* Dropdown styling */
 .dropdown {
   position: relative;
-  width: 250px;
+  width: 100%;
 }
 
 .dropdown-button {
@@ -617,4 +760,27 @@ name: "Dashboard",
 .dropdown-menu li:hover {
   background-color: var(--lightgrey-bg);
 }
+.visualization-mode-toggle {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.toggle-option {
+  padding: 8px 16px;
+  border: 1px solid var(--darkgrey-bg);
+  background-color: white;
+  color: var(--darkgrey-bg);
+  cursor: pointer;
+  border-radius: 5px;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.toggle-option.active {
+  background-color: var(--pink-color);
+  color: white;
+  border-color: var(--pink-color);
+}
+
 </style>

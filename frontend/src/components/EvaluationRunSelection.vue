@@ -45,11 +45,13 @@
             <li
               v-for="run in filteredRuns"
               :key="run.run_name"
-              @click="loadRun(run)"
+              @click="prjStore.toggleEvaluationRun(run)"
             >
-              <div :class="{ 'run-details2': true, 'selected': run === selectedRun }">
+            <div :class="{ 'run-details2': true, 'selected': prjStore.isEvaluationRunSelected(run) }">
+
                 <div class="run-details-inner-container">
-                  <div class="run_name" :class="{ selected: run === selectedRun }">
+                  <div class="run_name" :class="{ selected: prjStore.isEvaluationRunSelected(run) }">
+
                     {{ run.run_name }}
                   </div>
                   <table>
@@ -92,7 +94,7 @@
         </div>
         
         <div class="buttons">
-        <button @click="toggleUserInputPreviousSide" class="back-button">
+        <button @click="() => { toggleUserInputPreviousSide(); prjStore.clearEvaluationRuns();}" class="back-button">
           Back
         </button>
         <button @click="statusStore.toggleEvaluationRunPage">

@@ -100,6 +100,11 @@ export default {
           this.map.removeLayer("v_optimized_wfs");
           loadWMS("v_optimized_wfs", "wfs_optimized");
         }
+        if (this.isLayerExists("v_eval_pivoted")) {
+          this.map.removeLayer("v_eval_pivoted");
+          loadWMS("v_eval_pivoted", "wms_eval_pivoted");
+        }
+
         console.log("Layers after: ", this.map.getStyle().layers);
       }
     );

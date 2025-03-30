@@ -209,6 +209,13 @@ export async function loadWMS(layerID, layerSource, projectID, runID) {
         layerID
       );
   }
+  if (layerID === "v_eval_pivoted") {
+    tile =
+      "https://baug-ikg-gis-01.ethz.ch:8443/geoserver/GMP_EBC/wms?REQUEST=GetMap&SERVICE=WMS&layers=GMP_EBC:v_eval_pivoted&bbox={bbox-epsg-3857}&transparent=true&width=256&height=256&srs=EPSG:3857&styles=&format=image/png";
+  
+    console.log("WMS layer loaded: ", tile);
+  }
+  
 
   map.addSource(layerSource, {
     type: "raster",

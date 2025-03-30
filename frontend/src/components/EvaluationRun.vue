@@ -9,7 +9,7 @@
         </h2>
 
         <p class="info-text">
-          This is the overview of the project <i>{{ inputStore.projectName }}</i>. For evaluating one or multiple runs, select them in the list below.
+          This is the overview of the project <i>{{ inputStore.projectName }}</i>. ......
         </p>
 
         <!-- Runs Header -->
@@ -31,89 +31,121 @@
           </h3>
         </div>
 
-        <!-- List of all runs -->
-        <div class="project-list">
-          <ul>
-            <li
-              v-for="run in filteredRuns"
-              :key="run.run_name"
-              @click="loadRun(run)"
-            >
-              <div :class="{ 'run-details2': true, 'selected': run === selectedRun }">
-                <div class="run-details-inner-container">
-                  <button class="remove-button" title="Remove run">Remove</button>
+  <div class="project-list">
+    <ul>
+      <li
+        v-for="run in prjStore.selectedEvaluationRuns"
+        :key="run.run_name"
+      >
+      <div class="run-summary">
+  <div class="run-dropdown-toggle" @click="toggleRun(run.run_name)">
+    <span>{{ run.run_name }}</span>
+    <i
+      :class="[
+        'fa-solid',
+        expandedRuns[run.run_name] ? 'fa-chevron-up' : 'fa-chevron-down'
+      ]"
+      style="margin-left: 10px;"
+    ></i>
+  </div>
 
-                  <div class="run_name" :class="{ selected: run === selectedRun }">
-                    {{ run.run_name }}
-                  </div>
+  <button class="remove-button" @click.stop="removeRun(run)">Remove</button>
+</div>
 
-                  <table>
-                    <colgroup>
-                      <col style="width: 30px;">
-                      <col style="width: 270px;">
-                      <col style="width: 20px;">
-                    </colgroup>
-                    <tr>
-                      <td><i class="fa-solid fa-gears"></i></td>
-                      <td>Algorithm</td>
-                      <td class="bold">{{ convertAlgName(run.algorithm) }}</td> 
-                    </tr>
-                    <tr>
-                      <td><i class="fa-solid fa-bicycle"></i></td>
-                      <td>Bike lane ratio</td>
-                      <td class="bold">{{ (run.bike_ratio * 100).toFixed() }}%</td>
-                    </tr>
-                    <tr>
-                      <td><i class="fa-solid fa-shield-heart"></i></td>
-                      <td>Safety penalty</td>
-                      <td class="bold">{{ run.bike_safety_penalty }}</td>
-                    </tr>
-                    <tr v-if="convertAlgName(run.algorithm) === 'O'">
-                      <td><i class="fa-solid fa-car"></i></td>
-                      <td>Car weight:</td>
-                      <td class="bold">{{ run.car_weight }}</td>
-                    </tr>
-                    <tr v-if="convertAlgName(run.algorithm) === 'O'">
-                      <td><i class="fa-solid fa-arrow-up-short-wide"></i></td>
-                      <td>Optimize Frequency</td>
-                      <td class="bold">{{ run.optimize_frequency }}</td>
-                    </tr>
-                  </table>
-                </div>
-              </div>
-              <br />
-            </li>
-          </ul>
+        <!-- Expanded Run Details -->
+        <div
+          v-if="expandedRuns[run.run_name]"
+          class="run-details2 selected"
+          style="margin-top: 10px;"
+        >
+          <div class="run-details-inner-container">
+            <div class="run_name selected">{{ run.run_name }}</div>
+            <table>
+              <colgroup>
+                <col style="width: 30px;" />
+                <col style="width: 270px;" />
+                <col style="width: 20px;" />
+              </colgroup>
+              <tr>
+                <td><i class="fa-solid fa-gears"></i></td>
+                <td>Algorithm</td>
+                <td class="bold">{{ convertAlgName(run.algorithm) }}</td>
+              </tr>
+              <tr>
+                <td><i class="fa-solid fa-bicycle"></i></td>
+                <td>Bike lane ratio</td>
+                <td class="bold">{{ (run.bike_ratio * 100).toFixed() }}%</td>
+              </tr>
+              <tr>
+                <td><i class="fa-solid fa-shield-heart"></i></td>
+                <td>Safety penalty</td>
+                <td class="bold">{{ run.bike_safety_penalty }}</td>
+              </tr>
+              <tr v-if="convertAlgName(run.algorithm) === 'O'">
+                <td><i class="fa-solid fa-car"></i></td>
+                <td>Car weight</td>
+                <td class="bold">{{ run.car_weight }}</td>
+              </tr>
+              <tr v-if="convertAlgName(run.algorithm) === 'O'">
+                <td><i class="fa-solid fa-arrow-up-short-wide"></i></td>
+                <td>Optimize Frequency</td>
+                <td class="bold">{{ run.optimize_frequency }}</td>
+              </tr>
+            </table>
+          </div>
         </div>
 
-        <!-- Back Button -->
+        <br />
+      </li>
+    </ul>
+  </div>
+
+
+
+
+        <!-- Add Runs Button -->
         <div class="button-container" style="margin-top: 10px;">
           <button @click="toggleUserInputPreviousSide" class="back-button">
             Add runs
           </button>
         </div>
 
-        <!-- Evaluation Approach -->
+        <!-- Metric Selection -->
+
         <div style="margin-top: 30px;">
           <h3 class="runs-header">
-            <span class="runs-text">Evaluation Approach</span>
+            <span class="runs-text">Metric selection</span>
           </h3>
 
-          <div class="dropdown">
-            <button class="dropdown-button" @click="toggleModeDropdown">
-              {{ evaluationMode }}
-              <i class="fa-solid fa-caret-down"></i>
-            </button>
-            <ul v-show="modeDropdownOpen" class="dropdown-menu">
-              <li @click="setEvaluationMode('Basic')">Basic</li>
-              <li @click="setEvaluationMode('ANP')">ANP</li>
-            </ul>
-          </div>
-        </div>
+        <div class="dropdown" style="margin-bottom: 15px; position: relative;">
+          <button class="dropdown-button" @click="toggleMetricDropdown">
+  <div class="dropdown-button-content">
+    <span>Choose Metrics</span>
+    <i class="fa-solid fa-caret-down"></i>
+  </div>
+</button>
 
-        <div v-if="evaluationMode === 'ANP'">
-          <!-- ANP Attribute Controls -->
-  <div class="anp-attributes" style="margin-top: 30px;">
+
+    <ul v-show="metricDropdownOpen" class="dropdown-menu" style="max-height: 200px; overflow-y: auto;">
+      <li v-for="metric in inputStore.allMetrics" :key="metric.key" style="padding: 5px 10px;">
+        <label style="display: flex; align-items: center;">
+          <input
+            type="checkbox"
+            v-model="metric.selected"
+            @change="inputStore.toggleMetric(metric.key, metric.selected)"
+            style="margin-right: 8px;"
+          />
+          {{ metric.label }}
+        </label>
+      </li>
+    </ul>
+  </div>
+  <div v-if="isANPSelected" class="anp-attributes" style="margin-top: 30px;">
+    <div>
+      <h4 class="runs-header">
+            <span class="runs-text">ANP Configuration</span>
+      </h4>
+    </div>
     <div
       v-for="attr in anpAttributes"
       :key="attr.key"
@@ -151,49 +183,17 @@
       </p>
     </div>
   </div>
+  <div style="margin-top: 30px;">
+    <button class="calculate-button" @click="computeMetrics">
+    Compute
+  </button>
+</div>
 </div>
 
 
-        <!-- Visualization Section -->
-        <div class="metrics-container" style="margin-top: 30px;">
-          <h3 class="runs-header">
-            <span class="runs-text">Visualization</span>
-          </h3>
-
-          <!-- Run Selector -->
-          <div class="dropdown" style="margin-bottom: 15px;">
-            <button class="dropdown-button" @click="toggleRunDropdown">
-              {{ selectedRun || 'Select a Run' }}
-              <i class="fa-solid fa-caret-down"></i>
-            </button>
-            <ul v-show="runDropdownOpen" class="dropdown-menu">
-              <li @click="selectRun('Run 1')">Run 1</li>
-              <li @click="selectRun('Run 2')">Run 2</li>
-            </ul>
-          </div>
-
-          <!-- Metric Dropdown (only for Basic mode) -->
-          <div v-if="evaluationMode === 'Basic'" class="dropdown">
-            <button class="dropdown-button" @click="toggleDropdown">
-              {{ selectedMetric || 'Select a Metric' }}
-              <i class="fa-solid fa-caret-down"></i>
-            </button>
-            <ul v-show="dropdownOpen" class="dropdown-menu">
-              <li
-                v-for="metric in metricsOptions"
-                :key="metric"
-                @click="selectMetric(metric)"
-              >
-                {{ metric }}
-              </li>
-            </ul>
-          </div>
-          <div v-else-if="evaluationMode === 'ANP'">
-  
-</div>
 
 
-        </div>
+
       </div>
 
       <!-- Close Button -->
@@ -244,14 +244,6 @@ export default {
     const searchQuery = ref("");
     const dropdownOpen = ref(false);
     const selectedMetric = ref(null);
-    const metricsOptions = [
-      "LTS (Level of Traffic Stress)",
-      "BCI (Bicycle Compatibility Index)",
-      "BSL (Bicycle Stress Level)",
-      "BLOS (Bicycle Level of Service)",
-      "Porter Index",
-      "Weikl Index"
-    ];
 
     // Sort projects by "created" timestamp in descending order
     const filteredRuns = computed(() => {
@@ -278,12 +270,12 @@ export default {
       filteredRuns,
       compareRunStore,
       dropdownOpen,
-      selectedMetric,
-      metricsOptions,
+      selectedMetric
     };
   },
   data() {
     const inputStore = userInputStore();
+    const statusStore = statusVariablesStore();
     return {
       isButtonDisabled: true,
       projectName: inputStore.projectName,
@@ -293,19 +285,30 @@ export default {
       size: "25px",
       isLoading: false,
       selectedRun: null,
-      evaluationMode: "Basic",
       modeDropdownOpen: false,
-      selectedRun: null,
+      selectedRun_dropdown: null,
       runDropdownOpen: false,
       anpAttributes: [
       { key: 'accessibility', label: 'Accessibility', value: 50, enabled: true },
       { key: 'attractiveness', label: 'Attractiveness', value: 50, enabled: true },
-      { key: 'safety', label: 'Safety', value: 50, enabled: true }
-    ],
+      { key: 'safety', label: 'Safety', value: 50, enabled: true },
+      ],
+      statusStore,
+      metricDropdownOpen: false,
+      expandedRuns: {},
+    
     };
   },
 
+  computed: {
+  isANPSelected() {
+    return this.inputStore.allMetrics.some(m => m.key === "anp" && m.selected);
+    }
+  },
+
+
   methods: {
+    
     toggleUserInputNextSide() {
       this.statusStore.toggleLoadPage();
     },
@@ -316,7 +319,7 @@ export default {
       this.statusStore.toggleCreateNewRunPage();
     },
     async loadRun(run) {
-      this.statusStore.openDashboard("evaluation");
+      this.statusStore.openDashboard();
       this.prjStore.setSelectedRun(run);
       this.selectedRun = run;
 
@@ -332,8 +335,8 @@ export default {
 
       // create view on the map for the selected run
       await getBoundingBox(this.inputStore.projectID);
-      loadWMS("v_optimized", "wms_optimized",this.inputStore.projectID, run.id_run);
-      loadWFS("v_optimized_wfs", "wfs_optimized",this.inputStore.projectID, run.id_run);
+      loadWMS("v_eval_pivoted", "wms_eval_pivoted",this.inputStore.projectID, run.id_run);
+      loadWFS("v_eval_pivoted_wfs", "wfs_eval_pivoted_optimized",this.inputStore.projectID, run.id_run);
 
       this.runName = run.run_name;
       this.inputStore.setRunName(this.runName);
@@ -386,7 +389,7 @@ export default {
     this.modeDropdownOpen = !this.modeDropdownOpen;
     },
     setEvaluationMode(mode) {
-      this.evaluationMode = mode;
+      this.statusStore.evaluationMode = mode;
       this.modeDropdownOpen = false;
     },
 
@@ -394,12 +397,30 @@ export default {
       this.runDropdownOpen = !this.runDropdownOpen;
     },
     selectRun(run) {
-      this.selectedRun = run;
+      this.selectedRun_dropdown = run;
       this.runDropdownOpen = false;
     },
     updateANP(key, value) {
     // Example handler — customize as needed
     console.log(`Updated ${key} to ${value}`);
+    },
+    toggleMetricDropdown() {
+      this.metricDropdownOpen = !this.metricDropdownOpen;
+    },
+    computeMetrics() {
+      this.showMetricsTable = true;
+      this.statusStore.DashboardMode = "Evaluation";
+      this.statusStore.openDashboard();
+
+
+    },
+    toggleRun(runName) {
+      this.expandedRuns[runName] = !this.expandedRuns[runName];
+    },
+    removeRun(run) {
+      this.prjStore.removeEvaluationRun(run);
+      // Optionally also collapse it
+      this.$delete(this.expandedRuns, run.run_name);
     },
 
   },
@@ -444,7 +465,7 @@ export default {
 /* Dropdown styling */
 .dropdown {
   position: relative;
-  width: 250px;
+  width: 100% !important ;
 }
 
 .dropdown-button {
@@ -454,17 +475,18 @@ export default {
   color: black;
   border: 1px solid var(--darkgrey-bg);
   cursor: pointer;
-  text-align: left;
   font-size: 14px;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+.dropdown-button-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-radius: 5px;
+  width: 100%;
 }
 
-.dropdown-button i {
-  margin-left: 10px;
-}
 
 .dropdown-menu {
   position: absolute;
@@ -490,11 +512,11 @@ export default {
 .dropdown-menu li:hover {
   background-color: var(--lightgrey-bg);
 }
+.dropdown-label {
+  flex: 1;
+}
 
 .remove-button {
-  position: relative;
-  top: -1px;     /* lower it a bit */
-  right: -280px;   /* move it slightly inward */
   background-color: transparent;
   color: #da5268;
   border: 1px solid #da5268;
@@ -504,6 +526,11 @@ export default {
   font-weight: 500;
   cursor: pointer;
   transition: background-color 0.2s ease;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
 }
 
 .remove-button:hover {
@@ -511,15 +538,43 @@ export default {
 }
 
 .project-list {
-  width: 100%;
-  margin-left: 0px;
+  width: 100%; /* same as dropdown */
   margin-top: 10px;
   padding: 0;
-  overflow-y: scroll;
-  position: relative;
-  padding-right: 4px;
-  max-height: 400px;
+  max-height: none; /* remove the vertical scroll constraint */
+  overflow: visible; /* prevent scrollbars */
 }
+
+.run-summary {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.run-dropdown-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: lightgrey;
+  padding: 6px 10px;
+  border: 1px solid var(--darkgrey-bg);
+  border-radius: 5px;
+  cursor: pointer;
+  width: 80%;
+  height: 36px;
+  box-sizing: border-box;
+}
+
+
+
+.run-dropdown-toggle:hover {
+  background-color: #e0e0e0;
+}
+
+
+
+
+
 
 
 

@@ -19,6 +19,8 @@ export const statusVariablesStore = defineStore("statusVariables", {
     startingPage: false,
     evaluationrunPage: false,
     evaluationDashboard: false,
+    DashboardMode: "UserInput"
+ 
   }),
   actions: {
     toggleCreateNewRunPage() {
@@ -84,7 +86,18 @@ export const statusVariablesStore = defineStore("statusVariables", {
       this.evaluationrunPage = !this.evaluationrunPage;
     },
     toggleEvaluationDashboard() {
-      this.evaluationDashboard = !this.evaluationDashboard;
+      this.evaluationDashboard = !this.dashboard;
+    },
+    closeEvaluationDashboard() {
+      this.evaluationDashboard = false;
+    },
+    openEvaluationDashboard() {
+      this.evaluationDashboard = true;
+    },
+    toggleMetric(key, selected) {
+      const metric = this.allMetrics.find(m => m.key === key);
+      if (metric) metric.selected = selected;
     }
+
   },
 });
