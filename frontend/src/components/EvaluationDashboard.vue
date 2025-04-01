@@ -147,43 +147,61 @@
 
 
 <!-- Conditionally render based on mode -->
-<div v-if="visualizationMode === 'evaluation'" class="dropdown" style="margin-bottom: 15px;">
-  <button class="dropdown-button" @click="dropdownOpen = !dropdownOpen">
-    {{ visualizedMetric?.label || 'Select a Metric to Visualize' }}
-    <i class="fa-solid fa-caret-down"></i>
-  </button>
+<div v-if="visualizationMode === 'evaluation'" style="margin-bottom: 15px;">
+  <!-- Dropdown Button -->
+  <div class="dropdown">
+    <button class="dropdown-button" @click="dropdownOpen = !dropdownOpen">
+      {{ visualizedMetric?.label || 'Select a Metric to Visualize' }}
+      <i class="fa-solid fa-caret-down"></i>
+    </button>
 
-  <ul v-show="dropdownOpen" class="dropdown-menu">
-    <li
-      v-for="metric in selectedMetrics"
-      :key="metric.key"
-      @click="visualizeMetric(metric)"
-    >
-      {{ metric.label }}
-    </li>
-  </ul>
+    <!-- Dropdown Menu -->
+    <ul v-show="dropdownOpen" class="dropdown-menu">
+      <li
+        v-for="metric in selectedMetrics"
+        :key="metric.key"
+        @click="visualizeMetric(metric)"
+      >
+        {{ metric.label }}
+      </li>
+    </ul>
+  </div>
+
+  <!-- Display Button -->
+  <div style="margin-top: 30px;">
+    <button class="calculate-button" @click="displayEvaluationMap(selectedRun_dropdown)">
+      Display
+    </button>
+  </div>
+
+  
 </div>
 
-<div v-if="visualizationMode === 'network'" class="dropdown" style="margin-bottom: 15px;">
-  <button class="dropdown-button" @click="networkDropdownOpen = !networkDropdownOpen">
-    {{ selectedNetworkType || 'Select Network Type' }}
-    <i class="fa-solid fa-caret-down"></i>
-  </button>
 
-  <ul v-show="networkDropdownOpen" class="dropdown-menu">
-    <li @click="selectNetworkType('Bike')">Bike</li>
-    <li @click="selectNetworkType('Car')">Car</li>
-    <li @click="selectNetworkType('Both')">Both</li>
-  </ul>
+<div v-if="visualizationMode === 'network'"  style="margin-bottom: 15px;">
+    <div class="dropdown">
+      <button class="dropdown-button" @click="networkDropdownOpen = !networkDropdownOpen">
+        {{ selectedNetworkType || 'Select Network Type' }}
+        <i class="fa-solid fa-caret-down"></i>
+      </button>
+
+      <ul v-show="networkDropdownOpen" class="dropdown-menu">
+        <li @click="selectNetworkType('Bike Network')">Bike Network </li>
+        <li @click="selectNetworkType('Car Network')">Car Network</li>
+        <li @click="selectNetworkType('Full Network')">Full Network</li>
+      </ul>
+    </div>
+
+    <!-- Display Button -->
+    <div style="margin-top: 30px;">
+      <button class="calculate-button" @click="displayNetworkMap(selectedRun_dropdown)">
+        Display
+      </button>
+    </div>
 </div>
 
 
-  <!-- Calculate Button -->
-  <div>
-    <button class="calculate-button" @click="displayMap(selectedRun_dropdown)">
-    Display
-  </button>
-</div>
+
 
 
 
@@ -693,12 +711,31 @@ name: "Dashboard",
       this.selectedNetworkType = type;
       this.networkDropdownOpen = false;
     },
-    async displayMap(run) {
+    async displayEvaluationMap(run) {
+
+      const metricKey = this.visualizedMetric?.key;
+      if (!metricKey) {
+        alert("Please select a metric to visualize.");
+        return;
+      }
+
       await getBoundingBox(this.inputStore.projectID);
-      loadWMS("v_eval_pivoted", "wms_eval_pivoted",this.inputStore.projectID, run.id_run);
-      loadWFS("v_eval_pivoted_wfs", "wfs_eval_pivoted",this.inputStore.projectID, run.id_run);
+
+      loadWMS("v_eval_pivoted", "wms_eval_pivoted",this.inputStore.projectID, run.id_run, metricKey);
+      loadWFS("v_eval_pivoted_wfs", "wfs_eval_pivoted",this.inputStore.projectID, run.id_run, metricKey);
+    },
+    async displayNetworkMap(run) {
+
+
+      const type = this.selectedNetworkType; // 'Bike', 'Car', 'Full'
+      loadWMS("v_optimized", "wms_optimized", this.inputStore.projectID, run.id_run, null, this.selectedNetworkType);
+      loadWFS("v_optimized_wfs", "wfs_optimized", this.inputStore.projectID, run.id_run, null, this.selectedNetworkType);
     }
+
   },
+  
+
+
 };
 </script>
 

@@ -165,10 +165,14 @@ export async function loadWFS(layerID, layerSource, projectID, runID) {
   });
 }
 
-export async function loadWMS(layerID, layerSource, projectID, runID) {
+export async function loadWMS(layerID, layerSource, projectID, runID, metricKey = null, networkType = null) {
   const mapStoreInstance = mapStore();
   const map = mapStoreInstance.map;
   var tile = "";
+
+  // Clean up conflicting layers before adding new one
+  await removeLayer("v_eval_pivoted", "wms_eval_pivoted");
+  await removeLayer("v_optimized", "wms_optimized");
 
   if (map.getLayer(layerID)) {
     map.removeLayer(layerID);
@@ -182,14 +186,27 @@ export async function loadWMS(layerID, layerSource, projectID, runID) {
     if (projectID === undefined || runID === undefined) {
       throw new Error("Project ID and Run ID are required for v_optimized");
     }
-    tile =
-      "https://baug-ikg-gis-01.ethz.ch:8443/geoserver/GMP_EBC/wms?REQUEST=GetMap&SERVICE=WMS&layers=GMP_EBC:layername&bbox={bbox-epsg-3857}&transparent=true&width=256&height=256&srs=EPSG:3857&styles=&format=image/png&viewparams=prj:projectID;run:runID"
-        .replace("layername", layerID)
-        .replace("projectID", projectID)
-        .replace("runID", runID);
+  
+    let laneFilter = "";
+    if (networkType === "Bike Network") {
+      laneFilter = `;lanetype:P`;
+    } else if (networkType === "Car Network") {
+      laneFilter = `;lanetype:M`; 
+    } else {
+      laneFilter = `;lanetype:ALL`; 
+    }
 
+
+    
+  
+    const viewParams = `prj:${projectID};run:${runID}${laneFilter}`;
+
+  
+    tile = `https://baug-ikg-gis-01.ethz.ch:8443/geoserver/GMP_EBC/wms?REQUEST=GetMap&SERVICE=WMS&layers=GMP_EBC:${layerID}&bbox={bbox-epsg-3857}&transparent=true&width=256&height=256&srs=EPSG:3857&styles=&format=image/png&viewparams=${viewParams}`;
+  
     console.log("WMS layer loaded: ", tile);
   }
+  
   if (layerID === "v_bound") {
     if (projectID === undefined) {
       throw new Error("Project ID is required for v_optimized");
@@ -210,11 +227,20 @@ export async function loadWMS(layerID, layerSource, projectID, runID) {
       );
   }
   if (layerID === "v_eval_pivoted") {
-    tile =
-      "https://baug-ikg-gis-01.ethz.ch:8443/geoserver/GMP_EBC/wms?REQUEST=GetMap&SERVICE=WMS&layers=GMP_EBC:v_eval_pivoted&bbox={bbox-epsg-3857}&transparent=true&width=256&height=256&srs=EPSG:3857&styles=&format=image/png";
+    if (projectID === undefined || runID === undefined) {
+      throw new Error("Project ID and Run ID are required for v_eval_pivoted");
+    }
+  
+    const viewParams = `prj:${projectID};run:${runID}`;
+    tile = `https://baug-ikg-gis-01.ethz.ch:8443/geoserver/GMP_EBC/wms?REQUEST=GetMap&SERVICE=WMS&layers=GMP_EBC:${layerID}&bbox={bbox-epsg-3857}&transparent=true&width=256&height=256&srs=EPSG:3857&format=image/png&viewparams=${viewParams}`;
+  
+    if (metricKey) {
+      tile += `&styles=v_eval_pivoted_${metricKey}`;
+    }
   
     console.log("WMS layer loaded: ", tile);
   }
+  
   
 
   map.addSource(layerSource, {

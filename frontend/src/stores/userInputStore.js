@@ -21,7 +21,7 @@ export const userInputStore = defineStore("variableStore", {
       { key: 'lts', label: 'Level of Traffic Stress (LTS)', selected: false },
       { key: 'bci', label: 'Bicycle Compatibility Index (BCI)', selected: false },
       { key: 'bsl', label: 'Bicyle Stress Level (BSL)', selected: false },
-      { key: 'blos', label: 'Bicyle Level of Service(BLOS)', selected: false },
+      { key: 'blos_grade', label: 'Bicyle Level of Service(BLOS)', selected: false },
       { key: 'porter_index', label: 'Porter Index', selected: false },
       { key: 'weikl_index', label: 'Weikl Index', selected: false },
       { key: 'anp', label: 'ANP', selected: false }
