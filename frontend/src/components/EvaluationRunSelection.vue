@@ -45,12 +45,12 @@
             <li
               v-for="run in filteredRuns"
               :key="run.run_name"
-              @click="prjStore.toggleEvaluationRun(run)"
+              @click="prjStore.toggleTempEvaluationRun(run)"
             >
-            <div :class="{ 'run-details2': true, 'selected': prjStore.isEvaluationRunSelected(run) }">
+            <div :class="{ 'run-details2': true, 'selected': prjStore.isTempEvaluationRunSelected(run) }">
 
                 <div class="run-details-inner-container">
-                  <div class="run_name" :class="{ selected: prjStore.isEvaluationRunSelected(run) }">
+                  <div class="run_name" :class="{ selected: prjStore.isTempEvaluationRunSelected(run) }">
 
                     {{ run.run_name }}
                   </div>
@@ -94,7 +94,7 @@
         </div>
         
         <div class="buttons">
-        <button @click="() => { toggleUserInputPreviousSide(); prjStore.clearEvaluationRuns();}" class="back-button">
+        <button @click="() => { toggleUserInputPreviousSide(); prjStore.clearTempEvaluationRuns();}" class="back-button">
           Back
         </button>
         <button @click="statusStore.toggleEvaluationRunPage">
@@ -290,9 +290,17 @@ export default {
 @import "../styles/SideBarStyle.css";
 @import "../styles/SideBarStyleMobile.css";
 @import "../styles/UserInputRunStyle.css";
-.selected {
+/* Only apply pink to the run name title */
+.run_name.selected {
   color: var(--pink-color);
 }
+
+/* Keep attributes black (no override needed unless they're inheriting .selected) */
+.run-details-inner-container td,
+.run-details-inner-container td.bold {
+  color: black;
+}
+
 
 .buttons {
   margin-top: 20px;

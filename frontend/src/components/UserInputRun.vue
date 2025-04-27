@@ -103,7 +103,7 @@
 
        <!-- Button for going back and for creating a new run -->
       <div class="buttons">
-        <button @click="toggleUserInputPreviousSide" class="back-button">
+        <button @click="() => { toggleUserInputPreviousSide(); prjStore.clearTempEvaluationRuns(); toggleEvaluationRunPreviousSide();}" class="back-button">
           Back
         </button>
         <button @click="openCreate">Create new Run</button>
@@ -257,6 +257,9 @@ export default {
     }
     }
   },
+  toggleEvaluationRunPreviousSide() {
+      this.statusStore.toggleEvaluationRunPage();
+    }
 };
 </script>
 

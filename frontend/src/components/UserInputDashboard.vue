@@ -484,7 +484,7 @@
           <div class="buttons">
             <button 
   @click="() => { 
-    prjStore.addEvaluationRun(prjStore.selectedRun); 
+    prjStore.addTempEvaluationRun(prjStore.selectedRun); 
     statusStore.DashboardMode = 'Evaluation'; 
     toggleActiveTab('Evaluation');
     statusStore.closeDashboard();

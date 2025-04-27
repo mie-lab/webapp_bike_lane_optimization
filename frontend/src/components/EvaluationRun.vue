@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Run list -->
-    <div v-if="!statusStore.createNewRunPage">
+    <div>
       <div class="user-input-container">
         <h4 class="h4_override">Project:</h4>
         <h2 class="h2_override">
@@ -34,7 +34,7 @@
   <div class="project-list">
     <ul>
       <li
-        v-for="run in prjStore.selectedEvaluationRuns"
+        v-for="run in prjStore.tempSelectedEvaluationRuns"
         :key="run.run_name"
       >
       <div class="run-summary">
@@ -105,7 +105,7 @@
 
         <!-- Add Runs Button -->
         <div class="button-container" style="margin-top: 10px;">
-          <button @click="toggleUserInputPreviousSide" class="back-button">
+          <button @click="() => {toggleUserInputPreviousSide(); toggleMetricsChangedSinceLastCompute(); }" class="back-button">
             Add runs
           </button>
         </div>
@@ -113,26 +113,30 @@
         <!-- Metric Selection -->
 
         <div style="margin-top: 30px;">
-          <h3 class="runs-header">
-            <span class="runs-text">Metric selection</span>
-          </h3>
+  <h3 class="runs-header">
+    <span class="runs-text">Metric selection</span>
+  </h3>
 
-        <div class="dropdown" style="margin-bottom: 15px; position: relative;">
-          <button class="dropdown-button" @click="toggleMetricDropdown">
-  <div class="dropdown-button-content">
-    <span>Choose Metrics</span>
-    <i class="fa-solid fa-caret-down"></i>
-  </div>
-</button>
-
+  <!-- Dropdown -->
+  <div class="dropdown" style="margin-bottom: 15px; position: relative;">
+    <button class="dropdown-button" @click="toggleMetricDropdown">
+      <div class="dropdown-button-content">
+        <span>Choose Metrics</span>
+        <i class="fa-solid fa-caret-down"></i>
+      </div>
+    </button>
 
     <ul v-show="metricDropdownOpen" class="dropdown-menu" style="max-height: 200px; overflow-y: auto;">
-      <li v-for="metric in inputStore.allMetrics" :key="metric.key" style="padding: 5px 10px;">
+      <li
+        v-for="metric in localMetrics"
+        :key="metric.key"
+        style="padding: 5px 10px;"
+      >
         <label style="display: flex; align-items: center;">
           <input
             type="checkbox"
             v-model="metric.selected"
-            @change="inputStore.toggleMetric(metric.key, metric.selected)"
+            @change="handleMetricToggle(metric)"
             style="margin-right: 8px;"
           />
           {{ metric.label }}
@@ -140,10 +144,33 @@
       </li>
     </ul>
   </div>
+
+  <!-- Selected Metrics Display -->
+  <div v-if="selectedMetrics.length > 0" class="anp-attributes" style="margin-top: 20px;">
+
+    <h4 class="runs-header">
+        <span class="runs-text">Selected Metrics</span>
+      </h4>
+
+    <div
+      v-for="metric in selectedMetrics"
+      :key="metric.key"
+      class="bike-ratio"
+      style="margin-top: 10px; display: flex; align-items: center; justify-content: space-between;"
+    >
+      <div style="display: flex; align-items: center;">
+        <label class="runs-header">
+          <span class="runs-text">{{ metric.label }}</span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- ANP Section (unchanged) -->
   <div v-if="isANPSelected" class="anp-attributes" style="margin-top: 30px;">
     <div>
       <h4 class="runs-header">
-            <span class="runs-text">ANP Configuration</span>
+        <span class="runs-text">ANP Configuration</span>
       </h4>
     </div>
     <div
@@ -152,7 +179,6 @@
       class="bike-ratio"
       style="margin-top: 10px; display: flex; align-items: center; justify-content: space-between;"
     >
-      <!-- Checkbox and Label -->
       <div style="display: flex; align-items: center; gap: 10px;">
         <input
           type="checkbox"
@@ -163,8 +189,6 @@
           {{ attr.label }}
         </label>
       </div>
-
-      <!-- Slider (only enabled if checkbox is checked) -->
       <div class="slide-container" style="flex-grow: 1; margin-left: 20px;">
         <input
           class="slider"
@@ -176,19 +200,26 @@
           @input="updateANP(attr.key, attr.value)"
         />
       </div>
-
-      <!-- Value display -->
       <p style="margin-left: 10px; width: 60px; text-align: right;">
         {{ attr.value }}%
       </p>
     </div>
   </div>
+
+  <!-- Compute Button -->
   <div style="margin-top: 30px;">
-    <button class="calculate-button" @click="computeMetrics">
-    Compute
-  </button>
+    <button
+  class="calculate-button"
+  :class="{ 'button-disabled': isComputeButtonInactive }"
+  :disabled="isComputeButtonInactive"
+  @click="computeMetrics"
+>
+  Compute
+</button>
+
+  </div>
 </div>
-</div>
+
 
 
 
@@ -203,9 +234,6 @@
     </div>
 
     <!-- If New Run Page -->
-    <div v-if="statusStore.createNewRunPage">
-      <UserInputNewRun />
-    </div>
   </div>
 </template>
 
@@ -224,6 +252,9 @@ import { ref, computed} from "vue";
 import {
   getBoundingBox,
   getRunList,
+  checkIfEvalMetricExists,
+  triggerEvalMetricComputation
+
 } from "../scripts/api.js";
 import { loadWFS, loadWMS } from "../scripts/map.js";
 import UserInputNewRun from "./UserInputNewRun.vue";
@@ -296,15 +327,39 @@ export default {
       statusStore,
       metricDropdownOpen: false,
       expandedRuns: {},
-    
+      metricsChangedSinceLastCompute: true,
+      localMetrics: []
     };
   },
 
+
+    // Clone current selections from global store
+    mounted() {
+      this.localMetrics = JSON.parse(JSON.stringify(this.inputStore.allMetrics));
+
+
+
+  },
+
+
+
   computed: {
   isANPSelected() {
-    return this.inputStore.allMetrics.some(m => m.key === "anp" && m.selected);
-    }
+    return this.localMetrics.some(m => m.key === "anp" && m.selected);
   },
+  selectedMetrics() {
+    return this.localMetrics.filter(m => m.selected);
+  },
+  isComputeDisabled() {
+    const noRuns = this.prjStore.tempSelectedEvaluationRuns.length === 0;
+    const noMetrics = this.selectedMetrics.length === 0;
+    return noRuns || noMetrics;
+  },
+  isComputeButtonInactive() {
+    return this.isComputeDisabled || !this.metricsChangedSinceLastCompute;
+  }
+},
+
 
 
   methods: {
@@ -336,7 +391,7 @@ export default {
       // create view on the map for the selected run
       await getBoundingBox(this.inputStore.projectID);
       loadWMS("v_eval_pivoted", "wms_eval_pivoted",this.inputStore.projectID, run.id_run);
-      loadWFS("v_eval_pivoted_wfs", "wfs_eval_pivoted_optimized",this.inputStore.projectID, run.id_run);
+      loadWFS("v_eval_pivoted_wfs", "wfs_eval_pivoted",this.inputStore.projectID, run.id_run);
 
       this.runName = run.run_name;
       this.inputStore.setRunName(this.runName);
@@ -407,21 +462,83 @@ export default {
     toggleMetricDropdown() {
       this.metricDropdownOpen = !this.metricDropdownOpen;
     },
-    computeMetrics() {
-      this.showMetricsTable = true;
-      this.statusStore.DashboardMode = "Evaluation";
-      this.statusStore.openDashboard();
+    
+      
+      
+    async computeMetrics() {
+  console.log("▶️ computeMetrics started");
+
+  this.prjStore.setSelectedEvaluationRuns(
+  JSON.parse(JSON.stringify(this.prjStore.tempSelectedEvaluationRuns))
+);
 
 
-    },
+  this.inputStore.allMetrics.forEach(metric => {
+  const localMetric = this.localMetrics.find(m => m.key === metric.key);
+  metric.selected = localMetric ? localMetric.selected : false;
+});
+
+
+  for (const run of this.prjStore.selectedEvaluationRuns) {
+    console.log("▶️ Evaluating run:", run.run_name, "(id:", run.id_run + ")");
+
+    for (const metric of this.inputStore.allMetrics.filter(m => m.selected)) {
+      console.log("  ➤ Checking metric:", metric.key);
+
+      let alreadyExists = false;
+
+      try {
+        alreadyExists = await checkIfEvalMetricExists(run.id_run, metric.key, this.inputStore.projectID);
+        console.log("    ✅ Metric exists?", alreadyExists);
+      } catch (checkErr) {
+        console.error("    ❌ Error in checkIfEvalMetricExists:", checkErr);
+      }
+
+      if (!alreadyExists) {
+        console.log("    🚀 Triggering computation for:", metric.key);
+
+        try {
+          await triggerEvalMetricComputation(run.id_run, metric.key, this.inputStore.projectID);
+          console.log("    ✅ Computation finished for", metric.key);
+        } catch (triggerErr) {
+          console.error("    ❌ Error in triggerEvalMetricComputation:", triggerErr);
+        }
+      } else {
+        console.log("    ⏩ Skipping", metric.key, "– already in DB");
+      }
+    }
+  }
+
+  console.log("▶️ All metrics processed. Showing table & opening dashboard.");
+
+  try {
+    this.showMetricsTable = true;
+    this.statusStore.DashboardMode = "Evaluation";
+    this.statusStore.openDashboard();
+  } catch (finalErr) {
+    console.error("❌ Error during final UI update:", finalErr);
+  }
+
+  this.metricsChangedSinceLastCompute = false;
+
+  },
+
+  
     toggleRun(runName) {
       this.expandedRuns[runName] = !this.expandedRuns[runName];
     },
     removeRun(run) {
-      this.prjStore.removeEvaluationRun(run);
+      this.prjStore.removeTempEvaluationRun(run);
       // Optionally also collapse it
       this.$delete(this.expandedRuns, run.run_name);
     },
+    handleMetricToggle(metric) {
+  this.metricsChangedSinceLastCompute = true;
+  },
+  toggleMetricsChangedSinceLastCompute(){
+    this.metricsChangedSinceLastCompute = true;
+  }
+
 
   },
 };
@@ -433,9 +550,17 @@ export default {
 @import "../styles/SideBarStyle.css";
 @import "../styles/SideBarStyleMobile.css";
 @import "../styles/UserInputRunStyle.css";
-.selected {
+/* Only apply pink to the run name title */
+.run_name.selected {
   color: var(--pink-color);
 }
+
+/* Keep attributes black (no override needed unless they're inheriting .selected) */
+.run-details-inner-container td,
+.run-details-inner-container td.bold {
+  color: black;
+}
+
 
 .buttons {
   margin-top: 20px;
@@ -570,6 +695,14 @@ export default {
 .run-dropdown-toggle:hover {
   background-color: #e0e0e0;
 }
+
+.button-disabled {
+  background-color: #f5c6cf !important; /* light pink */
+  color: black !important;
+  cursor: not-allowed;
+  border: 1px solid red;
+}
+
 
 
 

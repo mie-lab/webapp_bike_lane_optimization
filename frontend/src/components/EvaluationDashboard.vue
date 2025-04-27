@@ -90,13 +90,17 @@
     </tr>
   </thead>
   <tbody>
-    <tr v-for="metric in selectedMetrics" :key="metric.key">
-      <td>{{ metric.label }}</td>
-      <td v-for="run in prjStore.selectedEvaluationRuns" :key="run.run_name + '-' + metric.key">
-        ...
-      </td>
-    </tr>
-  </tbody>
+  <tr v-for="metric in selectedMetrics" :key="metric.key">
+    <td>{{ metric.label }}</td>
+    <td
+      v-for="run in prjStore.selectedEvaluationRuns"
+      :key="run.run_name + '-' + metric.key"
+    >
+      {{ metricAverages[`${metric.key}_${run.id_run}`] || 'test' }}
+    </td>
+  </tr>
+</tbody>
+
 </table>
 
 
@@ -140,7 +144,7 @@
     :class="['toggle-option', visualizationMode === 'network' ? 'active' : '']"
     @click="visualizationMode = 'network'"
   >
-    Network
+    Optimization
   </button>
 </div>
 
@@ -149,23 +153,21 @@
 <!-- Conditionally render based on mode -->
 <div v-if="visualizationMode === 'evaluation'" style="margin-bottom: 15px;">
   <!-- Dropdown Button -->
-  <div class="dropdown">
-    <button class="dropdown-button" @click="dropdownOpen = !dropdownOpen">
-      {{ visualizedMetric?.label || 'Select a Metric to Visualize' }}
-      <i class="fa-solid fa-caret-down"></i>
-    </button>
+  <div class="visualization-selection" style="margin-top: 10px;">
+  <label
+    v-for="metric in selectedMetrics"
+    :key="metric.key"
+    class="visualization-option"
+  >
+    <input
+      type="checkbox"
+      :checked="visualizedMetric?.key === metric.key"
+      @change="visualizeMetric(metric)"
+    />
+    <span>{{ metric.label }}</span>
+  </label>
+</div>
 
-    <!-- Dropdown Menu -->
-    <ul v-show="dropdownOpen" class="dropdown-menu">
-      <li
-        v-for="metric in selectedMetrics"
-        :key="metric.key"
-        @click="visualizeMetric(metric)"
-      >
-        {{ metric.label }}
-      </li>
-    </ul>
-  </div>
 
   <!-- Display Button -->
   <div style="margin-top: 30px;">
@@ -179,18 +181,21 @@
 
 
 <div v-if="visualizationMode === 'network'"  style="margin-bottom: 15px;">
-    <div class="dropdown">
-      <button class="dropdown-button" @click="networkDropdownOpen = !networkDropdownOpen">
-        {{ selectedNetworkType || 'Select Network Type' }}
-        <i class="fa-solid fa-caret-down"></i>
-      </button>
+  <div class="visualization-selection" style="margin-top: 10px;">
+  <label
+    v-for="type in ['Bike Network', 'Car Network', 'Full Network']"
+    :key="type"
+    class="visualization-option"
+  >
+    <input
+      type="checkbox"
+      :checked="selectedNetworkType === type"
+      @change="selectNetworkType(type)"
+    />
+    <span>{{ type }}</span>
+  </label>
+</div>
 
-      <ul v-show="networkDropdownOpen" class="dropdown-menu">
-        <li @click="selectNetworkType('Bike Network')">Bike Network </li>
-        <li @click="selectNetworkType('Car Network')">Car Network</li>
-        <li @click="selectNetworkType('Full Network')">Full Network</li>
-      </ul>
-    </div>
 
     <!-- Display Button -->
     <div style="margin-top: 30px;">
@@ -230,6 +235,7 @@ import { loadWFS, loadWMS } from "../scripts/map.js";
 import {
   getBoundingBox,
   getRunList,
+  fetchEvaluationMetricValues
 } from "../scripts/api.js";
 
 import {
@@ -250,9 +256,6 @@ export default {
       return this.allMetrics.filter(m => m.selected).map(m => m.label);
     },
     selectedMetrics() {
-      return this.allMetrics.filter(m => m.selected);
-    },
-    selectedMetrics() {
     return this.inputStore.allMetrics.filter(m => m.selected);
   },
   showEmptyMessage() {
@@ -266,7 +269,8 @@ export default {
     if (noRuns) return "Please select a run to display the results.";
     if (noMetrics) return "Please select metrics to display the results.";
     return "";
-  }
+  },
+  
   },
 name: "Dashboard",
   components: {
@@ -285,14 +289,7 @@ name: "Dashboard",
     const loadingStoreInstance = loadingStore();
     const visualizedMetric = ref(null);
     const dropdownOpen = ref(false);
-    const metricsOptions = [
-      "LTS (Level of Traffic Stress)",
-      "zed (Bicycle Compatibility Index)",
-      "BSL (Bicycle Stress Level)",
-      "BLOS (Bicycle Level of Service)",
-      "Porter Index",
-      "Weikl Index"
-    ];
+
 
 
 
@@ -329,7 +326,6 @@ name: "Dashboard",
       dashboard,
       loadingStoreInstance,
       visualizedMetric,
-      metricsOptions,
       dropdownOpen
     };
   },
@@ -364,8 +360,9 @@ name: "Dashboard",
       selectedRun_dropdown: null,
       runDropdownOpen: false,
       visualizationMode: 'evaluation', // default
-      selectedNetworkType: null,
+      selectedNetworkType: 'Full Network',
       networkDropdownOpen: false,
+      metricAverages: {},
     };
   },
 
@@ -403,6 +400,14 @@ name: "Dashboard",
         this.createPieChartComplexityAll();
       }
     );
+    watch(
+      () => [this.selectedMetrics, this.prjStore.selectedEvaluationRuns],
+      async () => {
+        await this.loadAllAverages();
+      },
+      { deep: true, immediate: true }
+    );
+
 
     ///// compare run ////////////
     
@@ -709,7 +714,6 @@ name: "Dashboard",
     },
     selectNetworkType(type) {
       this.selectedNetworkType = type;
-      this.networkDropdownOpen = false;
     },
     async displayEvaluationMap(run) {
 
@@ -730,7 +734,41 @@ name: "Dashboard",
       const type = this.selectedNetworkType; // 'Bike', 'Car', 'Full'
       loadWMS("v_optimized", "wms_optimized", this.inputStore.projectID, run.id_run, null, this.selectedNetworkType);
       loadWFS("v_optimized_wfs", "wfs_optimized", this.inputStore.projectID, run.id_run, null, this.selectedNetworkType);
+    },
+    async getAverageMetricValue(metricKey, runId) {
+    const cacheKey = `${metricKey}_${runId}`;
+    if (!this.metricAverages) this.metricAverages = {};
+
+    if (this.metricAverages[cacheKey] !== undefined) {
+      return this.metricAverages[cacheKey];
     }
+
+    const values = await fetchEvaluationMetricValues(
+      this.inputStore.projectID,
+      runId,
+      metricKey
+    );
+
+    if (!values.length) {
+      this.metricAverages[cacheKey] = "N/A";
+      return "N/A";
+    }
+
+    const avg = values.reduce((sum, val) => sum + val, 0) / values.length;
+    const rounded = avg.toFixed(2);
+    this.metricAverages[cacheKey] = rounded;
+
+    return rounded;
+    },
+    async loadAllAverages() {
+  for (const metric of this.selectedMetrics) {
+    for (const run of this.prjStore.selectedEvaluationRuns) {
+      await this.getAverageMetricValue(metric.key, run.id_run);
+    }
+  }
+}
+
+
 
   },
   
@@ -819,5 +857,38 @@ name: "Dashboard",
   color: white;
   border-color: var(--pink-color);
 }
+
+.visualization-selection {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.visualization-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.visualization-option input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--pink-color);
+  border-radius: 50%; /* Makes it a circle */
+  background-color: white;
+  cursor: pointer;
+  position: relative;
+}
+
+.visualization-option input[type="checkbox"]:checked {
+  background-color: var(--pink-color);
+}
+
+
+
 
 </style>

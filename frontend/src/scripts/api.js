@@ -336,3 +336,145 @@ export async function getBoundingBox(projectID) {
     throw error;
   }
 }
+
+
+export async function checkIfEvalMetricExists(runID, metric_key, projectID) {
+  const url =
+    `${import.meta.env.VITE_BACKEND_URL}/check_eval_metric_exists?` +
+    `project_id=${encodeURIComponent(projectID)}` +
+    `&run_id=${encodeURIComponent(runID)}` +
+    `&metric_key=${encodeURIComponent(metric_key)}`;
+
+  const params = {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+  };
+
+  try {
+    const response = await fetch(url, params);
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+    const result = await response.json();
+    return result.exists === true;
+  } catch (error) {
+    console.error("Error checking if metric exists:", error);
+    return false;
+  }
+}
+
+const metricRoutes = {
+  lts: "get_lts",
+  bci: "get_bci",
+  bsl: "get_bsl",
+  blos_grade: "get_blos",
+  porter: "get_porter",
+  weikl: "get_weikl",
+};
+
+
+
+export async function triggerEvalMetricComputation(runID, metric, projectID) {
+  console.log("🟡 triggerEvalMetricComputation called with:", {
+    runID,
+    metric,
+    projectID,
+  });
+
+  const endpoint = metricRoutes[metric];
+  console.log("🔍 Resolved endpoint:", endpoint);
+
+  if (!endpoint) {
+    console.warn(`⚠️ No route mapped for metric: "${metric}"`);
+    return;
+  }
+
+  const url =
+    `${import.meta.env.VITE_BACKEND_URL}/${endpoint}?` +
+    `project_id=${encodeURIComponent(projectID)}` +
+    `&run_name=${encodeURIComponent(runID)}`;
+
+  const params = {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+  };
+
+  try {
+    const response = await fetch(url, params);
+    console.log("📬 Raw response status:", response.status);
+  
+    const contentType = response.headers.get("content-type");
+    const rawText = await response.text();
+    console.log("🧾 Raw response body:", rawText);
+  
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status} – body: ${rawText}`);
+    }
+  
+    // If content-type is not JSON, warn!
+    if (!contentType || !contentType.includes("application/json")) {
+      throw new Error("❌ Response is not JSON! Content-Type: " + contentType);
+    }
+  
+    return JSON.parse(rawText); // try parse manually for more control
+  } catch (error) {
+    console.error(`❌ Error while computing metric "${metric}":`, error);
+    throw error;
+  }
+  
+};
+export async function fetchEvaluationMetricValues(projectID, runID, rawMetricKey) {
+  const metricKey = rawMetricKey.replace(/^"(.*)"$/, "$1");
+  // Defensive check for invalid input
+  if (!projectID || !runID || !metricKey) {
+    console.warn("Invalid input for fetchEvaluationMetricValues:", {
+      projectID,
+      runID,
+      metricKey,
+    });
+    return [];
+  }
+
+  const layerName = "v_eval_pivoted";
+  const baseUrl = "https://baug-ikg-gis-01.ethz.ch:8443/geoserver/GMP_EBC/ows";
+  const viewParams = `prj:${projectID};run:${runID}`;
+  const url =
+    `${baseUrl}?service=WFS&version=1.0.0&request=GetFeature&typeName=GMP_EBC:${layerName}` +
+    `&outputFormat=application/json&viewparams=${viewParams}`;
+
+  // Debug logs
+  console.log("Fetching WFS data for metric:");
+  console.log("Metric Key:", metricKey);
+  console.log("Project ID:", projectID);
+  console.log("Run ID:", runID);
+  console.log("Full WFS URL:", url);
+
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      const rawText = await response.text();
+      console.error("WFS request failed:", response.status, rawText);
+      throw new Error("Failed to fetch WFS feature data");
+    }
+
+    const geojson = await response.json();
+
+    // Extract numeric values for the given metric key
+    const values = geojson.features
+      .map((feature) => feature.properties?.[metricKey])
+      .filter((v) => typeof v === "number" && !isNaN(v));
+
+    console.log(`Extracted ${values.length} values for ${metricKey}`);
+    return values;
+  } catch (error) {
+    console.error("Error fetching metric values:", error);
+    return [];
+  }
+}
+
+
+
+
+
+
+
+

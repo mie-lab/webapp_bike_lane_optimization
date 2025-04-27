@@ -19,10 +19,13 @@ export async function removeLayer(layerID, layerSource) {
   }
 }
 
-export async function loadWFS(layerID, layerSource, projectID, runID) {
+export async function loadWFS(layerID, layerSource, projectID, runID, metricKey = null, networkType = null) {
   const mapStoreInstance = mapStore();
   const map = mapStoreInstance.map;
   var wfsURL = "";
+
+await removeLayer("v_eval_pivoted_wfs", "wfs_eval_pivoted");
+await removeLayer("v_optimized_wfs", "wfs_optimized");
 
   if (map.getLayer(layerID)) {
     map.removeLayer(layerID);
@@ -36,12 +39,33 @@ export async function loadWFS(layerID, layerSource, projectID, runID) {
     if (projectID === undefined || runID === undefined) {
       throw new Error("Project ID and Run ID are required for v_optimized_wfs");
     }
+
+    let laneFilter = "";
+    if (networkType === "Bike Network") {
+      laneFilter = `;lanetype:P`;
+    } else if (networkType === "Car Network") {
+      laneFilter = `;lanetype:M`;
+    } else {
+      laneFilter = `;lanetype:ALL`;
+    }
+
     wfsURL =
-      "https://baug-ikg-gis-01.ethz.ch:8443/geoserver/GMP_EBC/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=GMP_EBC:layername&outputFormat=application/json&viewparams=prj:projectID;run:runID"
+      "https://baug-ikg-gis-01.ethz.ch:8443/geoserver/GMP_EBC/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=GMP_EBC:layername&outputFormat=application/json&viewparams=prj:projectID;run:runIDLANEFILTER"
         .replace("layername", layerID.replace("_wfs", ""))
         .replace("projectID", projectID)
-        .replace("runID", runID);
+        .replace("runID", runID)
+        .replace("LANEFILTER", laneFilter);
 
+    console.log("WFS layer loaded: ", wfsURL);
+  } else if (layerID === "v_eval_pivoted_wfs") {
+    if (projectID === undefined || runID === undefined) {
+      throw new Error("Project ID and Run ID are required for v_eval_pivoted_wfs");
+    }
+  
+    const viewParams = `prj:${projectID};run:${runID}`;
+    wfsURL =
+      `https://baug-ikg-gis-01.ethz.ch:8443/geoserver/GMP_EBC/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=GMP_EBC:v_eval_pivoted&outputFormat=application/json&viewparams=${viewParams}`;
+  
     console.log("WFS layer loaded: ", wfsURL);
   } else {
     wfsURL =
@@ -69,21 +93,24 @@ export async function loadWFS(layerID, layerSource, projectID, runID) {
     const features = data.features.map((feature) => {
       const geometry = feature.geometry;
       const coordinates = geometry.coordinates;
-      var convertedCoordinates = [];
-      if (layerID == "v_bound") {
+      let convertedCoordinates = [];
+    
+      if (layerID === "v_bound") {
         convertedCoordinates = coordinates.map((ring) =>
           ring.map((point) => proj4("EPSG:2056", "EPSG:4326", point))
         );
       }
-      if (layerID == "v_optimized_wfs") {
+    
+      if (layerID === "v_optimized_wfs" || layerID === "v_eval_pivoted_wfs") {
         convertedCoordinates = coordinates.map((point) =>
           proj4("EPSG:2056", "EPSG:4326", point)
         );
       }
-
+    
       geometry.coordinates = convertedCoordinates;
       return feature;
     });
+    
 
     // Update the original GeoJSON data with converted coordinates
     data.features = features;
@@ -116,7 +143,7 @@ export async function loadWFS(layerID, layerSource, projectID, runID) {
       });
     }
 
-    if (layerID == "v_optimized_wfs") {
+    if (layerID === "v_optimized_wfs" || layerID === "v_eval_pivoted_wfs") {
       map.addLayer({
         id: layerID,
         type: "line",
@@ -149,7 +176,7 @@ export async function loadWFS(layerID, layerSource, projectID, runID) {
 
   //----------------------TOOLTIP----------------------//
 
-  const tooltip = createTooltip(map, layerID, layerSource);
+  const tooltip = createTooltip(map, layerID, layerSource, metricKey);
 
   map.on("mousemove", (e) => {
     if (tooltip.isOpen()) {
@@ -218,14 +245,14 @@ export async function loadWMS(layerID, layerSource, projectID, runID, metricKey 
 
     console.log("WMS layer loaded: ", tile);
   }
-  if (layerID !== "v_optimized" && layerID !== "v_bound") {
-    console.log("LOADING WRONG LAYER");
-    tile =
-      "https://baug-ikg-gis-01.ethz.ch:8443/geoserver/GMP_EBC/wms?REQUEST=GetMap&SERVICE=WMS&layers=GMP_EBC:layername&bbox={bbox-epsg-3857}&transparent=true&width=256&height=256&srs=EPSG:3857&styles=&format=image/png".replace(
-        "layername",
-        layerID
-      );
-  }
+  //if (layerID !== "v_optimized" && layerID !== "v_bound") {
+  //  console.log("LOADING WRONG LAYER");
+  //  tile =
+  //    "https://baug-ikg-gis-01.ethz.ch:8443/geoserver/GMP_EBC/wms?REQUEST=GetMap&SERVICE=WMS&layers=GMP_EBC:layername&bbox={bbox-epsg-3857}&transparent=true&width=256&height=256&srs=EPSG:3857&styles=&format=image/png".replace(
+  //      "layername",
+  //      layerID
+  //    );
+  //}
   if (layerID === "v_eval_pivoted") {
     if (projectID === undefined || runID === undefined) {
       throw new Error("Project ID and Run ID are required for v_eval_pivoted");
@@ -240,6 +267,15 @@ export async function loadWMS(layerID, layerSource, projectID, runID, metricKey 
   
     console.log("WMS layer loaded: ", tile);
   }
+  if (layerID !== "v_optimized" && layerID !== "v_bound" && layerID !=="v_eval_pivoted") {
+    console.log("LOADING WRONG LAYER");
+    tile =
+      "https://baug-ikg-gis-01.ethz.ch:8443/geoserver/GMP_EBC/wms?REQUEST=GetMap&SERVICE=WMS&layers=GMP_EBC:layername&bbox={bbox-epsg-3857}&transparent=true&width=256&height=256&srs=EPSG:3857&styles=&format=image/png".replace(
+        "layername",
+        layerID
+      );
+  }
+  
   
   
 
@@ -292,7 +328,7 @@ export async function loadWMS(layerID, layerSource, projectID, runID, metricKey 
   }
 }
 
-function createTooltip(map, layerID, layerSource) {
+function createTooltip(map, layerID, layerSource, metricKey) {
   let tooltip = new mapboxgl.Popup({
     closeButton: false,
     closeOnClick: false,
@@ -392,4 +428,47 @@ function createTooltip(map, layerID, layerSource) {
 
     return tooltip;
   }
+  // Tooltip handler for v_eval_pivoted_wfs layer
+// Tooltip handler for v_eval_pivoted_wfs layer
+if (layerID === "v_eval_pivoted_wfs") {
+  const inputStore = userInputStore();
+  const metricLabel =
+    inputStore.allMetrics.find((m) => m.key === metricKey)?.label || metricKey;
+
+  map.on("mouseenter", layerID, (e) => {
+    const feature = e.features[0];
+    const featureId = feature.id;
+    const coordinates = e.lngLat;
+
+    // Highlight the feature
+    map.setFeatureState(
+      { source: layerSource, id: featureId },
+      { hover: true }
+    );
+
+    const metricValue = feature.properties[metricKey];
+
+    const tableContent = `
+      <h2 style="margin: 10px;">Metric</h2>
+      <table style="width: 100%; table-layout: fixed; text-align: left; margin-left: 10px">
+        <colgroup>
+            <col style="width: 40%;">
+            <col style="width: 60%;">
+        </colgroup>
+        <tr>
+            <td><b>${metricLabel}:</b></td>
+            <td>${metricValue !== undefined ? metricValue : "N/A"}</td>
+        </tr>
+      </table>
+    `;
+
+    tooltip.setLngLat(coordinates).setHTML(tableContent).addTo(map);
+  });
+
+  return tooltip;
+}
+
+
+
+  
 }

@@ -7,7 +7,8 @@ export const projectsStore = defineStore("projects", {
     projects: [],
     runs: [],
     selectedRun: null, // Used for general selection elsewhere
-    selectedEvaluationRuns: []
+    selectedEvaluationRuns: [],
+    tempSelectedEvaluationRuns: []
   }),
 
   actions: {
@@ -42,7 +43,36 @@ export const projectsStore = defineStore("projects", {
     },
     clearEvaluationRuns() {
       this.selectedEvaluationRuns = [];
+    },
+    setSelectedEvaluationRuns(runs) {
+      this.selectedEvaluationRuns = runs;
+    },
+
+
+    clearTempEvaluationRuns() {
+      this.tempSelectedEvaluationRuns = [];
+    },
+
+    addTempEvaluationRun(run) {
+      if (!run) return; 
+      if (!this.tempSelectedEvaluationRuns.some(r => r.id_run === run.id_run)) {
+        this.tempSelectedEvaluationRuns.push(run);
+      }
+    },
+    removeTempEvaluationRun(run) {
+      this.tempSelectedEvaluationRuns = this.tempSelectedEvaluationRuns.filter(
+        r => r.id_run !== run.id_run
+      );
+    },
+    toggleTempEvaluationRun(run) {
+      const exists = this.tempSelectedEvaluationRuns.some(r => r.id_run === run.id_run);
+      if (exists) {
+        this.removeTempEvaluationRun(run);
+      } else {
+        this.addTempEvaluationRun(run);
+      }
     }
+
   },
 
   getters: {
@@ -57,6 +87,9 @@ export const projectsStore = defineStore("projects", {
     },
     isEvaluationRunSelected: (state) => (run) => {
       return state.selectedEvaluationRuns.some(r => r.id_run === run.id_run);
+    },
+    isTempEvaluationRunSelected: (state) => (run) => {
+      return state.tempSelectedEvaluationRuns.some(r => r.id_run === run.id_run);
     }
   },
 });

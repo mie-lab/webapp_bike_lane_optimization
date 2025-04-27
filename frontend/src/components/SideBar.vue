@@ -14,7 +14,13 @@
         <button
           class="nav-button"
           :style="{ color: getIconColor('Evaluation') }"
-          @click="toggleActiveTab('Evaluation')"
+          @click="() => { 
+    prjStore.addTempEvaluationRun(prjStore.selectedRun); 
+    statusStore.DashboardMode = 'Evaluation'; 
+    toggleActiveTab('Evaluation');
+    statusStore.closeDashboard();
+
+  }"
         >
           <i class="fa-solid fa-magnifying-glass-chart" style="font-size: 24px"></i>
         </button>        
