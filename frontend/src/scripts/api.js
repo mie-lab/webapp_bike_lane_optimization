@@ -280,24 +280,31 @@ export async function getNetworkBearing(projectID, runID) {
     `${import.meta.env.VITE_BACKEND_URL}/get_network_bearing?` +
     `project_id=${encodeURIComponent(projectID)}` +
     `&run_name=${encodeURIComponent(runID)}`;
+
   const params = {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
     },
   };
+
   try {
     const response = await fetch(url, params);
+    const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      // Now you see the actual backend error
+      console.error("Backend error:", data);
+      throw new Error(`Backend error: ${data.error}`);
     }
-    return response.json(); // Parse and return JSON response
+
+    return data;
   } catch (error) {
-    console.error("Error:", error);
-    throw error; // Rethrow error for handling in the Vue component
+    console.error("Frontend fetch error:", error);
+    throw error;
   }
 }
+
 
 /**
  * Retrieves the bounding box for a specific project.
@@ -369,6 +376,7 @@ const metricRoutes = {
   blos_grade: "get_blos",
   porter: "get_porter",
   weikl: "get_weikl",
+  anp: "get_anp"
 };
 
 
@@ -424,6 +432,9 @@ export async function triggerEvalMetricComputation(runID, metric, projectID) {
 };
 export async function fetchEvaluationMetricValues(projectID, runID, rawMetricKey) {
   const metricKey = rawMetricKey.replace(/^"(.*)"$/, "$1");
+
+  const allowStrings = metricKey === "blos_grade";
+  
   // Defensive check for invalid input
   if (!projectID || !runID || !metricKey) {
     console.warn("Invalid input for fetchEvaluationMetricValues:", {
@@ -460,8 +471,10 @@ export async function fetchEvaluationMetricValues(projectID, runID, rawMetricKey
 
     // Extract numeric values for the given metric key
     const values = geojson.features
-      .map((feature) => feature.properties?.[metricKey])
-      .filter((v) => typeof v === "number" && !isNaN(v));
+    .map((feature) => feature.properties?.[metricKey])
+    .filter((v) =>
+      allowStrings ? typeof v === "string" && v : typeof v === "number" && !isNaN(v)
+    );
 
     console.log(`Extracted ${values.length} values for ${metricKey}`);
     return values;

@@ -322,3 +322,70 @@ export function createDoughnutChart(
     },
   });
 }
+
+export function createSingleMetricBarChart(metricLabel, runNames, dataValues, colors, canvas) {
+  const ctx = canvas.getContext("2d");
+
+  if (canvas.chart) {
+    canvas.chart.destroy();
+  }
+
+  canvas.chart = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: runNames, // run names are shown on y-axis
+      datasets: [
+        {
+          label: '',
+          data: dataValues.map((value) => parseFloat(value.toFixed(2))), // round to 2 decimals
+          backgroundColor: colors,
+        },
+      ],
+    },
+    options: {
+      indexAxis: "y", // horizontal bars
+      responsive: true,
+      plugins: {
+        datalabels: {
+          anchor: "center",
+          align: "center",
+        },
+        tooltip: {
+          callbacks: {
+            label: (tooltipItem) => `${tooltipItem.raw}`, // Only number
+          },
+        },
+        legend: {
+          display: false,
+        },
+      },
+      scales: {
+        x: {
+          beginAtZero: true,
+          ticks: {
+            color: "#666",
+            font: { size: 12 },
+          },
+          grid: {
+            color: "#eee",
+          },
+          title: {
+            display: true,
+            text: metricLabel, // bottom title is the metric name
+            font: { size: 14, weight: 'bold' },
+            color: "#666",
+          },
+        },
+        y: {
+          ticks: {
+            color: "#666",
+            font: { size: 12 },
+          },
+          grid: {
+            display: false,
+          },
+        },
+      },
+    },
+  });
+}

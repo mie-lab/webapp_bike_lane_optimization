@@ -9,20 +9,13 @@
         </h2>
 
         <p class="info-text">
-          This is the overview of the project <i>{{ inputStore.projectName }}</i>. ......
+          This is the overview of the project <i>{{ inputStore.projectName }}</i>. Select runs for detailed evaluation.
         </p>
 
         <!-- Runs Header -->
         <div class="runs-header-container">
           <h3 class="runs-header">
-            <span class="runs-text">Runs</span>
-            <span class="refresh-container">
-              <i
-                v-if="!isLoading"
-                class="fa-solid fa-rotate-right refresh-button"
-                @click="reloadRuns"
-              ></i>
-            </span>
+            <span class="runs-text">Selected Runs</span>
             <span class="ring-loader-container">
               <div class="ring-loader">
                 <RingLoader v-if="isLoading" :size="'80'" :color="'#123abc'" />
@@ -30,7 +23,8 @@
             </span>
           </h3>
         </div>
-
+  
+  <div class="project-list-wrapper">
   <div class="project-list">
     <ul>
       <li
@@ -99,29 +93,35 @@
       </li>
     </ul>
   </div>
+</div>
 
 
 
 
         <!-- Add Runs Button -->
-        <div class="button-container" style="margin-top: 10px;">
-          <button @click="() => {toggleUserInputPreviousSide(); toggleMetricsChangedSinceLastCompute(); }" class="back-button">
-            Add runs
-          </button>
-        </div>
+        <div class="button-container" style="margin-top: 10px; display: flex; justify-content: center;">
+  <button @click="() => {toggleUserInputPreviousSide(); toggleMetricsChangedSinceLastCompute(); }" class="back-button">
+    Add runs
+  </button>
+</div>
+
 
         <!-- Metric Selection -->
 
         <div style="margin-top: 30px;">
-  <h3 class="runs-header">
+  <h2 class="runs-header">
     <span class="runs-text">Metric selection</span>
-  </h3>
+  </h2>
+
+  <p class="info-text">
+          Select one or multiple evaluation metrics.
+  </p>
 
   <!-- Dropdown -->
   <div class="dropdown" style="margin-bottom: 15px; position: relative;">
     <button class="dropdown-button" @click="toggleMetricDropdown">
       <div class="dropdown-button-content">
-        <span>Choose Metrics</span>
+        <span>Select Metrics</span>
         <i class="fa-solid fa-caret-down"></i>
       </div>
     </button>
@@ -135,6 +135,7 @@
         <label style="display: flex; align-items: center;">
           <input
             type="checkbox"
+            class="custom-checkbox"
             v-model="metric.selected"
             @change="handleMetricToggle(metric)"
             style="margin-right: 8px;"
@@ -146,65 +147,22 @@
   </div>
 
   <!-- Selected Metrics Display -->
-  <div v-if="selectedMetrics.length > 0" class="anp-attributes" style="margin-top: 20px;">
+<!-- Selected Metrics Display -->
+<div v-if="selectedMetrics.length > 0" class="anp-attributes" style="margin-top: 20px; display: flex; flex-direction: column; gap: 2px;">
 
-    <h4 class="runs-header">
-        <span class="runs-text">Selected Metrics</span>
-      </h4>
+<h3 class="runs-header" style="margin-bottom: 20px;">
+  <span class="text-blue">Selected Metrics</span>
+</h3>
 
-    <div
-      v-for="metric in selectedMetrics"
-      :key="metric.key"
-      class="bike-ratio"
-      style="margin-top: 10px; display: flex; align-items: center; justify-content: space-between;"
-    >
-      <div style="display: flex; align-items: center;">
-        <label class="runs-header">
-          <span class="runs-text">{{ metric.label }}</span>
-        </label>
-      </div>
-    </div>
-  </div>
+<div
+  v-for="metric in selectedMetrics"
+  :key="metric.key"
+  style="display: flex; align-items: center;"
+>
+  <p class="normal-text" style="margin: 0;">{{ metric.label }}</p>
+</div>
 
-  <!-- ANP Section (unchanged) -->
-  <div v-if="isANPSelected" class="anp-attributes" style="margin-top: 30px;">
-    <div>
-      <h4 class="runs-header">
-        <span class="runs-text">ANP Configuration</span>
-      </h4>
-    </div>
-    <div
-      v-for="attr in anpAttributes"
-      :key="attr.key"
-      class="bike-ratio"
-      style="margin-top: 10px; display: flex; align-items: center; justify-content: space-between;"
-    >
-      <div style="display: flex; align-items: center; gap: 10px;">
-        <input
-          type="checkbox"
-          v-model="attr.enabled"
-          :id="attr.key"
-        />
-        <label :for="attr.key" class="text-blue" style="margin: 0;">
-          {{ attr.label }}
-        </label>
-      </div>
-      <div class="slide-container" style="flex-grow: 1; margin-left: 20px;">
-        <input
-          class="slider"
-          type="range"
-          min="0"
-          max="100"
-          :disabled="!attr.enabled"
-          v-model="attr.value"
-          @input="updateANP(attr.key, attr.value)"
-        />
-      </div>
-      <p style="margin-left: 10px; width: 60px; text-align: right;">
-        {{ attr.value }}%
-      </p>
-    </div>
-  </div>
+</div>
 
   <!-- Compute Button -->
   <div style="margin-top: 30px;">
@@ -328,7 +286,8 @@ export default {
       metricDropdownOpen: false,
       expandedRuns: {},
       metricsChangedSinceLastCompute: true,
-      localMetrics: []
+      localMetrics: [],
+      showInfoBoxANP: false,
     };
   },
 
@@ -594,15 +553,20 @@ export default {
 }
 
 .dropdown-button {
-  width: 100%;
-  padding: 10px;
-  background-color: lightgrey;
-  color: black;
+  background-color: var(--lightgrey-bg);
+  color: var(--darkgrey-bg);
   border: 1px solid var(--darkgrey-bg);
-  cursor: pointer;
-  font-size: 14px;
-  border-radius: 5px;
-  box-sizing: border-box;
+  width: 250px;
+  margin: 0;
+  padding: 0;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  text-align: left;
+  padding-left: 10px;
+  padding-right: 10px;
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center;
 }
 
 .dropdown-button-content {
@@ -615,17 +579,14 @@ export default {
 
 .dropdown-menu {
   position: absolute;
-  top: 100%;
-  left: 0;
-  width: 100%;
-  background-color: lightgrey;
-  border: 1px solid var(--darkgrey-bg);
+  width: 250px;
+  text-align: left;
+  background-color: #f9f9f9;
   border-radius: 5px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  z-index: 10;
+  margin-top: 5px;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
 }
 
 .dropdown-menu li {
@@ -662,12 +623,16 @@ export default {
   background-color: #da52681a;
 }
 
+.project-list-wrapper {
+  height: 250px; /* fixed height to preserve layout */
+  overflow-y: scroll; /* scroll when content overflows */
+  margin-bottom: 20px; /* spacing before "Add runs" and Metric Selection */
+}
+
 .project-list {
   width: 100%; /* same as dropdown */
   margin-top: 10px;
   padding: 0;
-  max-height: none; /* remove the vertical scroll constraint */
-  overflow: visible; /* prevent scrollbars */
 }
 
 .run-summary {
@@ -688,6 +653,8 @@ export default {
   width: 80%;
   height: 36px;
   box-sizing: border-box;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px; /* or match your info-text size */
 }
 
 
@@ -702,6 +669,37 @@ export default {
   cursor: not-allowed;
   border: 1px solid red;
 }
+
+.text-blue {
+  margin-top: 2px;
+}
+
+.normal-text {
+  padding-bottom: 0px;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; /* <--- add this */
+  font-size: 14px; /* optional, matches info-text look */
+}
+
+
+.custom-checkbox {
+  width: 16px;
+  height: 16px;
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: transparent;
+  border: 2px solid dimgray;
+  border-radius: 3px;
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+}
+
+.custom-checkbox:checked {
+  background-color: var(--pink-color);
+}
+
+
+
 
 
 

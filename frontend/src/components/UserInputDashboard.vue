@@ -24,7 +24,7 @@
               style="background-color: var(--pink-color)"
             ></div>
           </td>
-          <td>Test Bike</td>
+          <td>Bike</td>
         </tr>
       </table>
     </div>
@@ -915,6 +915,6 @@ export default {
 </script>
 
 <style scoped>
-@import "../styles/dashboardStyle.css";
-@import "../styles/dashboardStyleMobile.css";
+@import "../styles/UserInputDashboardStyle.css";
+@import "../styles/UserInputDashboardStyleMobile.css";
 </style>
