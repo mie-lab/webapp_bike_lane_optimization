@@ -839,130 +839,136 @@ async createMetricChart(metricKey) {
     canvas.chartInstance.destroy();
   }
 
-  if (metricKey === 'blos_grade') {
-    this.createClusteredBarChartBLOS(canvas);
+  // All 3 metrics use same gradient and stacked bar chart
+  const stackedMetrics = {
+    blos_grade: ['A', 'B', 'C', 'D', 'E', 'F'],
+    lts: [1, 2, 3, 4],
+    bsl: [1, 2, 3, 4, 5]
+  };
+
+  if (Object.keys(stackedMetrics).includes(metricKey)) {
+    const categories = stackedMetrics[metricKey];
+    const gradientColors = ['#da5268', '#e98b98', '#efb8be', '#f4d9db', '#faf0f1', '#ffffff'];
+    this.createHorizontalStackedBarChart(canvas, metricKey, categories, gradientColors.slice(0, categories.length));
     return;
   }
 
-  // default bar chart
+
+  // Default numeric average chart
   const metric = this.selectedMetrics.find(m => m.key === metricKey);
   if (!metric) return;
 
-  const metricLabel = metric.label;
+  const metricLabel = "Average";
   const runNames = this.prjStore.selectedEvaluationRuns.map(run => run.run_name);
   const data = this.prjStore.selectedEvaluationRuns.map(
     run => parseFloat(this.metricAverages[`${metricKey}_${run.id_run}`]) || 0
   );
 
   const colors = runNames.map(() => {
-    const pinkColor = getComputedStyle(document.documentElement).getPropertyValue('--pink-color').trim();
-    return pinkColor;
+    return getComputedStyle(document.documentElement).getPropertyValue('--pink-color').trim();
   });
-
-  console.log(data);
 
   createSingleMetricBarChart(metricLabel, runNames, data, colors, canvas);
   canvas.chartInstance = Chart.getChart(canvas);
 },
-async createClusteredBarChartBLOS(canvas) {
+
+
+async createHorizontalStackedBarChart(canvas, metricKey, categories, gradientColors) {
   const runNames = this.prjStore.selectedEvaluationRuns.map(run => run.run_name);
 
-  const colors = runNames.map((_, i) => {
-    const color = getComputedStyle(document.documentElement)
-      .getPropertyValue(`--run-color-${i}`)
-      .trim();
-    return color || `hsl(${i * 50}, 70%, 60%)`; // fallback
-  });
+  const categoryCountsPerRun = {};
 
-  const groupLabels = ['A+B', 'C+D', 'E+F'];
+  for (let run of this.prjStore.selectedEvaluationRuns) {
+    const values = await fetchEvaluationMetricValues(this.inputStore.projectID, run.id_run, metricKey);
 
-  const datasets = runNames.map((runName, idx) => ({
-    label: runName,
-    data: [],
-    backgroundColor: colors[idx],
-  }));
+    const counts = {};
+    for (const cat of categories) counts[cat] = 0;
 
-  for (let i = 0; i < this.prjStore.selectedEvaluationRuns.length; i++) {
-    const run = this.prjStore.selectedEvaluationRuns[i];
-    const values = await fetchEvaluationMetricValues(
-      this.inputStore.projectID,
-      run.id_run,
-      'blos_grade'
-    );
-
-    const counts = { A: 0, B: 0, C: 0, D: 0, E: 0, F: 0 };
-    for (const v of values) {
-      if (['A', 'B', 'C', 'D', 'E', 'F'].includes(v)) counts[v]++;
+    for (const val of values) {
+      const normalized = typeof val === 'string' ? val.toUpperCase() : parseInt(val);
+      if (categories.includes(normalized)) {
+        counts[normalized]++;
+      }
     }
 
-    const groupData = [
-      counts.A + counts.B,
-      counts.C + counts.D,
-      counts.E + counts.F,
-    ];
-
-    datasets[i].data = groupData;
+    categoryCountsPerRun[run.run_name] = counts;
   }
 
-  // ❌ Destroy old chart first
+  const datasets = categories.map((cat, i) => ({
+    label: `${cat}`,
+    backgroundColor: gradientColors[i],
+    data: runNames.map(runName => categoryCountsPerRun[runName][cat] || 0),
+    stack: 'stack1'
+  }));
+
+  // 🔧 Adjust bar thickness: previously 90 → now 135px per run
+  const barHeightPx = 85;
+  const minHeight = 160;
+  const canvasHeight = Math.max(runNames.length * barHeightPx, minHeight);
+  canvas.style.height = `${canvasHeight}px`;
+
   if (canvas.chartInstance) {
     canvas.chartInstance.destroy();
   }
 
-  // ✅ Set the actual DOM style height — this DOES work with maintainAspectRatio: false
-  const pxPerBar = 40; // adjust for desired thickness
-  const numBarGroups = groupLabels.length;
-  const canvasHeight = runNames.length * numBarGroups * pxPerBar;
-  canvas.style.height = `${canvasHeight}px`;
-
-  // ✅ Build the chart
   const chart = new Chart(canvas, {
     type: 'bar',
     data: {
-      labels: groupLabels,
-      datasets: datasets,
+      labels: runNames,
+      datasets: datasets
     },
     options: {
-      indexAxis: 'y',
       responsive: true,
       maintainAspectRatio: false,
-      categoryPercentage: 0.7,
-      barPercentage: 0.9,
+      indexAxis: 'y',
       scales: {
         x: {
+          stacked: true,
           beginAtZero: true,
           title: {
             display: true,
             text: 'Count',
-          },
+            font: {
+              weight: 'bold', 
+              size: 14        
+            }
+            
+          }
         },
         y: {
-          title: {
-            display: true,
-            text: 'BLOS Category',
-          },
+          stacked: true,
           ticks: {
             font: {
-              size: 13,
-              weight: 'bold',
-            },
-          },
-        },
+              size: 12  // ✅ Smaller labels to match default charts
+            }
+          }
+        }
       },
       plugins: {
         legend: {
           position: 'top',
-        },
-        title: {
-          display: true,
-          text: 'BLOS Grade Distribution',
-        },
-      },
-    },
+          labels: {
+            boxWidth: 20,
+            boxHeight: 12,
+            padding: 8,
+            font: {
+              size: 12
+            }
+          }
+        }
+
+      }
+    }
   });
 
   canvas.chartInstance = chart;
 }
+
+
+
+
+
+
 
 
 
@@ -1197,6 +1203,12 @@ async createClusteredBarChartBLOS(canvas) {
   margin-top: 10px;
   padding: 0;
 }
+
+canvas {
+  width: 100% !important;
+  display: block;
+}
+
 
 
 
