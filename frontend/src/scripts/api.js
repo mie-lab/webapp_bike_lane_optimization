@@ -482,7 +482,34 @@ export async function fetchEvaluationMetricValues(projectID, runID, rawMetricKey
     console.error("Error fetching metric values:", error);
     return [];
   }
-}
+};
+
+export async function fetchAnpCriteriaAndMetrics(projectID, runID, showAllCriteria = false, showAllMetrics = false) {
+  const url =
+    `${import.meta.env.VITE_BACKEND_URL}/get_anp_weights?` +
+    `project_id=${encodeURIComponent(projectID)}` +
+    `&run_id=${encodeURIComponent(runID)}` +
+    `&show_all_criteria=${showAllCriteria}`+
+    `&show_all_metrics=${showAllMetrics}`;
+
+
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`Failed to fetch ANP data: ${response.status}`);
+    const data = await response.json();
+    return {
+      criteria: data.criteria || [],
+      metrics: data.metrics || []
+    };
+  } catch (error) {
+    console.error("Error fetching ANP data:", error);
+    return { criteria: [], metrics: [] };
+  }
+};
+
+
+
+
 
 
 

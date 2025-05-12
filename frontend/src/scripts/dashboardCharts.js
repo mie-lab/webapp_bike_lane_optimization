@@ -389,3 +389,104 @@ export function createSingleMetricBarChart(metricLabel, runNames, dataValues, co
     },
   });
 }
+
+export function createContinousEvalMetricBarChart(metricLabel, runNames, dataValues, canvas, legend = []) {
+
+  const ctx = canvas.getContext("2d");
+
+  if (canvas.chart) {
+    canvas.chart.destroy();
+  }
+
+  canvas.chart = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: runNames, // run names are shown on y-axis
+      datasets: [
+        {
+          label: '',
+          data: dataValues.map((value) => parseFloat(value.toFixed(2))), // round to 2 decimals
+          backgroundColor: dataValues.map(value => getColorForValue(value, legend)),
+
+        },
+      ],
+    },
+    options: {
+      indexAxis: "y", // horizontal bars
+      responsive: true,
+      plugins: {
+        datalabels: {
+          anchor: "center",
+          align: "center",
+        },
+        tooltip: {
+          callbacks: {
+            label: (tooltipItem) => `${tooltipItem.raw}`, // Only number
+          },
+        },
+        legend: {
+          display: false,
+        },
+      },
+      scales: {
+        x: {
+          beginAtZero: true,
+          ticks: {
+            color: "#666",
+            font: { size: 12 },
+          },
+          grid: {
+            color: "#eee",
+          },
+          title: {
+            display: true,
+            text: metricLabel, // bottom title is the metric name
+            font: { size: 14, weight: 'bold' },
+            color: "#666",
+          },
+        },
+        y: {
+          title: {
+            display: true,
+            text: 'Runs', 
+            font: {
+              weight: 'bold',
+              size: 14
+            }
+          },
+          ticks: {
+            color: "#666",
+            font: { size: 12 },
+          },
+          grid: {
+            display: false,
+          },
+        },
+      },
+    },
+  });
+}
+
+function getColorForValue(value, legend) {
+  for (const { label, color } of legend) {
+    // Handle range-based labels like "≤ 3", "≥ 4", "0.5 – 0.75"
+    if (label.includes('≤')) {
+      const max = parseFloat(label.replace('≤', '').trim());
+      if (value <= max) return color;
+    } else if (label.includes('≥')) {
+      const min = parseFloat(label.replace('≥', '').trim());
+      if (value >= min) return color;
+    } else if (label.includes('–')) {
+      const [min, max] = label.split('–').map(n => parseFloat(n.trim()));
+      if (value >= min && value <= max) return color;
+    } else if (label.includes('<')) {
+      const max = parseFloat(label.replace('<', '').trim());
+      if (value < max) return color;
+    }
+  }
+
+  // Default fallback color
+  return '#cccccc';
+}
+
+

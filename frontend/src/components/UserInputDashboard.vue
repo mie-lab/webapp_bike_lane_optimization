@@ -97,8 +97,10 @@
         </div>
         <div class="dashboard-content-evaluation">
           <!-- Pareto -->
-          <div class="dropdown-evaluation" @click="toggleParetoDropdown">
-            <div :class="{ 'dropdown-header': true, selected: isOpenPareto }">
+          <div class="dropdown-evaluation" >
+            <div :class="{ 'dropdown-header': true, selected: isOpenPareto }" 
+              @click="toggleParetoDropdown"
+            >
               <h3>
                 Pareto
                 <i
@@ -149,8 +151,8 @@
           </div>
 
           <!-- Travel times -->
-          <div class="dropdown-evaluation" @click="toggleTTDropdown">
-            <div :class="{ 'dropdown-header': true, selected: isOpenTT }">
+          <div class="dropdown-evaluation" >
+            <div :class="{ 'dropdown-header': true, selected: isOpenTT }" @click="toggleTTDropdown">
               <h3>
                 Travel Times Changes
                 <i
@@ -186,9 +188,9 @@
           </div>
 
           <!-- Distances -->
-          <div class="dropdown-evaluation" @click="toggleDistancesDropdown">
+          <div class="dropdown-evaluation" >
             <div
-              :class="{ 'dropdown-header': true, selected: isOpenDistances }"
+              :class="{ 'dropdown-header': true, selected: isOpenDistances }" @click="toggleDistancesDropdown"
             >
               <h3>
                 Distances per lane type
@@ -258,9 +260,9 @@
           </div>
 
           <!-- Complexity -->
-          <div class="dropdown-evaluation" @click="toggleComplexityDropdown">
+          <div class="dropdown-evaluation" >
             <div
-              :class="{ 'dropdown-header': true, selected: isOpenComplexity }"
+              :class="{ 'dropdown-header': true, selected: isOpenComplexity }" @click="toggleComplexityDropdown"
             >
               <h3>
                 Network Complexity
@@ -352,8 +354,8 @@
           </div>
 
           <!-- Network Bearing -->
-          <div class="dropdown-evaluation" @click="toggleBearingDropdown">
-            <div :class="{ 'dropdown-header': true, selected: isOpenBearing }">
+          <div class="dropdown-evaluation" >
+            <div :class="{ 'dropdown-header': true, selected: isOpenBearing }" @click="toggleBearingDropdown">
               <h3>
                 Network Bearing
                 <i

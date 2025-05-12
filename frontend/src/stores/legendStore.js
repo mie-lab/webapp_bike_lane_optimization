@@ -1,62 +1,67 @@
-// stores/legendStore.js
 import { defineStore } from 'pinia';
 
 export const useLegendStore = defineStore('legendStore', {
   state: () => ({
     currentLegendKey: null,
     legends: {
-      lts: [
-        { label: '1', color: '#00ff00' },
-        { label: '2', color: '#80ff00' },
-        { label: '3', color: '#ffff00' },
-        { label: '4', color: '#ff0000' }
-      ],
-
-      bci: [
-        { label: '< 1', color: '#00ff00' },
-        { label: '< 2', color: '#80ff00' },
-        { label: '< 3', color: '#ffff00' },
-        { label: '< 4', color: '#ff8000' },
-        { label: '< 6', color: '#ff0000' },
-        { label: '≥ 6', color: '#800000' }
-      ],
-
+      // Updated BSL (5 levels, blue to pink)
       bsl: [
-        { label: '1', color: '#00ff00' },
-        { label: '2', color: '#80ff00' },
-        { label: '3', color: '#ffff00' },
-        { label: '4', color: '#ff8000' },
-        { label: '5', color: '#ff0000' }
-      ],
-
-      blos_grade: [
-        { label: 'A', color: '#00ff00' },
-        { label: 'B', color: '#80ff00' },
-        { label: 'C', color: '#ffff00' },
-        { label: 'D', color: '#ff9900' },
-        { label: 'E', color: '#ff3300' },
-        { label: 'F', color: '#ff0000' }
+        { label: '≤ 2', color: '#0d00a3' },
+        { label: '≤ 3', color: '#7260bc' },
+        { label: '≤ 4', color: '#e48ca6' },
+        { label: '≤ 5', color: '#da5268' }
       ],
       
 
-      porter: [
-        { label: '≥ 0.75', color: '#00ff00' },
-        { label: '0.5 – 0.75', color: '#ffff00' },
-        { label: '< 0.5', color: '#ff0000' }
+      // Updated BCI (6 levels, blue to pink)
+      bci: [
+        { label: '< 1', color: '#0d00a3' },
+        { label: '< 2', color: '#6151b0' },
+        { label: '< 3', color: '#b3a8d7' },
+        { label: '< 4', color: '#e9ccd4' },
+        { label: '< 6', color: '#f7a4a8' },
+        { label: '≥ 6', color: '#da5268' }
       ],
 
-      weikl: [
-        { label: '≥ 4', color: '#00cc00' },
-        { label: '2.5 – 4', color: '#ffff00' },
-        { label: '< 2.5', color: '#ff3300' }
-      ],
-
+      // Updated ANP (3 levels, blue to pink)
       anp: [
-        { label: '≥ 0.75', color: '#00ff00' },
-        { label: '0.5 – 0.75', color: '#ffff00' },
-        { label: '< 0.5', color: '#ff0000' }
+        { label: '≥ 0.75', color: '#0d00a3' },
+        { label: '0.5 – 0.75', color: '#ffffff' },
+        { label: '< 0.5', color: '#da5268' }
       ],
 
+
+      blos_grade: [
+        { label: 'A', color: '#0d00a3' },
+        { label: 'B', color: '#4e44b5' },
+        { label: 'C', color: '#9a8ed6' },
+        { label: 'D', color: '#e6c3d6' },
+        { label: 'E', color: '#f3a2af' },
+        { label: 'F', color: '#da5268' }
+      ],
+      
+
+      // New WEIKL (3 levels, blue to pink)
+      weikl: [
+        { label: '≥ 4', color: '#0d00a3' },
+        { label: '2.5 – 4', color: '#ffffff' },
+        { label: '< 2.5', color: '#da5268' }
+      ],
+
+      // New PORTER (3 levels, blue to pink)
+      porter: [
+        { label: '≥ 0.75', color: '#0d00a3' },
+        { label: '0.5 – 0.75', color: '#ffffff' },
+        { label: '< 0.5', color: '#da5268' }
+      ],
+
+      // New LTS (4 levels, blue to pink)
+      lts: [
+        { label: '1', color: '#0d00a3' },
+        { label: '2', color: '#7260bc' },
+        { label: '3', color: '#e48ca6' },
+        { label: '4', color: '#da5268' }
+      ],
       network_bike: [
         { label: 'Bike', color: 'var(--pink-color)' }
       ],

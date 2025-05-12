@@ -629,6 +629,26 @@ export default {
   margin-bottom: 20px; /* spacing before "Add runs" and Metric Selection */
 }
 
+.project-list-wrapper::-webkit-scrollbar {
+  width: 8px;
+  background-color: transparent;
+}
+
+.project-list-wrapper::-webkit-scrollbar-thumb {
+  background-color: var(--darkgrey-bg);
+  border-radius: 5px;
+}
+
+.project-list-wrapper::-webkit-scrollbar-thumb:hover {
+  background-color: var(--pink-color);
+}
+
+.project-list-wrapper {
+  scrollbar-color: var(--darkgrey-bg) transparent;
+  scrollbar-width: thin;
+}
+
+
 .project-list {
   width: 100%; /* same as dropdown */
   margin-top: 10px;

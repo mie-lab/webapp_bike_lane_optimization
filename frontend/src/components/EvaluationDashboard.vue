@@ -60,10 +60,14 @@
   v-for="metric in selectedMetrics"
   :key="metric.key"
   class="dropdown-evaluation"
-  @click="toggleMetric(metric.key)"
+
 >
   <!-- Metric Header -->
-  <div :class="{ 'dropdown-header': true, selected: openMetricDropdowns.includes(metric.key) }">
+  <div :class="{ 'dropdown-header': true, selected: openMetricDropdowns.includes(metric.key) }"
+      @click="toggleMetric(metric.key)"
+  >
+
+    
     <h3>
       {{ metric.label }}
       <i
@@ -90,7 +94,112 @@
       :ref="'metricChart_' + metric.key"
       style="width: 100%; height: 150px;"
     ></canvas>
+  
+  </div>  
+
+  <!-- Additional Dropdowns for ANP -->
+  <div
+  v-if="metric.key === 'anp' && openMetricDropdowns.includes('anp')"
+  class="anp-extra-dropdowns-wrapper"
+>
+  <!-- Run selection -->
+  <div class="dropdown run-selector">
+    <button 
+      class="dropdown-button"
+      :style="{ color: selectedRun_dropdown ? 'black' : 'var(--darkgrey-bg)' }"
+      @click="toggleRunDropdownAnp"
+    >
+      {{ selectedRun_dropdown?.run_name || 'Select a Run' }}
+      <i class="fa-solid fa-caret-down"></i>
+    </button>
+
+    <ul v-show="runDropdownOpenAnp" class="dropdown-menu">
+      <li
+        v-for="run in prjStore.selectedEvaluationRuns"
+        :key="run.run_name"
+        @click="selectRun(run)"
+      >
+        {{ run.run_name }}
+      </li>
+    </ul>
   </div>
+
+  <!-- Criteria + Metric dropdowns below -->
+  <div class="anp-extra-dropdowns-row">
+    <!-- Criteria Dropdown -->
+    <div class="small-dropdown">
+  <div class="dropdown-header" @click.stop="toggleAnpCriteriaDropdown">
+    <span>Criteria</span>
+    <i :class="['fa-solid', anpCriteriaDropdownOpen ? 'fa-angle-up' : 'fa-angle-down']"></i>
+  </div>
+
+  <div
+  :class="['dropdown-body', { open: anpCriteriaDropdownOpen }]"
+  v-show="anpCriteriaDropdownOpen"
+>
+
+    <table v-if="anpCriteria.length">
+      <thead><tr><th>Criterion</th><th>Weight</th></tr></thead>
+      <tbody>
+        <tr v-for="(item, index) in anpCriteria" :key="index">
+          <td>{{ item.metric_or_criteria }}</td>
+          <td>{{ item.weight.toFixed(2) }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    
+    <p v-else class="dropdown-placeholder">No criteria data available.</p>
+
+    <button 
+  class="toggle-table-button" 
+  @click.stop="toggleShowAllCriteria"
+>
+  {{ showAllCriteria ? "Show Top 5" : "Show All" }}
+</button>
+
+  </div>
+</div>
+
+
+    <!-- Metric Dropdown -->
+    <div class="small-dropdown">
+  <div class="dropdown-header" @click.stop="toggleAnpMetricDropdown">
+    <span>Metric</span>
+    <i :class="['fa-solid', anpMetricDropdownOpen ? 'fa-angle-up' : 'fa-angle-down']"></i>
+  </div>
+
+  <div
+  :class="['dropdown-body', { open: anpMetricDropdownOpen }]"
+  v-show="anpMetricDropdownOpen"
+>
+
+    <table v-if="anpMetrics.length">
+      <thead><tr><th>Metric</th><th>Weight</th></tr></thead>
+      <tbody>
+        <tr v-for="(item, index) in anpMetrics" :key="index">
+          <td>{{ item.metric_or_criteria }}</td>
+          <td>{{ item.weight.toFixed(2) }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <p v-else class="dropdown-placeholder">No metric data available.</p>
+
+    <button 
+  class="toggle-table-button" 
+  @click.stop="toggleShowAllMetrics"
+>
+  {{ showAllMetrics ? "Show Top 5" : "Show All" }}
+</button>
+
+  </div>
+</div>
+
+  </div>
+</div>
+
+
+  
 
 </div>
 
@@ -265,7 +374,8 @@ import { loadWFS, loadWMS } from "../scripts/map.js";
 import {
   getBoundingBox,
   getRunList,
-  fetchEvaluationMetricValues
+  fetchEvaluationMetricValues,
+  fetchAnpCriteriaAndMetrics
 } from "../scripts/api.js";
 
 import Chart from 'chart.js/auto';
@@ -277,7 +387,7 @@ import {
   createBarChart,
   createDoughnutChart,
   createScatterPlot,
-  createSingleMetricBarChart
+  createContinousEvalMetricBarChart
 } from "../scripts/dashboardCharts.js";
 import RingLoader from "vue-spinner/src/RingLoader.vue";
 import { infoBoxTexts } from "../strings/infoBoxText.js";
@@ -399,11 +509,20 @@ export default {
       paretoIsLoading:false,
       selectedRun_dropdown: null,
       runDropdownOpen: false,
+      runDropdownOpenAnp: false,
       visualizationMode: 'evaluation', // default
       selectedNetworkType: 'Full Network',
       networkDropdownOpen: false,
       metricAverages: {},
       openMetricDropdowns: [],
+      anpCriteriaDropdownOpen: false,
+      anpMetricDropdownOpen: false,
+      anpCriteria: [],
+      anpMetrics: [],
+      showAllCriteria: false,
+      showAllMetrics: false,
+
+
     };
   },
 
@@ -746,10 +865,16 @@ export default {
     toggleRunDropdown() {
       this.runDropdownOpen = !this.runDropdownOpen;
     },
+    toggleRunDropdownAnp() {
+      this.runDropdownOpenAnp = !this.runDropdownOpenAnp;
+    },
     selectRun(run) {
       this.selectedRun_dropdown = run;
       this.runDropdownOpen = false;
+      this.runDropdownOpenAnp = false;
     },
+
+
     updateANP(key, value) {
     // Example handler — customize as needed
     console.log(`Updated ${key} to ${value}`);
@@ -806,7 +931,7 @@ export default {
       }
 
       const avg = values.reduce((sum, val) => sum + val, 0) / values.length;
-      const rounded = avg.toFixed(2);
+      const rounded = avg.toFixed(5);
       this.metricAverages[cacheKey] = rounded;
 
       return rounded;
@@ -833,30 +958,47 @@ async createMetricChart(metricKey) {
   await this.$nextTick();
   const canvases = this.$refs['metricChart_' + metricKey];
   const canvas = Array.isArray(canvases) ? canvases[0] : canvases;
+
+  if (!(canvas instanceof HTMLCanvasElement)) {
+  console.error(`Canvas ref not ready for metric "${metricKey}":`, canvas);
+  return;
+}
+
+
   if (!canvas) return;
 
   if (canvas.chartInstance) {
     canvas.chartInstance.destroy();
   }
 
-  // All 3 metrics use same gradient and stacked bar chart
+  
   const stackedMetrics = {
-    blos_grade: ['A', 'B', 'C', 'D', 'E', 'F'],
-    lts: [1, 2, 3, 4],
-    bsl: [1, 2, 3, 4, 5]
+  blos_grade: ['A', 'B', 'C', 'D', 'E', 'F'],
+  lts: [1, 2, 3, 4]
   };
 
+  // Exact color mapping from legend store
   if (Object.keys(stackedMetrics).includes(metricKey)) {
     const categories = stackedMetrics[metricKey];
-    const gradientColors = ['#da5268', '#e98b98', '#efb8be', '#f4d9db', '#faf0f1', '#ffffff'];
-    this.createHorizontalStackedBarChart(canvas, metricKey, categories, gradientColors.slice(0, categories.length));
-    return;
-  }
+    const legend = this.legendStore.legends?.[metricKey] || [];
+
+    const colorMap = Object.fromEntries(legend.map(l => [l.label, l.color]));
+    const gradientColors = categories.map(cat => colorMap[`${cat}`]);
+    this.createHorizontalStackedBarChart(canvas, metricKey, categories, gradientColors);
+  return;
+}
+
 
 
   // Default numeric average chart
   const metric = this.selectedMetrics.find(m => m.key === metricKey);
   if (!metric) return;
+
+  this.prjStore.selectedEvaluationRuns.forEach(run => {
+  const key = `${metricKey}_${run.id_run}`;
+  const value = parseFloat(this.metricAverages[key]) || 0;
+  console.log(`  ${run.run_name}: ${value}`);
+});
 
   const metricLabel = "Average";
   const runNames = this.prjStore.selectedEvaluationRuns.map(run => run.run_name);
@@ -864,11 +1006,9 @@ async createMetricChart(metricKey) {
     run => parseFloat(this.metricAverages[`${metricKey}_${run.id_run}`]) || 0
   );
 
-  const colors = runNames.map(() => {
-    return getComputedStyle(document.documentElement).getPropertyValue('--pink-color').trim();
-  });
+  const legend = this.legendStore.legends?.[metricKey] || [];
+  createContinousEvalMetricBarChart(metricLabel, runNames, data, canvas, legend);
 
-  createSingleMetricBarChart(metricLabel, runNames, data, colors, canvas);
   canvas.chartInstance = Chart.getChart(canvas);
 },
 
@@ -937,9 +1077,17 @@ async createHorizontalStackedBarChart(canvas, metricKey, categories, gradientCol
         },
         y: {
           stacked: true,
+          title: {
+            display: true,
+            text: 'Runs', 
+            font: {
+              weight: 'bold',
+              size: 14
+            }
+          },
           ticks: {
             font: {
-              size: 12  // ✅ Smaller labels to match default charts
+              size: 12  
             }
           }
         }
@@ -962,7 +1110,52 @@ async createHorizontalStackedBarChart(canvas, metricKey, categories, gradientCol
   });
 
   canvas.chartInstance = chart;
-}
+},
+
+async toggleAnpCriteriaDropdown() {
+  this.anpCriteriaDropdownOpen = !this.anpCriteriaDropdownOpen;
+  if (this.anpCriteriaDropdownOpen) {
+    const projectID = this.inputStore.projectID;
+    const runID = this.selectedRun_dropdown?.id_run;
+    if (!projectID || !runID) return;
+
+    const { criteria } = await fetchAnpCriteriaAndMetrics(projectID, runID, this.showAllCriteria, false);
+    this.anpCriteria = criteria;
+  }
+},
+async toggleAnpMetricDropdown() {
+  this.anpMetricDropdownOpen = !this.anpMetricDropdownOpen;
+  if (this.anpMetricDropdownOpen) {
+    const projectID = this.inputStore.projectID;
+    const runID = this.selectedRun_dropdown?.id_run;
+    if (!projectID || !runID) return;
+
+    const { metrics } = await fetchAnpCriteriaAndMetrics(projectID, runID, false, this.showAllMetrics);
+    this.anpMetrics = metrics;
+  }
+},
+async toggleShowAllCriteria() {
+  this.showAllCriteria = !this.showAllCriteria;
+  if (this.anpCriteriaDropdownOpen) {
+    const projectID = this.inputStore.projectID;
+    const runID = this.selectedRun_dropdown?.id_run;
+    const { criteria } = await fetchAnpCriteriaAndMetrics(projectID, runID, this.showAllCriteria, false);
+    this.anpCriteria = criteria;
+  }
+},
+async toggleShowAllMetrics() {
+  this.showAllMetrics = !this.showAllMetrics;
+  if (this.anpMetricDropdownOpen) {
+    const projectID = this.inputStore.projectID;
+    const runID = this.selectedRun_dropdown?.id_run;
+    const { metrics } = await fetchAnpCriteriaAndMetrics(projectID, runID, false, this.showAllMetrics);
+    this.anpMetrics = metrics;
+  }
+},
+
+
+
+
 
 
 
@@ -1182,20 +1375,20 @@ async createHorizontalStackedBarChart(canvas, metricKey, categories, gradientCol
 }
 
 .metric-list-wrapper {
-  height: 400px; /* fixed height to preserve layout */
-  overflow-y: scroll; /* scroll when content overflows */
-  margin-bottom: 20px; /* spacing before "Add runs" and Metric Selection */
+  height: 400px; 
+  overflow-y: scroll; 
+  margin-bottom: 20px; 
 }
 
 .metric-list {
-  width: 100%; /* same as dropdown */
+  width: 100%; 
   margin-top: 10px;
   padding: 0;
 }
 .vis-metric-list-wrapper {
-  height: 115px; /* fixed height to preserve layout */
-  overflow-y: scroll; /* scroll when content overflows */
-  margin-bottom: 20px; /* spacing before "Add runs" and Metric Selection */
+  height: 115px; 
+  overflow-y: scroll; 
+  margin-bottom: 20px; 
 }
 
 .vis-metric-list {
@@ -1204,10 +1397,124 @@ async createHorizontalStackedBarChart(canvas, metricKey, categories, gradientCol
   padding: 0;
 }
 
+/* For .metric-list-wrapper */
+.metric-list-wrapper::-webkit-scrollbar,
+.vis-metric-list-wrapper::-webkit-scrollbar {
+  width: 8px;
+  background-color: transparent;
+}
+
+.metric-list-wrapper::-webkit-scrollbar-thumb,
+.vis-metric-list-wrapper::-webkit-scrollbar-thumb {
+  background-color: var(--darkgrey-bg);
+  border-radius: 5px;
+}
+
+.metric-list-wrapper::-webkit-scrollbar-thumb:hover,
+.vis-metric-list-wrapper::-webkit-scrollbar-thumb:hover {
+  background-color: var(--pink-color);
+}
+
+/* Optional: Firefox support */
+.metric-list-wrapper,
+.vis-metric-list-wrapper {
+  scrollbar-color: var(--darkgrey-bg) transparent;
+  scrollbar-width: thin;
+}
+
+
+
+
 canvas {
   width: 100% !important;
   display: block;
 }
+
+.anp-extra-dropdowns {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  gap: 20px;
+  width: 100%;
+}
+
+.small-dropdown {
+  flex: 1;
+  border: 1px solid var(--darkgrey-bg);
+  background-color: #d4d4d4;
+  border-radius: 10px;
+  box-shadow: 0px 2px 5px rgba(0,0,0,0.1);
+  cursor: pointer;
+}
+
+.small-dropdown .dropdown-header {
+  padding: 10px 12px;
+  background-color: var(--lightgrey-bg);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+
+}
+
+.small-dropdown .dropdown-body {
+  padding: 12px;
+  display: none;
+}
+
+.small-dropdown .dropdown-body.open {
+  display: block;
+}
+
+
+.dropdown-placeholder {
+  font-size: 13px;
+  color: dimgray;
+}
+
+.anp-extra-dropdowns.below-chart {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-top: 15px;
+  gap: 20px;
+  width: 100%;
+}
+
+.anp-extra-dropdowns-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.anp-extra-dropdowns-row {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  width: 100%;
+}
+
+.toggle-table-button {
+  margin-top: 12px;
+  background-color: var(--lightgrey-bg);
+  border: 1px solid var(--darkgrey-bg);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+  display: block;
+  width: 100%;
+  position: sticky;
+  bottom: 0;
+  background: #d4d4d4;
+}
+
+
+
+
 
 
 
