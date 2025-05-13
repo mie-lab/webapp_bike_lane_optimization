@@ -102,8 +102,17 @@
   v-if="metric.key === 'anp' && openMetricDropdowns.includes('anp')"
   class="anp-extra-dropdowns-wrapper"
 >
+
+<h4 class="runs-header">
+  <span class="text-blue">ANP Weights</span>
+</h4>
+
+<p class="info-text">
+    Select a run to view the criterion and metric weights used in its ANP evaluation.
+</p>
+
   <!-- Run selection -->
-  <div class="dropdown run-selector">
+  <div class="dropdown run-selector" style="margin-bottom: 15px;">
     <button 
       class="dropdown-button"
       :style="{ color: selectedRun_dropdown ? 'black' : 'var(--darkgrey-bg)' }"
@@ -126,18 +135,15 @@
 
   <!-- Criteria + Metric dropdowns below -->
   <div class="anp-extra-dropdowns-row">
-    <!-- Criteria Dropdown -->
-    <div class="small-dropdown">
+
+<!-- Criteria Dropdown -->
+<div v-if="anpCriteriaDropdownOpen" class="small-dropdown">
   <div class="dropdown-header" @click.stop="toggleAnpCriteriaDropdown">
-    <span>Criteria</span>
-    <i :class="['fa-solid', anpCriteriaDropdownOpen ? 'fa-angle-up' : 'fa-angle-down']"></i>
+    <span>Criterion Weights</span>
+    <i :class="['fa-solid', 'fa-angle-up']"></i>
   </div>
 
-  <div
-  :class="['dropdown-body', { open: anpCriteriaDropdownOpen }]"
-  v-show="anpCriteriaDropdownOpen"
->
-
+  <div class="dropdown-body open">
     <table v-if="anpCriteria.length">
       <thead><tr><th>Criterion</th><th>Weight</th></tr></thead>
       <tbody>
@@ -148,32 +154,34 @@
       </tbody>
     </table>
 
-    
     <p v-else class="dropdown-placeholder">No criteria data available.</p>
 
     <button 
-  class="toggle-table-button" 
-  @click.stop="toggleShowAllCriteria"
->
-  {{ showAllCriteria ? "Show Top 5" : "Show All" }}
-</button>
+      class="toggle-table-button" 
+      @click.stop="toggleShowAllCriteria"
+    >
+      {{ showAllCriteria ? "Show Top 5" : "Show All" }}
+    </button>
+  </div>
+</div>
 
+<!-- Header for collapsed criteria (to reopen it) -->
+<div v-else class="small-dropdown collapsed-header" @click.stop="toggleAnpCriteriaDropdown">
+  <div class="dropdown-header">
+    <span>Criterion Weights</span>
+    <i class="fa-solid fa-angle-down"></i>
   </div>
 </div>
 
 
-    <!-- Metric Dropdown -->
-    <div class="small-dropdown">
+<!-- Metric Dropdown -->
+<div v-if="anpMetricDropdownOpen" class="small-dropdown">
   <div class="dropdown-header" @click.stop="toggleAnpMetricDropdown">
-    <span>Metric</span>
-    <i :class="['fa-solid', anpMetricDropdownOpen ? 'fa-angle-up' : 'fa-angle-down']"></i>
+    <span>Metric Weights</span>
+    <i :class="['fa-solid', 'fa-angle-up']"></i>
   </div>
 
-  <div
-  :class="['dropdown-body', { open: anpMetricDropdownOpen }]"
-  v-show="anpMetricDropdownOpen"
->
-
+  <div class="dropdown-body open">
     <table v-if="anpMetrics.length">
       <thead><tr><th>Metric</th><th>Weight</th></tr></thead>
       <tbody>
@@ -183,19 +191,28 @@
         </tr>
       </tbody>
     </table>
+
     <p v-else class="dropdown-placeholder">No metric data available.</p>
 
     <button 
-  class="toggle-table-button" 
-  @click.stop="toggleShowAllMetrics"
->
-  {{ showAllMetrics ? "Show Top 5" : "Show All" }}
-</button>
-
+      class="toggle-table-button" 
+      @click.stop="toggleShowAllMetrics"
+    >
+      {{ showAllMetrics ? "Show Top 5" : "Show All" }}
+    </button>
   </div>
 </div>
 
+<!-- Header for collapsed metrics (to reopen it) -->
+<div v-else class="small-dropdown collapsed-header" @click.stop="toggleAnpMetricDropdown">
+  <div class="dropdown-header">
+    <span>Metric Weights</span>
+    <i class="fa-solid fa-angle-down"></i>
   </div>
+</div>
+
+</div>
+
 </div>
 
 
@@ -1007,7 +1024,8 @@ async createMetricChart(metricKey) {
   );
 
   const legend = this.legendStore.legends?.[metricKey] || [];
-  createContinousEvalMetricBarChart(metricLabel, runNames, data, canvas, legend);
+  createContinousEvalMetricBarChart(metricLabel, runNames, data, canvas, legend, metricKey);
+
 
   canvas.chartInstance = Chart.getChart(canvas);
 },
@@ -1511,6 +1529,16 @@ canvas {
   bottom: 0;
   background: #d4d4d4;
 }
+
+.collapsed-header {
+  box-shadow: none;
+  background-color: transparent;
+  border: none;
+}
+
+
+
+
 
 
 

@@ -390,9 +390,20 @@ export function createSingleMetricBarChart(metricLabel, runNames, dataValues, co
   });
 }
 
-export function createContinousEvalMetricBarChart(metricLabel, runNames, dataValues, canvas, legend = []) {
+export function createContinousEvalMetricBarChart(metricLabel, runNames, dataValues, canvas, legend = [], metricKey = '') {
+
 
   const ctx = canvas.getContext("2d");
+
+  const maxValuesByMetric = {
+    bsl: 5,
+    bci: 10,
+    anp: 0.01,
+    weikl: 5,
+    porter: 1,
+  };
+  
+  const suggestedMax = maxValuesByMetric[metricKey] || undefined;
 
   if (canvas.chart) {
     canvas.chart.destroy();
@@ -405,7 +416,10 @@ export function createContinousEvalMetricBarChart(metricLabel, runNames, dataVal
       datasets: [
         {
           label: '',
-          data: dataValues.map((value) => parseFloat(value.toFixed(2))), // round to 2 decimals
+          data: dataValues.map(value => 
+            parseFloat(value.toFixed(metricKey === 'anp' ? 5 : 2))
+          ),
+          
           backgroundColor: dataValues.map(value => getColorForValue(value, legend)),
 
         },
@@ -431,6 +445,7 @@ export function createContinousEvalMetricBarChart(metricLabel, runNames, dataVal
       scales: {
         x: {
           beginAtZero: true,
+          max: suggestedMax,
           ticks: {
             color: "#666",
             font: { size: 12 },
@@ -440,7 +455,7 @@ export function createContinousEvalMetricBarChart(metricLabel, runNames, dataVal
           },
           title: {
             display: true,
-            text: metricLabel, // bottom title is the metric name
+            text: metricLabel,
             font: { size: 14, weight: 'bold' },
             color: "#666",
           },
