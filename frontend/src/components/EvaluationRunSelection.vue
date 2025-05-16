@@ -94,7 +94,7 @@
         </div>
         
         <div class="buttons">
-        <button @click="() => { toggleUserInputPreviousSide(); prjStore.clearTempEvaluationRuns();}" class="back-button">
+        <button @click="() => { toggleUserInputPreviousSide(); prjStore.clearTempEvaluationRuns(); statusStore.createNewRunPage=false;}" class="back-button">
           Back
         </button>
         <button @click="statusStore.toggleEvaluationRunPage">

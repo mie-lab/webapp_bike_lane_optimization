@@ -5,7 +5,7 @@
         <button
           class="nav-button"
           :style="{ color: getIconColor('UserInput') }"
-          @click=" ()=> { toggleActiveTab('UserInput'); prjStore.clearEvaluationRuns();}"
+          @click=" ()=> { toggleActiveTab('UserInput'); prjStore.clearEvaluationRuns(); statusStore.DashboardMode = 'UserInput'; this.statusStore.closeDashboard();}"
         >
           <i class="fa-solid fa-sliders" style="font-size: 24px"></i>
         </button>
@@ -19,7 +19,6 @@
     statusStore.DashboardMode = 'Evaluation'; 
     toggleActiveTab('Evaluation');
     statusStore.closeDashboard();
-
   }"
         >
           <i class="fa-solid fa-magnifying-glass-chart" style="font-size: 24px"></i>
@@ -63,6 +62,23 @@
           </div>
 
           <button
+            class="nav-button nav-button-process"
+            :class="{ 'nav-button-process-active': isEvalContainerVisible }"
+            :style="{ color: getIconColor('EvalProcess') }"
+            @click="toggleEvalContainer"
+          >
+            <i class="fa-solid fa-clipboard-list" style="font-size: 24px"></i>
+          </button>
+          <div class="evalprocess-container" v-show="isEvalContainerVisible">
+            <div class="triangle"></div>
+            <div class="rectangle">
+              <div class="process-inner-container">
+                <EvalProcessList />
+              </div>
+            </div>
+          </div>
+
+          <button
             class="nav-button nav-button-info"
             :class="{ 'nav-button-info-active': activeTab === 'None' }"
             @click="toggleActiveTab('Info')"
@@ -98,16 +114,20 @@ import Help from "./Help.vue";
 import EvaluationStart from "./EvaluationStart.vue";
 import { statusVariablesStore } from "../stores/statusVariablesStore.js";
 import ProcessList from "./ProcessList.vue";
+import EvalProcessList from "./EvaluationProcessList.vue";
+
 import { projectsStore } from "../stores/projectsStore.js";
 
 export default {
   name: "SideBar",
   components: {
     ProcessList,
+    EvalProcessList
   },
   setup() {
     const statusStore = statusVariablesStore();
     const isContainerVisible = ref(false);
+    const isEvalContainerVisible = ref(false);
     const prjStore = projectsStore();
 
     // Use a watcher to keep the list up to date
@@ -119,15 +139,25 @@ export default {
     );
 
     watch(
+      () => statusStore.evalProcessList,
+      (newProcesses, oldProcesses) => {
+        isEvalContainerVisible.value = true;
+      }
+    );
+
+    watch(
       () => statusStore.startingPage,
       (newProcesses, oldProcesses) => {
         statusStore.setActiveTab("UserInput");
       }
     );
 
+    
+
     return {
       statusStore,
       isContainerVisible,
+      isEvalContainerVisible,
       prjStore,
     };
   },
@@ -190,6 +220,10 @@ export default {
     toggleContainer() {
       this.isContainerVisible = !this.isContainerVisible;
     },
+    toggleEvalContainer() {
+      this.isEvalContainerVisible = !this.isEvalContainerVisible;
+    },
+
     toggleDashboard() {
       this.isDashboardActive = !this.isDashboardActive;
       this.statusStore.toggleDashboard();

@@ -470,11 +470,8 @@ export async function fetchEvaluationMetricValues(projectID, runID, rawMetricKey
     const geojson = await response.json();
 
     // Extract numeric values for the given metric key
-    const values = geojson.features
-    .map((feature) => feature.properties?.[metricKey])
-    .filter((v) =>
-      allowStrings ? typeof v === "string" && v : typeof v === "number" && !isNaN(v)
-    );
+    const values = geojson.features.map((feature) => feature.properties?.[metricKey]);
+
 
     console.log(`Extracted ${values.length} values for ${metricKey}`);
     return values;

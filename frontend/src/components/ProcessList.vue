@@ -1,6 +1,6 @@
 <template>
   <div class="running-requests-list">
-    <h3>Running Requests</h3>
+    <h3>Run Requests</h3>
     <div class="list-header">
       <div class="header-item">Name</div>
       <div class="header-item"><i class="fa-solid fa-gears"></i></div>

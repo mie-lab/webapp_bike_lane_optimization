@@ -19,4 +19,15 @@ export const infoBoxTexts = {
   evaluation_network_bearing : "Average turn angle between two connected edges in the optimized network.",
   evaluation_network_complexity: " Illustrates the percentage of intersection sizes in the optimized networks, categorized by node degree.",
 
+  // evaluation dashboard
+  lts: "test lts",
+  bci: "test bts",
+  bsl: "test",
+  blos_grade: "test",
+  porter: "test",
+  weikl: "test",
+  anp: "test"
+
+
+
 };

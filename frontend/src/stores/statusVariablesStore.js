@@ -15,6 +15,7 @@ export const statusVariablesStore = defineStore("statusVariables", {
     dashboard: false,
     createNewRunPage: false,
     processList: false,
+    evalProcessList: false,
     helpDetailsPage: false,
     startingPage: false,
     evaluationrunPage: false,
@@ -45,6 +46,12 @@ export const statusVariablesStore = defineStore("statusVariables", {
     toggleProcessList() {
       this.processList = !this.processList;
     },
+
+    toggleEvalProcessList() {
+      this.evalProcessList = !this.evalProcessList;
+    },
+
+
 
     activateLoadPage() {
       this.loadPage = true;

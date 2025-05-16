@@ -9,7 +9,7 @@
         </h2>
 
         <p class="info-text">
-          This is the overview of the project <i>{{ inputStore.projectName }}</i>. Select runs for detailed evaluation.
+          This is the overview of the project <i>{{ inputStore.projectName }}</i>. For evaluating an optimized bike network in the specified area, select a one or multiple optimization runs from the list below. ‘
         </p>
 
         <!-- Runs Header -->
@@ -100,10 +100,16 @@
 
         <!-- Add Runs Button -->
         <div class="button-container" style="margin-top: 10px; display: flex; justify-content: center;">
-  <button @click="() => {toggleUserInputPreviousSide(); toggleMetricsChangedSinceLastCompute(); }" class="back-button">
+          <button @click="() => { toggleUserInputPreviousSide(); prjStore.clearTempEvaluationRuns(); statusStore.toggleRunPage(); statusStore.createNewRunPage=false;}" class="back-button">
+          Switch Project
+        </button>
+
+  <button @click="() => {toggleUserInputPreviousSide(); toggleMetricsChangedSinceLastCompute(); }">
     Add runs
   </button>
 </div>
+
+
 
 
         <!-- Metric Selection -->
@@ -114,12 +120,12 @@
   </h2>
 
   <p class="info-text">
-          Select one or multiple evaluation metrics.
+    Select one or multiple evaluation metrics from the dropdown below to evaluate chosen runs.
   </p>
 
   <!-- Dropdown -->
-  <div class="dropdown" style="margin-bottom: 15px; position: relative;">
-    <button class="dropdown-button" @click="toggleMetricDropdown">
+  <div class="dropdown" ref="metricDropdownRef" style="margin-bottom: 15px; position: relative;">
+    <button class="dropdown-button" @click="toggleMetricDropdown" >
       <div class="dropdown-button-content">
         <span>Select Metrics</span>
         <i class="fa-solid fa-caret-down"></i>
@@ -128,7 +134,7 @@
 
     <ul v-show="metricDropdownOpen" class="dropdown-menu" style="max-height: 200px; overflow-y: auto;">
       <li
-        v-for="metric in localMetrics"
+        v-for="metric in inputStore.tempMetrics"
         :key="metric.key"
         style="padding: 5px 10px;"
       >
@@ -217,6 +223,8 @@ import {
 import { loadWFS, loadWMS } from "../scripts/map.js";
 import UserInputNewRun from "./UserInputNewRun.vue";
 import { useCompareRunEvaluation } from "../stores/compareRunResultStore.js";
+import { evaluationProcessListStore } from "../stores/evaluationProcessListStore.js";
+
 
 export default {
   name: "UserInputRun",
@@ -233,6 +241,8 @@ export default {
     const searchQuery = ref("");
     const dropdownOpen = ref(false);
     const selectedMetric = ref(null);
+    const evalStore = evaluationProcessListStore();
+
 
     // Sort projects by "created" timestamp in descending order
     const filteredRuns = computed(() => {
@@ -259,7 +269,8 @@ export default {
       filteredRuns,
       compareRunStore,
       dropdownOpen,
-      selectedMetric
+      selectedMetric,
+      evalStore
     };
   },
   data() {
@@ -286,7 +297,6 @@ export default {
       metricDropdownOpen: false,
       expandedRuns: {},
       metricsChangedSinceLastCompute: true,
-      localMetrics: [],
       showInfoBoxANP: false,
     };
   },
@@ -294,20 +304,27 @@ export default {
 
     // Clone current selections from global store
     mounted() {
-      this.localMetrics = JSON.parse(JSON.stringify(this.inputStore.allMetrics));
+      document.addEventListener("click", this.handleClickOutsideMetricDropdown);
 
 
 
   },
+
+  beforeUnmount() {
+  document.removeEventListener("click", this.handleClickOutsideMetricDropdown);
+},
+
+
+
 
 
 
   computed: {
   isANPSelected() {
-    return this.localMetrics.some(m => m.key === "anp" && m.selected);
+    return this.inputStore.tempMetrics.some(m => m.key === "anp" && m.selected);
   },
   selectedMetrics() {
-    return this.localMetrics.filter(m => m.selected);
+    return this.inputStore.tempMetrics.filter(m => m.selected);
   },
   isComputeDisabled() {
     const noRuns = this.prjStore.tempSelectedEvaluationRuns.length === 0;
@@ -427,60 +444,91 @@ export default {
     async computeMetrics() {
   console.log("▶️ computeMetrics started");
 
+  // Show sidebar immediately
+  this.statusStore.toggleEvalProcessList();
+
+  // Prepare selected runs
   this.prjStore.setSelectedEvaluationRuns(
-  JSON.parse(JSON.stringify(this.prjStore.tempSelectedEvaluationRuns))
-);
+    JSON.parse(JSON.stringify(this.prjStore.tempSelectedEvaluationRuns))
+  );
 
-
+  // Sync selected metrics from temp store
   this.inputStore.allMetrics.forEach(metric => {
-  const localMetric = this.localMetrics.find(m => m.key === metric.key);
-  metric.selected = localMetric ? localMetric.selected : false;
-});
+    const tempMetric = this.inputStore.tempMetrics.find(m => m.key === metric.key);
+    metric.selected = tempMetric ? tempMetric.selected : false;
+  });
 
-
+  // For each selected run and metric
   for (const run of this.prjStore.selectedEvaluationRuns) {
     console.log("▶️ Evaluating run:", run.run_name, "(id:", run.id_run + ")");
 
     for (const metric of this.inputStore.allMetrics.filter(m => m.selected)) {
-      console.log("  ➤ Checking metric:", metric.key);
+      const projectId = this.inputStore.projectID;
+      const evalId = `${projectId}-${run.id_run}-${metric.key}`;
+      const metricObj = this.inputStore.tempMetrics.find(m => m.key === metric.key);
 
-      let alreadyExists = false;
+      // ✅ Check if this evalId is already in the process list
+      const alreadyTracked = this.evalStore.evaluationProcesses.some(
+        (p) => p.id === evalId
+      );
 
-      try {
-        alreadyExists = await checkIfEvalMetricExists(run.id_run, metric.key, this.inputStore.projectID);
-        console.log("    ✅ Metric exists?", alreadyExists);
-      } catch (checkErr) {
-        console.error("    ❌ Error in checkIfEvalMetricExists:", checkErr);
+      if (!alreadyTracked) {
+        // ➕ Add new process if not already tracked
+        this.evalStore.addEvaluationProcess({
+          id: evalId,
+          projectName: this.inputStore.projectName,
+          runName: run.run_name,
+          metricLabel: metricObj ? metricObj.label : metric.key,
+          status: "pending",
+        });
+
+        console.log("🟢 Added eval process:", evalId);
+      } else {
+        console.log("⏭️ Skipping duplicate process:", evalId);
       }
 
-      if (!alreadyExists) {
-        console.log("    🚀 Triggering computation for:", metric.key);
+      // 🔍 Check if metric result already exists
+      let alreadyExists = false;
+      try {
+        alreadyExists = await checkIfEvalMetricExists(
+          run.id_run,
+          metric.key,
+          projectId
+        );
+      } catch (err) {
+        console.error("❌ Error checking metric existence:", err);
+      }
 
+      // 🚀 Trigger computation if necessary
+      if (!alreadyExists) {
         try {
-          await triggerEvalMetricComputation(run.id_run, metric.key, this.inputStore.projectID);
-          console.log("    ✅ Computation finished for", metric.key);
-        } catch (triggerErr) {
-          console.error("    ❌ Error in triggerEvalMetricComputation:", triggerErr);
+          await triggerEvalMetricComputation(
+            run.id_run,
+            metric.key,
+            projectId
+          );
+          console.log("🚀 Computation triggered:", evalId);
+        } catch (err) {
+          console.error("❌ Error triggering computation:", err);
         }
       } else {
-        console.log("    ⏩ Skipping", metric.key, "– already in DB");
+        console.log("⏩ Metric already exists, skipping computation:", evalId);
       }
+
+      // ✅ Mark the process as done (always)
+      this.evalStore.markEvaluationAsDone(evalId);
+      console.log("✅ Marked as done:", evalId);
     }
   }
 
-  console.log("▶️ All metrics processed. Showing table & opening dashboard.");
-
-  try {
-    this.showMetricsTable = true;
-    this.statusStore.DashboardMode = "Evaluation";
-    this.statusStore.openDashboard();
-  } catch (finalErr) {
-    console.error("❌ Error during final UI update:", finalErr);
-  }
-
+  // UI updates
+  this.showMetricsTable = true;
+  this.statusStore.DashboardMode = "Evaluation";
+  this.statusStore.openDashboard();
   this.metricsChangedSinceLastCompute = false;
+}
 
-  },
+,
 
   
     toggleRun(runName) {
@@ -491,15 +539,27 @@ export default {
       // Optionally also collapse it
       this.$delete(this.expandedRuns, run.run_name);
     },
+
     handleMetricToggle(metric) {
-  this.metricsChangedSinceLastCompute = true;
-  },
-  toggleMetricsChangedSinceLastCompute(){
+      this.metricsChangedSinceLastCompute = true;
+    },
+  
+  
+    toggleMetricsChangedSinceLastCompute(){
     this.metricsChangedSinceLastCompute = true;
+  },
+  handleClickOutsideMetricDropdown(event) {
+  const dropdown = this.$refs.metricDropdownRef;
+  if (dropdown && !dropdown.contains(event.target)) {
+    this.metricDropdownOpen = false;
   }
 
 
   },
+
+
+}
+
 };
 </script>
 
@@ -554,7 +614,7 @@ export default {
 
 .dropdown-button {
   background-color: var(--lightgrey-bg);
-  color: var(--darkgrey-bg);
+  color: black;
   border: 1px solid var(--darkgrey-bg);
   width: 250px;
   margin: 0;

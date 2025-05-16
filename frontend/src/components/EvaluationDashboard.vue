@@ -72,8 +72,14 @@
       {{ metric.label }}
       <i
         class="fa-solid fa-info-circle small-icon"
-        @click.stop="showInfo(metric)"
+          @mouseover="showInfoBox[metric.key] = true"
+          @mouseleave="showInfoBox[metric.key] = false"
       ></i>
+      
+      <div v-show="showInfoBox[metric.key]" class="info-box">
+                  {{infoBoxTexts[metric.key]}}
+      </div>
+
     </h3>
     <i
       :class="[
@@ -235,7 +241,7 @@
           </h2>
 
           <p class="info-text">
-          Select a run and a layer to display it on the map.
+          Select a run and a road network layer to display it on the map.
         </p>
 
           <h4 class="runs-header" style="margin-bottom: 20px;">
@@ -243,7 +249,8 @@
 </h4>
 
 <!-- Run Selector -->
-<div class="dropdown" style="margin-bottom: 15px; position: relative; display: flex; justify-content: flex-start;">
+<div class="dropdown" style="margin-bottom: 15px; position: relative; display: block;">
+
 
   <button 
   class="dropdown-button" 
@@ -508,22 +515,22 @@ export default {
       showMetricsTable: true,
 
       showDropdown: false,
-      showInfoBox: false,
-      showInfoBoxTravelTimes: false,
-      showInfoBoxDistances: false,
-      isOpenTT: false,
-      isOpenPareto: false,
-      isOpenDistances: false,
-      isOpenComplexity: false,
-      showInfoBoxComplexity: false,
-      isOpenBearing: false,
-      showInfoBoxBearing: false,
-      distancesIsLoading: false,
-      travelTimesIsLoading: false,
-      complexityIsLoading: false,
-      bearingIsLoading: false,
+      showInfoBox: {
+        lts: false,
+        bts: false,
+        bsl: false,
+        blos_grade: false,
+        porter: false,
+        weikl: false,
+        anp: false,
+      },
+
+
+
+
+
+      
       infoBoxTexts: infoBoxTexts,
-      paretoIsLoading:false,
       selectedRun_dropdown: null,
       runDropdownOpen: false,
       runDropdownOpenAnp: false,
@@ -1033,7 +1040,6 @@ async createMetricChart(metricKey) {
 
 async createHorizontalStackedBarChart(canvas, metricKey, categories, gradientColors) {
   const runNames = this.prjStore.selectedEvaluationRuns.map(run => run.run_name);
-
   const categoryCountsPerRun = {};
 
   for (let run of this.prjStore.selectedEvaluationRuns) {
@@ -1041,17 +1047,27 @@ async createHorizontalStackedBarChart(canvas, metricKey, categories, gradientCol
 
     const counts = {};
     for (const cat of categories) counts[cat] = 0;
+    counts["N/A"] = 0; // For null/undefined/empty values
 
     for (const val of values) {
-      const normalized = typeof val === 'string' ? val.toUpperCase() : parseInt(val);
-      if (categories.includes(normalized)) {
+      // Normalize value
+      const normalized = typeof val === 'string' ? val.toUpperCase() : val;
+
+      // If it's null/undefined/empty, count as N/A
+      if (normalized === null || normalized === undefined || normalized === '') {
+        counts["N/A"]++;
+      } else if (categories.includes(normalized)) {
         counts[normalized]++;
+      } else {
+        // Also treat unexpected values as N/A
+        counts["N/A"]++;
       }
     }
 
     categoryCountsPerRun[run.run_name] = counts;
   }
 
+  // Build datasets
   const datasets = categories.map((cat, i) => ({
     label: `${cat}`,
     backgroundColor: gradientColors[i],
@@ -1059,7 +1075,15 @@ async createHorizontalStackedBarChart(canvas, metricKey, categories, gradientCol
     stack: 'stack1'
   }));
 
-  // 🔧 Adjust bar thickness: previously 90 → now 135px per run
+  // Add N/A dataset last so it stacks on top/right
+  datasets.push({
+    label: 'N/A',
+    backgroundColor: 'grey', // dark grey
+    data: runNames.map(runName => categoryCountsPerRun[runName]["N/A"] || 0),
+    stack: 'stack1'
+  });
+
+  // Adjust canvas height
   const barHeightPx = 85;
   const minHeight = 160;
   const canvasHeight = Math.max(runNames.length * barHeightPx, minHeight);
@@ -1086,27 +1110,18 @@ async createHorizontalStackedBarChart(canvas, metricKey, categories, gradientCol
           title: {
             display: true,
             text: 'Count',
-            font: {
-              weight: 'bold', 
-              size: 14        
-            }
-            
+            font: { weight: 'bold', size: 14 }
           }
         },
         y: {
           stacked: true,
           title: {
             display: true,
-            text: 'Runs', 
-            font: {
-              weight: 'bold',
-              size: 14
-            }
+            text: 'Runs',
+            font: { weight: 'bold', size: 14 }
           },
           ticks: {
-            font: {
-              size: 12  
-            }
+            font: { size: 12 }
           }
         }
       },
@@ -1117,12 +1132,9 @@ async createHorizontalStackedBarChart(canvas, metricKey, categories, gradientCol
             boxWidth: 20,
             boxHeight: 12,
             padding: 8,
-            font: {
-              size: 12
-            }
+            font: { size: 12 }
           }
         }
-
       }
     }
   });
@@ -1169,7 +1181,7 @@ async toggleShowAllMetrics() {
     const { metrics } = await fetchAnpCriteriaAndMetrics(projectID, runID, false, this.showAllMetrics);
     this.anpMetrics = metrics;
   }
-},
+}
 
 
 

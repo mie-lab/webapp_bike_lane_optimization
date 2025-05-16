@@ -255,11 +255,12 @@ export default {
      else {
         return algorithm;
     }
+    },
+    toggleEvaluationRunPreviousSide() {
+      this.statusStore.evaluationrunPage=false;
     }
   },
-  toggleEvaluationRunPreviousSide() {
-      this.statusStore.toggleEvaluationRunPage();
-    }
+
 };
 </script>
 

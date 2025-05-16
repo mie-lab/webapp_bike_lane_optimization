@@ -490,6 +490,7 @@
     statusStore.DashboardMode = 'Evaluation'; 
     toggleActiveTab('Evaluation');
     statusStore.closeDashboard();
+    this.statusStore.toggleCreateNewRunPage();
 
   }"
 >
