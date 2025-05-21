@@ -445,7 +445,8 @@ export default {
   console.log("▶️ computeMetrics started");
 
   // Show sidebar immediately
-  this.statusStore.toggleEvalProcessList();
+  this.statusStore.processList = false;
+  this.statusStore.evalProcessList = true;
 
   // Prepare selected runs
   this.prjStore.setSelectedEvaluationRuns(
@@ -526,6 +527,8 @@ export default {
   this.statusStore.DashboardMode = "Evaluation";
   this.statusStore.openDashboard();
   this.metricsChangedSinceLastCompute = false;
+  this.statusStore.evalProcessList = false;
+
 }
 
 ,

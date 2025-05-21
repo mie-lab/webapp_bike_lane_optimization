@@ -9,7 +9,11 @@
         </colgroup>
         <tr v-for="(item, index) in legendStore.activeLegend" :key="index">
           <td>
-            <div class="legend-rectangle" :style="{ backgroundColor: item.color }"></div>
+            <div
+              class="legend-rectangle"
+              :style="getLegendStyle(item)"
+            ></div>
+
           </td>
           <td>{{ item.label }}</td>
         </tr>
@@ -1024,7 +1028,7 @@ async createMetricChart(metricKey) {
   console.log(`  ${run.run_name}: ${value}`);
 });
 
-  const metricLabel = "Average";
+  const metricLabel = "Average Score";
   const runNames = this.prjStore.selectedEvaluationRuns.map(run => run.run_name);
   const data = this.prjStore.selectedEvaluationRuns.map(
     run => parseFloat(this.metricAverages[`${metricKey}_${run.id_run}`]) || 0
@@ -1181,7 +1185,23 @@ async toggleShowAllMetrics() {
     const { metrics } = await fetchAnpCriteriaAndMetrics(projectID, runID, false, this.showAllMetrics);
     this.anpMetrics = metrics;
   }
-}
+},
+getLegendStyle(item) {
+    const baseStyle = {
+      backgroundColor: item.color
+    };
+
+    if (item.strokeDasharray) {
+      // Simulate dashed line using border instead of fill
+      return {
+        backgroundColor: 'transparent',
+        borderTop: `4px ${item.strokeDasharray === '5 5' ? 'dashed' : 'solid'} ${item.color}`,
+        height: '0px'
+      };
+    }
+
+    return baseStyle;
+  }
 
 
 

@@ -48,7 +48,8 @@
             class="nav-button nav-button-process"
             :class="{ 'nav-button-process-active': isContainerVisible }"
             :style="{ color: getIconColor('Process') }"
-            @click="toggleContainer"
+            @click="()=> { toggleContainer(); statusStore.evalProcessList = false;}"
+            
           >
             <i class="fa-solid fa-list-check" style="font-size: 24px"></i>
           </button>
@@ -65,7 +66,8 @@
             class="nav-button nav-button-process"
             :class="{ 'nav-button-process-active': isEvalContainerVisible }"
             :style="{ color: getIconColor('EvalProcess') }"
-            @click="toggleEvalContainer"
+            @click="()=> { toggleEvalContainer(); statusStore.processList = false;}"
+
           >
             <i class="fa-solid fa-clipboard-list" style="font-size: 24px"></i>
           </button>
@@ -132,18 +134,19 @@ export default {
 
     // Use a watcher to keep the list up to date
     watch(
-      () => statusStore.processList,
-      (newProcesses, oldProcesses) => {
-        isContainerVisible.value = true;
-      }
-    );
+  () => statusStore.processList,
+  (newVal) => {
+    isContainerVisible.value = newVal;
+  }
+);
 
-    watch(
-      () => statusStore.evalProcessList,
-      (newProcesses, oldProcesses) => {
-        isEvalContainerVisible.value = true;
-      }
-    );
+watch(
+  () => statusStore.evalProcessList,
+  (newVal) => {
+    isEvalContainerVisible.value = newVal;
+  }
+);
+
 
     watch(
       () => statusStore.startingPage,
@@ -218,11 +221,26 @@ export default {
         : this.iconColors[icon];
     },
     toggleContainer() {
-      this.isContainerVisible = !this.isContainerVisible;
-    },
-    toggleEvalContainer() {
-      this.isEvalContainerVisible = !this.isEvalContainerVisible;
-    },
+  this.isContainerVisible = !this.isContainerVisible;
+  this.statusStore.processList = this.isContainerVisible;
+
+  if (this.isContainerVisible) {
+    this.isEvalContainerVisible = false;
+    this.statusStore.evalProcessList = false;
+  }
+},
+
+toggleEvalContainer() {
+  this.isEvalContainerVisible = !this.isEvalContainerVisible;
+  this.statusStore.evalProcessList = this.isEvalContainerVisible;
+
+  if (this.isEvalContainerVisible) {
+    this.isContainerVisible = false;
+    this.statusStore.processList = false;
+  }
+}
+,
+
 
     toggleDashboard() {
       this.isDashboardActive = !this.isDashboardActive;

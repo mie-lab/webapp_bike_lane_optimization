@@ -407,7 +407,9 @@ export default {
       });
 
       // Toggle the process list
+      this.statusStore.evalProcessList = false;
       this.statusStore.toggleProcessList();
+      
 
     
       // Run the optimization
