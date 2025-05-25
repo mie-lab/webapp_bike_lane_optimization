@@ -24,11 +24,16 @@ export const useLegendStore = defineStore('legendStore', {
       ],
 
       anp: [
-        { label: '≥ 0.75', color: '#0d00a3' },
-        { label: '0.5 – 0.75', color: '#ffffff' },
-        { label: '< 0.5', color: '#da5268' },
+        { label: '≥ 0.25', color: '#0d00a3' },
+        { label: '≥ 0.20', color: '#564fb2' },
+        { label: '≥ 0.15', color: '#a69ccc' },
+        { label: '≥ 0.10', color: '#e2d3dc' },
+        { label: '≥ 0.05', color: '#ed9ca4' },
+        { label: '< 0.05', color: '#da5268' },
         { label: 'N/A', color: '#000000', strokeDasharray: '5 5' }
       ],
+      
+      
 
       blos_grade: [
         { label: 'A', color: '#0d00a3' },
@@ -41,18 +46,30 @@ export const useLegendStore = defineStore('legendStore', {
       ],
 
       weikl: [
-        { label: '≥ 4', color: '#0d00a3' },
-        { label: '2.5 – 4', color: '#ffffff' },
-        { label: '< 2.5', color: '#da5268' },
+        { label: '≥ 1.6', color: '#0d00a3' },
+        { label: '≥ 1.4', color: '#413fae' },
+        { label: '≥ 1.2', color: '#7874c2' },
+        { label: '≥ 1.0', color: '#b3b3d1' },
+        { label: '≥ 0.8', color: '#e4c6cd' },
+        { label: '≥ 0.6', color: '#ec9aa7' },
+        { label: '≥ 0.4', color: '#e56d80' },
+        { label: '< 0.4', color: '#da5268' },
         { label: 'N/A', color: '#000000', strokeDasharray: '5 5' }
       ],
+      
 
       porter: [
-        { label: '≥ 0.75', color: '#0d00a3' },
-        { label: '0.5 – 0.75', color: '#ffffff' },
-        { label: '< 0.5', color: '#da5268' },
+        { label: '≥ 1', color: '#0d00a3' },
+        { label: '0.5 – 1', color: '#413fae' },
+        { label: '0.25 – 0.5', color: '#7874c2' },
+        { label: '0 – 0.25', color: '#b3b3d1' },
+        { label: '-0.25 – 0', color: '#e4c6cd' },
+        { label: '-0.5 – -0.25', color: '#ec9aa7' },
+        { label: '-1 – -0.5', color: '#e56d80' },
+        { label: '< -1', color: '#da5268' },
         { label: 'N/A', color: '#000000', strokeDasharray: '5 5' }
       ],
+      
 
       lts: [
         { label: '1', color: '#0d00a3' },

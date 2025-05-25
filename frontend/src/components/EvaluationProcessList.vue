@@ -5,6 +5,7 @@
       <div class="header-cell">Project</div>
       <div class="header-cell">Run</div>
       <div class="header-cell">Metric</div>
+      <div class="header-cell">Time</div>
       <div class="header-cell"><i class="fa-solid fa-spinner"></i></div>
     </div>
     <ul class="listContent">
@@ -13,6 +14,9 @@
           <div class="cell">{{ process.projectName }}</div>
           <div class="cell">{{ process.runName }}</div>
           <div class="cell metric-text">{{ process.metricLabel }}</div>
+          <div class="cell time-cell">
+            {{ formatTime(process.createdAt) }}
+          </div>
           <div class="cell status-cell">
             <template v-if="process.status === 'pending'">
               <BeatLoader :color="'#123abc'" :size="6" />
@@ -42,6 +46,13 @@ export default {
       evaluationProcesses: store.evaluationProcesses,
     };
   },
+  methods: {
+    formatTime(isoString) {
+      if (!isoString) return '';
+      const date = new Date(isoString);
+      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+  }
 };
 </script>
 
@@ -56,7 +67,7 @@ export default {
 
 .eval-grid {
   display: grid;
-  grid-template-columns: 30% 30% 30% 10%;
+  grid-template-columns: 25% 20% 25% 20% 10%;
   align-items: center;
   padding: 4px 0;
   box-sizing: border-box;
@@ -86,6 +97,11 @@ export default {
 
 .metric-text {
   white-space: pre-line;
+}
+
+.time-cell {
+  font-size: 0.75em;
+  color: black;
 }
 
 .status-cell {

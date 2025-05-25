@@ -391,9 +391,13 @@ export function createSingleMetricBarChart(metricLabel, runNames, dataValues, co
 }
 
 export function createContinousEvalMetricBarChart(metricLabel, runNames, dataValues, canvas, legend = [], metricKey = '') {
-
-
   const ctx = canvas.getContext("2d");
+
+  // Ensure the height is consistent with stacked bar charts
+  const barHeightPx = 50; // ✅ Match to stacked chart
+  const minHeight = 160;
+  const canvasHeight = Math.max(runNames.length * barHeightPx, minHeight);
+  canvas.style.height = `${canvasHeight}px`;
 
   const maxValuesByMetric = {
     bsl: 5,
@@ -402,7 +406,7 @@ export function createContinousEvalMetricBarChart(metricLabel, runNames, dataVal
     weikl: 5,
     porter: 1,
   };
-  
+
   const suggestedMax = maxValuesByMetric[metricKey] || undefined;
 
   if (canvas.chart) {
@@ -412,22 +416,21 @@ export function createContinousEvalMetricBarChart(metricLabel, runNames, dataVal
   canvas.chart = new Chart(ctx, {
     type: "bar",
     data: {
-      labels: runNames, // run names are shown on y-axis
+      labels: runNames,
       datasets: [
         {
           label: '',
-          data: dataValues.map(value => 
+          data: dataValues.map(value =>
             parseFloat(value.toFixed(metricKey === 'anp' ? 5 : 2))
           ),
-          
           backgroundColor: dataValues.map(value => getColorForValue(value, legend)),
-
         },
       ],
     },
     options: {
       indexAxis: "y", // horizontal bars
       responsive: true,
+      maintainAspectRatio: false,
       plugins: {
         datalabels: {
           anchor: "center",
@@ -435,7 +438,7 @@ export function createContinousEvalMetricBarChart(metricLabel, runNames, dataVal
         },
         tooltip: {
           callbacks: {
-            label: (tooltipItem) => `${tooltipItem.raw}`, // Only number
+            label: (tooltipItem) => `${tooltipItem.raw}`,
           },
         },
         legend: {
@@ -450,9 +453,6 @@ export function createContinousEvalMetricBarChart(metricLabel, runNames, dataVal
             color: "#666",
             font: { size: 12 },
           },
-          grid: {
-            color: "#eee",
-          },
           title: {
             display: true,
             text: metricLabel,
@@ -463,24 +463,23 @@ export function createContinousEvalMetricBarChart(metricLabel, runNames, dataVal
         y: {
           title: {
             display: true,
-            text: 'Runs', 
+            text: 'Runs',
             font: {
               weight: 'bold',
-              size: 14
-            }
+              size: 14,
+            },
           },
           ticks: {
             color: "#666",
             font: { size: 12 },
-          },
-          grid: {
-            display: false,
-          },
+          }
+          // ⛔️ Do NOT set barThickness — let it auto-size based on canvas height
         },
       },
     },
   });
 }
+
 
 function getColorForValue(value, legend) {
   for (const { label, color } of legend) {

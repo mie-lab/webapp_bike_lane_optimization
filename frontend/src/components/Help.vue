@@ -46,6 +46,31 @@
               <p style="margin-bottom: 20px">{{ howToContent3 }}</p>
             </td>
           </tr>
+          <tr>
+            <td>
+              <div class="numbered-circle"><p>4</p></div>
+            </td>
+            <td><p class="bold">Compute advanced evaluation metrics</p></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>
+              <p style="margin-bottom: 20px">{{ howToContent4 }}</p>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="numbered-circle"><p>5</p></div>
+            </td>
+            <td><p class="bold">Compare advanced evaluation metrics</p></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>
+              <p style="margin-bottom: 20px">{{ howToContent5 }}</p>
+            </td>
+          </tr>
+
         </table>
         <p class="link-style-p">
           <!-- Button to get more Details, get to HelpDetails component-->
@@ -71,6 +96,8 @@ export default {
       howToContent1: helpText.howTo1,
       howToContent2: helpText.howTo2,
       howToContent3: helpText.howTo3,
+      howToContent4: helpText.howTo4,
+      howToContent5: helpText.howTo5
     };
   },
   methods: {

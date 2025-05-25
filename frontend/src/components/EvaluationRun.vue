@@ -3,6 +3,8 @@
     <!-- Run list -->
     <div>
       <div class="user-input-container">
+
+        <div class="eval-runs-container">
         <h4 class="h4_override">Project:</h4>
         <h2 class="h2_override">
           {{ inputStore.projectName }} | {{ runName }}
@@ -109,6 +111,9 @@
   </button>
 </div>
 
+</div>
+<div class="eval-metrics-container">
+
 
 
 
@@ -182,6 +187,7 @@
 </button>
 
   </div>
+</div>
 </div>
 
 
@@ -442,7 +448,7 @@ export default {
       
       
     async computeMetrics() {
-  console.log("▶️ computeMetrics started");
+  console.log("computeMetrics started");
 
   // Show sidebar immediately
   this.statusStore.processList = false;
@@ -459,36 +465,33 @@ export default {
     metric.selected = tempMetric ? tempMetric.selected : false;
   });
 
-  // For each selected run and metric
   for (const run of this.prjStore.selectedEvaluationRuns) {
-    console.log("▶️ Evaluating run:", run.run_name, "(id:", run.id_run + ")");
+    console.log("Evaluating run:", run.run_name, "(id:", run.id_run + ")");
 
     for (const metric of this.inputStore.allMetrics.filter(m => m.selected)) {
       const projectId = this.inputStore.projectID;
       const evalId = `${projectId}-${run.id_run}-${metric.key}`;
       const metricObj = this.inputStore.tempMetrics.find(m => m.key === metric.key);
 
-      // ✅ Check if this evalId is already in the process list
       const alreadyTracked = this.evalStore.evaluationProcesses.some(
         (p) => p.id === evalId
       );
 
       if (!alreadyTracked) {
-        // ➕ Add new process if not already tracked
         this.evalStore.addEvaluationProcess({
           id: evalId,
           projectName: this.inputStore.projectName,
           runName: run.run_name,
           metricLabel: metricObj ? metricObj.label : metric.key,
           status: "pending",
+          createdAt: new Date().toISOString()
         });
 
-        console.log("🟢 Added eval process:", evalId);
+        console.log("Added eval process:", evalId);
       } else {
-        console.log("⏭️ Skipping duplicate process:", evalId);
+        console.log("Skipping duplicate process:", evalId);
       }
 
-      // 🔍 Check if metric result already exists
       let alreadyExists = false;
       try {
         alreadyExists = await checkIfEvalMetricExists(
@@ -497,10 +500,9 @@ export default {
           projectId
         );
       } catch (err) {
-        console.error("❌ Error checking metric existence:", err);
+        console.error("Error checking metric existence:", err);
       }
 
-      // 🚀 Trigger computation if necessary
       if (!alreadyExists) {
         try {
           await triggerEvalMetricComputation(
@@ -508,28 +510,27 @@ export default {
             metric.key,
             projectId
           );
-          console.log("🚀 Computation triggered:", evalId);
+          console.log("Computation triggered:", evalId);
         } catch (err) {
-          console.error("❌ Error triggering computation:", err);
+          console.error("Error triggering computation:", err);
         }
       } else {
-        console.log("⏩ Metric already exists, skipping computation:", evalId);
+        console.log("Metric already exists, skipping computation:", evalId);
       }
 
-      // ✅ Mark the process as done (always)
       this.evalStore.markEvaluationAsDone(evalId);
-      console.log("✅ Marked as done:", evalId);
+      console.log("Marked as done:", evalId);
     }
   }
 
-  // UI updates
   this.showMetricsTable = true;
   this.statusStore.DashboardMode = "Evaluation";
   this.statusStore.openDashboard();
   this.metricsChangedSinceLastCompute = false;
   this.statusStore.evalProcessList = false;
-
 }
+
+
 
 ,
 
@@ -675,7 +676,10 @@ export default {
   font-weight: 500;
   cursor: pointer;
   transition: background-color 0.2s ease;
-  height: 36px;
+  height: auto; /* let flexbox control it */
+  display: flex;
+  align-items: center;
+
   display: flex;
   align-items: center;
   justify-content: center;
@@ -687,7 +691,7 @@ export default {
 }
 
 .project-list-wrapper {
-  height: 250px; /* fixed height to preserve layout */
+  height: 50%; /* fixed height to preserve layout */
   overflow-y: scroll; /* scroll when content overflows */
   margin-bottom: 20px; /* spacing before "Add runs" and Metric Selection */
 }
@@ -720,9 +724,11 @@ export default {
 
 .run-summary {
   display: flex;
-  align-items: center;
+  align-items: stretch; /* stretch children to same height */
   width: 100%;
+  gap: 10px; /* optional spacing between elements */
 }
+
 
 .run-dropdown-toggle {
   display: flex;
@@ -779,6 +785,14 @@ export default {
 
 .custom-checkbox:checked {
   background-color: var(--pink-color);
+}
+
+.eval-runs-container{
+  height: 45vh
+}
+
+.eval-metrics-container{
+  height: 55vh
 }
 
 

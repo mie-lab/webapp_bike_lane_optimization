@@ -7,7 +7,14 @@ export const helpText = {
     "to define a perimeter where the optimization will take place by drawing a polygon or a rectangle on the map",
   howTo2:
     "for your defined perimeter with different optimization algorithms and parameters",
-  howTo3: "of the different runs on the map and in the dashboard",
+  howTo3: 
+    "of the different runs on the map and in the dashboard",
+  howTo4:
+    "for multiple runs of a project",
+  howTo5:
+    "of the different runs on the map and in the dashboard ",
+
+
 
   // algorithm descriptions
   optimize:

@@ -46,7 +46,6 @@
     justify-content: center; 
     background-color: transparent;
     border: none;
-
     padding: 10px;
     margin: 5px 0;
     width: 100%;
@@ -56,6 +55,7 @@
   .nav-button-info {
     margin-bottom: 20px;
   }
+
   .button-icon {
     color: var(--darkgrey-3-bg);
   }
@@ -87,6 +87,7 @@
     overflow: hidden; 
   }
 
+  /* ✅ Process List — Higher */
   .process-container {
     position: absolute;
     left: 70px;
@@ -95,6 +96,7 @@
     z-index: 1000;
   }
 
+  /* ✅ Eval Process List — Lower */
   .evalprocess-container {
     position: absolute;
     left: 70px;
@@ -102,8 +104,6 @@
     margin-top: 20px;
     z-index: 1000;
   }
-
-
 
   .process-inner-container {
     padding-top: 15px;

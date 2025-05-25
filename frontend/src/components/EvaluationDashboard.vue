@@ -102,7 +102,7 @@
   >
     <canvas
       :ref="'metricChart_' + metric.key"
-      style="width: 100%; height: 150px;"
+      style="width: 100%; "
     ></canvas>
   
   </div>  
@@ -302,7 +302,7 @@
 
 
 <!-- Conditionally render based on mode -->
-<div v-if="visualizationMode === 'evaluation'" style="margin-bottom: 15px;">
+<div v-if="visualizationMode === 'evaluation'" style="margin-bottom: 15px; height: 5%;">
 
   <div class="vis-metric-list-wrapper">
   <div class="vis-metric-list">
@@ -338,7 +338,7 @@
 </div>
 
 
-<div v-if="visualizationMode === 'network'" style="margin-bottom: 15px;">
+<div v-if="visualizationMode === 'network'" style="margin-bottom: 15px; height: 100%;">
 
   <div class="vis-metric-list-wrapper">
   <div class="vis-metric-list">
@@ -1088,8 +1088,8 @@ async createHorizontalStackedBarChart(canvas, metricKey, categories, gradientCol
   });
 
   // Adjust canvas height
-  const barHeightPx = 85;
-  const minHeight = 160;
+  const barHeightPx = 50;
+  const minHeight = 175;
   const canvasHeight = Math.max(runNames.length * barHeightPx, minHeight);
   canvas.style.height = `${canvasHeight}px`;
 
@@ -1125,8 +1125,9 @@ async createHorizontalStackedBarChart(canvas, metricKey, categories, gradientCol
             font: { weight: 'bold', size: 14 }
           },
           ticks: {
-            font: { size: 12 }
-          }
+            font: { size: 12 } 
+          },
+          barThickness: 50
         }
       },
       plugins: {
@@ -1425,7 +1426,7 @@ getLegendStyle(item) {
 }
 
 .metric-list-wrapper {
-  height: 400px; 
+  height: 40vh; 
   overflow-y: scroll; 
   margin-bottom: 20px; 
 }
@@ -1436,7 +1437,7 @@ getLegendStyle(item) {
   padding: 0;
 }
 .vis-metric-list-wrapper {
-  height: 115px; 
+  height: 10vh; 
   overflow-y: scroll; 
   margin-bottom: 20px; 
 }

@@ -12,26 +12,38 @@
     width: 95vw;
     height: 7vh;
     border-radius: 10px;
-    display: flex; 
-    flex-direction: row; 
-    justify-content: center;
-    align-items: center;
-    padding-top: 0;
-    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.05);
+    display: flex;
+    overflow-x: hidden; /* hides anything outside nav container */
     position: fixed;
     top: 0;
     left: 0;
+    background-color: var(--darkgrey-bg); /* just to make sure it's visible */
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.05);
   }
-
+  
+  .nav-scroll-container {
+    display: inline-flex;
+    flex-direction: row;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch; /* smooth scroll on iOS */
+    white-space: nowrap;
+    width: 100%;
+    padding: 0 10px;
+    scroll-snap-type: x mandatory;
+  }
+  
   .nav-button {
+    flex: 0 0 auto;
+    white-space: nowrap;
+    scroll-snap-align: start;
     color: black;
     background-color: transparent;
     border: none;
     padding: 10px;
     margin: 0 5px;
-    width: auto;
     cursor: pointer;
   }
+  
 
   .lower-buttons {
     display: flex;
