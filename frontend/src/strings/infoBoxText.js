@@ -20,15 +20,18 @@ export const infoBoxTexts = {
   evaluation_network_complexity: " Illustrates the percentage of intersection sizes in the optimized networks, categorized by node degree.",
 
   // evaluation dashboard
-  lts: "Measures how well a cycling network supports stress-free travel. Based on street and crossing classifications, it reflects what share of trips can be completed using only low-stress routes without major detours, highlighting network gaps and barriers.",
-  bci: "Rates how comfortable and safe a roadway is for shared use between cars and bikes. It uses traffic speed, lane width, volume, and roadside conditions to calculate a score, where lower values mean better biking compatibility.",
-  bsl: "Evaluates how mentally stressful a roadway is for bicyclists based on traffic volume, speed, and lane width. Streets are rated from 1 (low stress) to 5 (high stress), reflecting how comfortable and safe they feel for cyclists across different conditions.",
-  blos_grade: "Grades how well a roadway serves bicyclists based on factors like traffic speed, volume, lane width, and heavy vehicles. Scores range from A (high comfort) to F (low comfort), helping identify roads needing bike-friendly improvements.",
-  porter: "A transportation bikeability index that captures how supportive the environment is for biking to destinations. It combines factors like bike lanes, density, parks, and transit access, and is strongly associated with how often people bike for transportation.",
-  weikl: "A data-driven index that evaluates overall bicycle network quality based on planning criteria like safety, coherence, directness, comfort, and attractiveness. It combines local, route-wide, and network-wide indicators into a single comprehensive score.",
-  anp: "A bikeability index that uses analytic network process (ANP) and a knowledge graph of evaluation studies to weight and combine over 270 metrics and 40 criteria. It reflects scholarly consensus and captures complex relationships between bike planning factors.",
-  
+  lts: "Measures how well a cycling network supports stress-free travel. Based on street and crossing classifications, it reflects what share of trips can be completed using only low-stress routes without major detours, highlighting network gaps and barriers. **Lower values are better**, indicating more of the network can be used comfortably.",
 
+bci: "Rates how comfortable and safe a roadway is for shared use between cars and bikes. It uses traffic speed, lane width, volume, and roadside conditions to calculate a score. **Lower values are better**, indicating safer and more comfortable biking conditions.",
 
+bsl: "Evaluates how mentally stressful a roadway is for bicyclists based on traffic volume, speed, and lane width. Streets are rated from 1 (low stress) to 5 (high stress). **Lower values are better**, indicating a more relaxed and comfortable cycling experience.",
+
+blos_grade: "Grades how well a roadway serves bicyclists based on factors like traffic speed, volume, lane width, and heavy vehicles. Scores range from A (high comfort) to F (low comfort). **Grades closer to A are better**, highlighting streets that are safer and more comfortable for biking.",
+
+porter: "A transportation bikeability index that captures how supportive the environment is for biking to destinations. It combines factors like bike lanes, density, parks, and transit access, and is strongly associated with how often people bike for transportation. **Higher values are better**, reflecting more bike-friendly environments.",
+
+weikl: "A data-driven index that evaluates overall bicycle network quality based on planning criteria like safety, coherence, directness, comfort, and attractiveness. It combines local, route-wide, and network-wide indicators into a single comprehensive score. **Higher values are better**, representing stronger, more cohesive networks.",
+
+anp: "A bikeability index that uses analytic network process (ANP) and a knowledge graph of evaluation studies to weight and combine over 270 metrics and 40 criteria. It reflects scholarly consensus and captures complex relationships between bike planning factors. **Higher values are better**, indicating a more comprehensive and well-supported bike network.",
 
 };

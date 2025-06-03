@@ -22,7 +22,7 @@
       <h3>Optimize Frequency</h3>
       <p>{{ optimizeFrequency }}</p>
 
-      <h2 class="legend-text" style="margin-top: 40px">Evaluation</h2>
+      <h2 class="legend-text" style="margin-top: 40px">Basic Evaluation</h2>
       <h3>Pareto</h3>
       <p>{{ pareto }}</p>
       <h3>Travel Times Changes</h3>
@@ -33,6 +33,25 @@
       <p>{{ complexityContent }}</p>
       <h3>Network Bearing</h3>
       <p>{{ bearingContent }}</p>
+
+      <h2 class="legend-text" style="margin-top: 40px">Advanced Evaluation</h2>
+
+      <h3>Level of Traffic Stress (LTS)</h3>
+      <p>{{ lts }}</p>
+      <h3>Bicycle Compatibility Index (BCI)</h3>
+      <p>{{ bci }}</p>
+      <h3>Bicyle Stress Level (BSL)</h3>
+      <p>{{ bsl }}</p>
+      <h3>Bicyle Level of Service(BLOS)</h3>
+      <p>{{ blos_grade }}</p>
+      <h3>Porter Index</h3>
+      <p>{{ porter }}</p>
+      <h3>Weikl Index</h3>
+      <p>{{ weikl }}</p>
+      <h3>ANP</h3>
+      <p>{{ anp }}</p>
+
+
     </div>
 
     <div class="button-div">
@@ -60,6 +79,13 @@ export default {
       safetyPenalty: helpText.safetyPenalty,
       carWeight: helpText.carWeight,
       optimizeFrequency: helpText.optimizeFrequency,
+      lts: helpText.lts,
+      bci: helpText.bci,
+      bsl: helpText.bsl,
+      blos_grade: helpText.blos_grade,
+      porter: helpText.porter,
+      weikl: helpText.weikl,
+      anp: helpText.anp,
     };
   },
 

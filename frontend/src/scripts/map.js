@@ -448,6 +448,8 @@ if (layerID === "v_eval_pivoted_wfs") {
 
     const metricValue = feature.properties[metricKey];
 
+    const decimals = metricKey === 'anp' ? 5 : 3;
+
     const tableContent = `
       <h2 style="margin: 10px;">Metric</h2>
       <table style="width: 100%; table-layout: fixed; text-align: left; margin-left: 10px">
@@ -457,7 +459,7 @@ if (layerID === "v_eval_pivoted_wfs") {
         </colgroup>
         <tr>
             <td><b>${metricLabel}:</b></td>
-            <td>${metricValue !== undefined ? metricValue : "N/A"}</td>
+            <td>${typeof metricValue === 'number' ? metricValue.toFixed(decimals) : "N/A"}</td>
         </tr>
       </table>
     `;

@@ -31,6 +31,8 @@ export const helpText = {
   optimizeFrequency: "Can also be seen as the optimization exactness, because the more often it's re-run, the better the result should be. But the runtime increases as well.",
 
 
+
+
   // evaluation descriptions
   pareto: "The Pareto front shows the trade-off between car and bike travel times. The points on the Pareto front are the solutions that are not dominated by any other solution. The Pareto front is a useful tool to understand the trade-offs between different objectives.",
   travelTimeChanges: "The travel time changes for cars and bikes are calculated as the difference between the travel times in the original and optimized networks. The travel time changes are a useful metric to understand the impact of the optimization on car and bike travel times.",
@@ -40,4 +42,24 @@ export const helpText = {
 
   networkComplexity:
   "The percentage distribution of intersection sizes based on node degree in the optimized network offers insight into network complexity, known to influence travel behavior.",
+
+
+  // advanced evaluation
+  
+
+lts: "The Level of Traffic Stress measures how accessible and low-stress a cycling network is. It evaluates whether cyclists can reach destinations using only low-stress routes, based on street types and intersection complexity. A higher LTS indicates more barriers and stress-inducing segments in the network.",
+
+bci: "The Bicycle Compatibility Index assesses how safely and comfortably a roadway accommodates cyclists riding alongside motor vehicles. It incorporates factors such as traffic speed, volume, lane width, and roadside conditions. Lower scores indicate better compatibility and a more bike-friendly environment.",
+
+bsl: "The Bicycle Stress Level quantifies the psychological stress experienced by cyclists on different road segments. It accounts for traffic volume, vehicle speed, and lane characteristics, and rates roads on a scale from 1 (low stress) to 5 (high stress), reflecting their comfort level for cycling.",
+
+blos_grade: "The Bicycle Level of Service grade rates roadways from A to F based on how well they support safe and efficient bicycle travel. The grade considers factors like traffic speed, volume, lane width, and the presence of heavy vehicles, helping identify corridors that need infrastructure improvements.",
+
+porter: "The Porter Index evaluates the suitability of urban environments for transportation cycling. It combines spatial factors like land use density, access to parks and public transit, and the availability of bike lanes to reflect how supportive an area is for everyday cycling activity.",
+
+weikl: "The Weikl Index is a comprehensive, data-driven assessment of bicycle network quality. It integrates criteria such as safety, directness, comfort, and connectivity across local and regional scales to produce a single score that reflects overall network performance and planning quality.",
+
+anp: "The ANP metric uses the Analytic Network Process to calculate a composite bikeability score. It synthesizes over 270 indicators across 40 planning criteria, weighted by a knowledge graph of academic studies. This method reflects expert consensus and captures complex interdependencies in network evaluation.",
+
 };
+

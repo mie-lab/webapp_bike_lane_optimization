@@ -691,9 +691,9 @@ export default {
 }
 
 .project-list-wrapper {
-  height: 50%; /* fixed height to preserve layout */
-  overflow-y: scroll; /* scroll when content overflows */
-  margin-bottom: 20px; /* spacing before "Add runs" and Metric Selection */
+  height: 47%; 
+  overflow-y: scroll; 
+  margin-bottom: 20px; 
 }
 
 .project-list-wrapper::-webkit-scrollbar {
@@ -788,11 +788,41 @@ export default {
 }
 
 .eval-runs-container{
-  height: 45vh
+  height: 45vh;
+  overflow-y: scroll;
+}
+
+.eval-runs-container::-webkit-scrollbar {
+  width: 8px;
+  background-color: transparent;
+}
+
+.eval-runs-container::-webkit-scrollbar-thumb {
+  background-color: var(--darkgrey-bg);
+  border-radius: 5px;
+}
+
+.eval-runs-container::-webkit-scrollbar-thumb:hover {
+  background-color: var(--pink-color);
 }
 
 .eval-metrics-container{
-  height: 55vh
+  height: 55vh;
+  overflow-y: scroll;
+}
+
+.eval-metrics-container::-webkit-scrollbar {
+  width: 8px;
+  background-color: transparent;
+}
+
+.eval-metrics-container::-webkit-scrollbar-thumb {
+  background-color: var(--darkgrey-bg);
+  border-radius: 5px;
+}
+
+.eval-metrics-container::-webkit-scrollbar-thumb:hover {
+  background-color: var(--pink-color);
 }
 
 

@@ -46,7 +46,7 @@
         <!-- Title Button -->
         <div class="titel-inkl-button">
           <h2 class="h2_override">
-            Metric Averages
+            Metric Overview
           </h2>
 
         
@@ -98,13 +98,26 @@
   <div
     class="dropdown-eval-content"
     v-if="openMetricDropdowns.includes(metric.key)"
-    style="width: 70%; display: flex; justify-content: center; align-items: center; margin: auto;"
+    style="width: 70%; display: flex; flex-direction: column; justify-content: center; align-items: center; margin: auto;"
   >
+  <div>
     <canvas
       :ref="'metricChart_' + metric.key"
       style="width: 100%; "
     ></canvas>
-  
+
+  </div>
+
+    <div v-if="evaluationLinks[metric.key]" style="margin-top: 10px; text-align: left;">
+    <a
+      :href="evaluationLinks[metric.key]"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="source-link"
+    >
+      Source
+    </a>
+    </div>
   </div>  
 
   <!-- Additional Dropdowns for ANP -->
@@ -327,12 +340,18 @@
 </div>
 
 
-  <!-- Display Button -->
-  <div style="margin-top: 30px;">
-    <button class="calculate-button" @click="displayEvaluationMap(selectedRun_dropdown)">
-      Display
-    </button>
-  </div>
+<!-- Display Button -->
+<div style="margin-top: 30px;">
+  <button
+    class="calculate-button"
+    :class="{ 'button-disabled': isDisplayButtonDisabled }"
+    :disabled="isDisplayButtonDisabled"
+    @click="displayEvaluationMap(selectedRun_dropdown)"
+  >
+    Display
+  </button>
+</div>
+
 
   
 </div>
@@ -363,12 +382,17 @@
 
 
 
-  <!-- Display Button -->
   <div style="margin-top: 30px;">
-    <button class="calculate-button" @click="displayNetworkMap(selectedRun_dropdown)">
-      Display
-    </button>
-  </div>
+  <button
+    class="calculate-button"
+    :class="{ 'button-disabled': isDisplayButtonDisabled }"
+    :disabled="isDisplayButtonDisabled"
+    @click="displayNetworkMap(selectedRun_dropdown)"
+  >
+    Display
+  </button>
+</div>
+
 </div>
 
 
@@ -419,6 +443,7 @@ import {
 } from "../scripts/dashboardCharts.js";
 import RingLoader from "vue-spinner/src/RingLoader.vue";
 import { infoBoxTexts } from "../strings/infoBoxText.js";
+import { evaluationLinks } from "../strings/evaluationLinks.js";
 import {extractParetoEvaluation,extractDistancesPerLane, extractComplexity, extractBearing} from "../scripts/dashboard.js";
 
 export default {
@@ -443,6 +468,16 @@ export default {
     if (noMetrics) return "Please select metrics to display the results.";
     return "";
   },
+  
+  isDisplayButtonDisabled() {
+    const noRunSelected = !this.selectedRun_dropdown;
+    const noLayerSelected =
+      (this.visualizationMode === 'evaluation' && !this.visualizedMetric) ||
+      (this.visualizationMode === 'network' && !this.selectedNetworkType);
+
+    return noRunSelected || noLayerSelected || this.displayClicked;
+  },
+
   
   },
   name: "Dashboard",
@@ -493,6 +528,9 @@ export default {
       }
     );
 
+
+
+
     return {
       ResultsStore,
       statusStore,
@@ -535,6 +573,7 @@ export default {
 
       
       infoBoxTexts: infoBoxTexts,
+      evaluationLinks: evaluationLinks,
       selectedRun_dropdown: null,
       runDropdownOpen: false,
       runDropdownOpenAnp: false,
@@ -549,6 +588,7 @@ export default {
       anpMetrics: [],
       showAllCriteria: false,
       showAllMetrics: false,
+      displayClicked: false
 
 
     };
@@ -589,12 +629,16 @@ export default {
       }
     );
     watch(
-      () => [this.selectedMetrics, this.prjStore.selectedEvaluationRuns],
-      async () => {
-        await this.loadAllAverages();
-      },
-      { deep: true, immediate: true }
-    );
+  () => [this.selectedMetrics, this.prjStore.selectedEvaluationRuns, this.inputStore.projectID],
+  async () => {
+    await this.loadAllAverages();
+
+    // Close all open metric dropdowns
+    this.openMetricDropdowns = [];
+  },
+  { deep: true, immediate: true }
+);
+
 
 
     ///// compare run ////////////
@@ -648,6 +692,26 @@ export default {
         this.bearingIsLoading = newBearing;
       }
     );
+    watch(
+  () => [
+    this.selectedRun_dropdown?.id_run,
+    this.visualizedMetric?.key,
+    this.selectedNetworkType,
+    this.visualizationMode,
+    this.inputStore.projectID
+  ],
+  () => {
+    this.displayClicked = false;
+  },
+  { deep: true }
+);
+
+watch(() => this.inputStore.projectID, () => {
+  this.selectedRun_dropdown = null;  // reset run selection
+  this.displayClicked = false;       // also re-enable the display button
+});
+
+
   },
 
 
@@ -926,6 +990,9 @@ export default {
 
 
       this.legendStore.setLegendKey(metricKey);
+
+      this.displayClicked = true;
+
     },
     async displayNetworkMap(run) {
 
@@ -936,6 +1003,9 @@ export default {
 
       const key = `network_${type.toLowerCase().split(' ')[0]}`;
       this.legendStore.setLegendKey(key);
+
+      this.displayClicked = true;
+
 
 
     },
@@ -1134,7 +1204,7 @@ async createHorizontalStackedBarChart(canvas, metricKey, categories, gradientCol
         legend: {
           position: 'top',
           labels: {
-            boxWidth: 20,
+            boxWidth: 18,
             boxHeight: 12,
             padding: 8,
             font: { size: 12 }
@@ -1429,6 +1499,8 @@ getLegendStyle(item) {
   height: 40vh; 
   overflow-y: scroll; 
   margin-bottom: 20px; 
+  
+
 }
 
 .metric-list {
@@ -1568,6 +1640,24 @@ canvas {
   background-color: transparent;
   border: none;
 }
+
+.source-link {
+  color: var(--blue-color);
+  font-size: 14px;
+  font-weight: normal;
+  text-decoration: underline;
+  cursor: pointer;
+  text-align: left;
+}
+
+.button-disabled {
+  background-color: #f5c6cf !important; /* light pink */
+  color: black !important;
+  cursor: not-allowed;
+  border: 1px solid red;
+}
+
+
 
 
 
