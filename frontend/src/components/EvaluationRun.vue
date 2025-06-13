@@ -1,6 +1,9 @@
+
+<!-- In this file, the evaluation can be computed. The content appears in the left window after runs are selected for evaluation in EvaluationRunSelection.vue. When computing the metrics, the dashboar EvaluationDashboard.vue opens in the right window. -->
+
 <template>
   <div>
-    <!-- Run list -->
+    <!-- Run list. The selected runs are displayed. -->
     <div>
       <div class="user-input-container">
 
@@ -48,7 +51,7 @@
   <button class="remove-button" @click.stop="removeRun(run)">Remove</button>
 </div>
 
-        <!-- Expanded Run Details -->
+        <!-- Expanded Run Details. The inpup parameters of the runs are shown after a run is clicked. -->
         <div
           v-if="expandedRuns[run.run_name]"
           class="run-details2 selected"
@@ -100,12 +103,13 @@
 
 
 
-        <!-- Add Runs Button -->
+        <!-- Switch Project Button. Users can return to EvaluationLoad.vue. -->  
         <div class="button-container" style="margin-top: 10px; display: flex; justify-content: center;">
           <button @click="() => { toggleUserInputPreviousSide(); prjStore.clearTempEvaluationRuns(); statusStore.toggleRunPage(); statusStore.createNewRunPage=false;}" class="back-button">
           Switch Project
         </button>
-
+  
+  <!-- Add Runs Button. More runs can be added, jumping back to EvaluationRunSelection.vue. -->
   <button @click="() => {toggleUserInputPreviousSide(); toggleMetricsChangedSinceLastCompute(); }">
     Add runs
   </button>
@@ -117,7 +121,7 @@
 
 
 
-        <!-- Metric Selection -->
+        <!-- Metric Selection. Metrics can be selected for evaluation. -->
 
         <div style="margin-top: 30px;">
   <h2 class="runs-header">
@@ -128,7 +132,7 @@
     Select one or multiple evaluation metrics from the dropdown below to evaluate chosen runs.
   </p>
 
-  <!-- Dropdown -->
+  <!-- Dropdown with metric options -->
   <div class="dropdown" ref="metricDropdownRef" style="margin-bottom: 15px; position: relative;">
     <button class="dropdown-button" @click="toggleMetricDropdown" >
       <div class="dropdown-button-content">
@@ -157,8 +161,8 @@
     </ul>
   </div>
 
-  <!-- Selected Metrics Display -->
-<!-- Selected Metrics Display -->
+  <!-- The selected metrics are displayed in a list. -->
+
 <div v-if="selectedMetrics.length > 0" class="anp-attributes" style="margin-top: 20px; display: flex; flex-direction: column; gap: 2px;">
 
 <h3 class="runs-header" style="margin-bottom: 20px;">
@@ -175,7 +179,7 @@
 
 </div>
 
-  <!-- Compute Button -->
+  <!-- Compute Button. The selected metrics can be computed for the selected runs. Afterwards, the dashboard EvaluationDashboard.vue opens up in the right window. -->
   <div style="margin-top: 30px;">
     <button
   class="calculate-button"
@@ -197,13 +201,12 @@
 
       </div>
 
-      <!-- Close Button -->
+      <!-- Close Button. The window can be closed. -->
       <button class="close-btn" @click="toggleTabsVisibility">
         <i class="fa-solid fa-times" style="font-size: 20px; color: var(--darkgrey-bg)"></i>
       </button>
     </div>
 
-    <!-- If New Run Page -->
   </div>
 </template>
 
@@ -438,7 +441,7 @@ export default {
       this.runDropdownOpen = false;
     },
     updateANP(key, value) {
-    // Example handler — customize as needed
+
     console.log(`Updated ${key} to ${value}`);
     },
     toggleMetricDropdown() {
@@ -573,12 +576,12 @@ export default {
 @import "../styles/SideBarStyle.css";
 @import "../styles/SideBarStyleMobile.css";
 @import "../styles/UserInputRunStyle.css";
-/* Only apply pink to the run name title */
+
 .run_name.selected {
   color: var(--pink-color);
 }
 
-/* Keep attributes black (no override needed unless they're inheriting .selected) */
+
 .run-details-inner-container td,
 .run-details-inner-container td.bold {
   color: black;
@@ -610,7 +613,7 @@ export default {
   margin-bottom: 8px;
 }
 
-/* Dropdown styling */
+
 .dropdown {
   position: relative;
   width: 100% !important ;
@@ -676,7 +679,7 @@ export default {
   font-weight: 500;
   cursor: pointer;
   transition: background-color 0.2s ease;
-  height: auto; /* let flexbox control it */
+  height: auto; 
   display: flex;
   align-items: center;
 
@@ -717,16 +720,16 @@ export default {
 
 
 .project-list {
-  width: 100%; /* same as dropdown */
+  width: 100%; 
   margin-top: 10px;
   padding: 0;
 }
 
 .run-summary {
   display: flex;
-  align-items: stretch; /* stretch children to same height */
+  align-items: stretch; 
   width: 100%;
-  gap: 10px; /* optional spacing between elements */
+  gap: 10px; 
 }
 
 
@@ -743,7 +746,7 @@ export default {
   height: 36px;
   box-sizing: border-box;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 14px; /* or match your info-text size */
+  font-size: 14px; 
 }
 
 
@@ -753,7 +756,7 @@ export default {
 }
 
 .button-disabled {
-  background-color: #f5c6cf !important; /* light pink */
+  background-color: #f5c6cf !important; 
   color: black !important;
   cursor: not-allowed;
   border: 1px solid red;
@@ -765,8 +768,8 @@ export default {
 
 .normal-text {
   padding-bottom: 0px;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; /* <--- add this */
-  font-size: 14px; /* optional, matches info-text look */
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; 
+  font-size: 14px; 
 }
 
 

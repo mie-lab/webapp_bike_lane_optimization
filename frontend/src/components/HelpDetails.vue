@@ -42,7 +42,7 @@
       <p>{{ bci }}</p>
       <h3>Bicyle Stress Level (BSL)</h3>
       <p>{{ bsl }}</p>
-      <h3>Bicyle Level of Service(BLOS)</h3>
+      <h3>Bicyle Level of Service (BLOS)</h3>
       <p>{{ blos_grade }}</p>
       <h3>Porter Index</h3>
       <p>{{ porter }}</p>

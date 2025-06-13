@@ -1,5 +1,8 @@
+
+<!-- In this file, a project area can be selected for evaluation. After clicking a project, the run selection file EvaluationRunSelection.vue opens. -->
+ 
 <template>
-  <!-- Components that shows all projects in a list-->
+  <!-- Components that shows all projects in a list. -->
   <div>
     <button class="close-btn" @click="toggleTabsVisibility">
       <i class="fa-solid fa-times" style="font-size: 20px"></i>
@@ -26,7 +29,7 @@
         </span>
       </h3>
 
-      <!-- Search input -->
+      <!-- Search input. Specific project can be searched. -->
       <input
         type="text"
         v-model="searchQuery"
@@ -34,7 +37,7 @@
         class="project-name-input"
       />
 
-      <!-- Project list -->
+      <!-- Project list. One project can be selected for evaluation. -->
       <div class="list-header">
         <div class="header-item-left"><p class="run_list_name">Name</p></div>
         <div class="header-item-left"><p class="run_list_name">Date</p></div>

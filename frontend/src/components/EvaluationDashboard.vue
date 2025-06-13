@@ -1,5 +1,9 @@
+
+<!-- In this file, the evaluation dashboard is built. In appears on the right window after evaluation metrics are computed in the file EvaluationRun.vue  -->
+ 
 <template>
   <div :class="['dashboard-container', { hidden: !dashboard }]">
+    <!-- Legend Section  -->
     <div class="legend-container bg-lightgrey" v-if="legendStore.activeLegend.length">
       <h3 class="legend-text">Legend</h3>
       <table class="legend-table">
@@ -21,7 +25,7 @@
     </div>
 
 
-    <!-- Dashboard Navigation -->
+    <!-- Dashboard Navigation. It is determined if dashboard is visible or not. -->
     <div
       class="dashboard-navigation"
       :class="{ hidden: !dashboard }"
@@ -38,8 +42,8 @@
     <div v-show="dashboard" class="dashboard-content bg-lightgrey">
       <h1 class="text-pink">Detailed Evaluation</h1>
       <div class="text-align" v-if="showEmptyMessage">
-  <p>{{ emptyMessage }}</p>
-</div>
+        <p>{{ emptyMessage }}</p>
+      </div>
 
 
       <div class="text-align" v-else>
@@ -48,15 +52,11 @@
           <h2 class="h2_override">
             Metric Overview
           </h2>
-
-        
         </div>
-
-
         <div>
 
-          <!-- Metrics Section -->
-<!-- Metrics Section -->
+
+<!-- Metrics Overview Section. Metric Overview Plots are loaded here. -->
 <div class="metric-list-wrapper">
 <div class="metric-list" >
 
@@ -94,7 +94,7 @@
     ></i>
   </div>
 
-  <!-- Dropdown Content (Chart) -->
+  <!-- Dropdown Content for each Metric -->
   <div
     class="dropdown-eval-content"
     v-if="openMetricDropdowns.includes(metric.key)"
@@ -120,21 +120,21 @@
     </div>
   </div>  
 
-  <!-- Additional Dropdowns for ANP -->
+  <!-- Additional Dropdown content for ANP, displaying weights -->
   <div
-  v-if="metric.key === 'anp' && openMetricDropdowns.includes('anp')"
-  class="anp-extra-dropdowns-wrapper"
->
+    v-if="metric.key === 'anp' && openMetricDropdowns.includes('anp')"
+    class="anp-extra-dropdowns-wrapper"
+  >
 
-<h4 class="runs-header">
-  <span class="text-blue">ANP Weights</span>
-</h4>
+    <h4 class="runs-header">
+      <span class="text-blue">ANP Weights</span>
+    </h4>
 
-<p class="info-text">
+    <p class="info-text">
     Select a run to view the criterion and metric weights used in its ANP evaluation.
 </p>
 
-  <!-- Run selection -->
+  <!-- Selection of run for which ANP weights should be shown-->
   <div class="dropdown run-selector" style="margin-bottom: 15px;">
     <button 
       class="dropdown-button"
@@ -156,10 +156,10 @@
     </ul>
   </div>
 
-  <!-- Criteria + Metric dropdowns below -->
+  <!-- Criteria + Metric weights dropdowns below -->
   <div class="anp-extra-dropdowns-row">
 
-<!-- Criteria Dropdown -->
+<!-- Criteria Weights Dropdown -->
 <div v-if="anpCriteriaDropdownOpen" class="small-dropdown">
   <div class="dropdown-header" @click.stop="toggleAnpCriteriaDropdown">
     <span>Criterion Weights</span>
@@ -188,7 +188,7 @@
   </div>
 </div>
 
-<!-- Header for collapsed criteria (to reopen it) -->
+<!-- Header for collapsed criteria to reopen it -->
 <div v-else class="small-dropdown collapsed-header" @click.stop="toggleAnpCriteriaDropdown">
   <div class="dropdown-header">
     <span>Criterion Weights</span>
@@ -197,7 +197,7 @@
 </div>
 
 
-<!-- Metric Dropdown -->
+<!-- Metric Weights Dropdown -->
 <div v-if="anpMetricDropdownOpen" class="small-dropdown">
   <div class="dropdown-header" @click.stop="toggleAnpMetricDropdown">
     <span>Metric Weights</span>
@@ -233,16 +233,9 @@
     <i class="fa-solid fa-angle-down"></i>
   </div>
 </div>
-
 </div>
-
 </div>
-
-
-  
-
 </div>
-
 </div>
 </div>
 
@@ -251,21 +244,21 @@
 
 
 
-        <!-- Map Section -->
-        <div style="height: 50%">
-          <h2 class="runs-header">
-            <span class="runs-text">Visualization on Map</span>
-          </h2>
+<!-- Map Section. In this section, a run and a metric can be chosen for visualization. -->
+  <div style="height: 50%">
+    <h2 class="runs-header">
+      <span class="runs-text">Visualization on Map</span>
+    </h2>
 
-          <p class="info-text">
-          Select a run and a road network layer to display it on the map.
-        </p>
+  <p class="info-text">
+  Select a run and a road network layer to display it on the map.
+</p>
 
-          <h4 class="runs-header" style="margin-bottom: 20px;">
-  <span class="text-blue">Run Selection</span>
+  <h4 class="runs-header" style="margin-bottom: 20px;">
+<span class="text-blue">Run Selection</span>
 </h4>
 
-<!-- Run Selector -->
+<!-- Select a run for visualization. -->
 <div class="dropdown" style="margin-bottom: 15px; position: relative; display: block;">
 
 
@@ -293,7 +286,7 @@
 <h4 class="runs-header" style="margin-bottom: 20px;">
   <span class="text-blue">Layer Selection</span>
 </h4>
-<!-- Visualization Mode Selector -->
+<!-- Visualization Mode Selector. Select either the Evaluation or the Optimization of the selected run to be visualized. -->
 <div class="toggle-wrapper" style="margin-bottom: 20px;" >
   <button
     :class="['toggle-half', visualizationMode === 'evaluation' ? 'selected' : '']"
@@ -314,13 +307,13 @@
 
 
 
-<!-- Conditionally render based on mode -->
+<!-- Conditionally render Evaluation options here -->
 <div v-if="visualizationMode === 'evaluation'" style="margin-bottom: 15px; height: 5%;">
 
   <div class="vis-metric-list-wrapper">
   <div class="vis-metric-list">
   
-  <!-- Dropdown Button -->
+  <!-- Selection of Evaluation Layer -->
   <div class="visualization-selection" style="margin-top: 10px;">
   <label
     v-for="metric in selectedMetrics"
@@ -340,7 +333,7 @@
 </div>
 
 
-<!-- Display Button -->
+<!-- Display Button. When clicked, the selected layer is displayed on the map. -->
 <div style="margin-top: 30px;">
   <button
     class="calculate-button"
@@ -356,12 +349,13 @@
   
 </div>
 
-
+<!-- Conditionally render Optimization options here -->
 <div v-if="visualizationMode === 'network'" style="margin-bottom: 15px; height: 100%;">
 
   <div class="vis-metric-list-wrapper">
   <div class="vis-metric-list">
-
+  
+  <!-- Selection of Optimization layer -->
   <div class="visualization-selection" style="margin-top: 10px;">
     <label
       v-for="type in ['Bike Network', 'Car Network', 'Full Network']"
@@ -381,7 +375,7 @@
   </div>
 
 
-
+<!-- Display Button. When clicked, the selected layer is displayed on the map. -->
   <div style="margin-top: 30px;">
   <button
     class="calculate-button"
@@ -391,23 +385,10 @@
   >
     Display
   </button>
-</div>
-
-</div>
-
-
-
-
-
-
-
         </div>
-        
         </div>
-
-
-    
-
+        </div>
+        </div>
       </div>
     </div>
   </div>
@@ -1041,6 +1022,7 @@ watch(() => this.inputStore.projectID, () => {
       }
     }
   },
+
 toggleMetric(key) {
   if (this.openMetricDropdowns.includes(key)) {
     this.openMetricDropdowns = this.openMetricDropdowns.filter(k => k !== key);
@@ -1049,9 +1031,11 @@ toggleMetric(key) {
     this.createMetricChart(key);
   }
 },
+
 showInfo(metric) {
   alert(this.metricInfoTexts[metric.key] || 'No info available.');
 },
+
 async createMetricChart(metricKey) {
   await this.$nextTick();
   const canvases = this.$refs['metricChart_' + metricKey];
@@ -1228,6 +1212,7 @@ async toggleAnpCriteriaDropdown() {
     this.anpCriteria = criteria;
   }
 },
+
 async toggleAnpMetricDropdown() {
   this.anpMetricDropdownOpen = !this.anpMetricDropdownOpen;
   if (this.anpMetricDropdownOpen) {
@@ -1239,6 +1224,7 @@ async toggleAnpMetricDropdown() {
     this.anpMetrics = metrics;
   }
 },
+
 async toggleShowAllCriteria() {
   this.showAllCriteria = !this.showAllCriteria;
   if (this.anpCriteriaDropdownOpen) {
@@ -1248,6 +1234,7 @@ async toggleShowAllCriteria() {
     this.anpCriteria = criteria;
   }
 },
+
 async toggleShowAllMetrics() {
   this.showAllMetrics = !this.showAllMetrics;
   if (this.anpMetricDropdownOpen) {
@@ -1257,6 +1244,7 @@ async toggleShowAllMetrics() {
     this.anpMetrics = metrics;
   }
 },
+
 getLegendStyle(item) {
     const baseStyle = {
       backgroundColor: item.color
@@ -1651,7 +1639,7 @@ canvas {
 }
 
 .button-disabled {
-  background-color: #f5c6cf !important; /* light pink */
+  background-color: #f5c6cf !important;
   color: black !important;
   cursor: not-allowed;
   border: 1px solid red;

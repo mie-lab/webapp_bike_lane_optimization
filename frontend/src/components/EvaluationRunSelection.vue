@@ -1,6 +1,9 @@
+
+<!-- In this file, network runs of a project can be selected for computation. The content appears after a project is selected for evaluation in EvaluationLoad.vue. After selecting the runs, they can be evaluated, opening up the content of the file EvaluationRun.vue. -->
+
 <template>
   <div>
-    <!-- Run list -->
+    <!-- Run list. All runs of the selected project are listed and can be selected. -->
     <div v-if="!statusStore.evaluationrunPage">
       <div class="user-input-container">
         <h4 class="h4_override">Project:</h4>
@@ -31,7 +34,7 @@
           </h3>
         </div>
 
-        <!-- Search Bar -->
+        <!-- Search Bar. Specific runs can be searched. -->
         <input
           type="text"
           v-model="searchQuery"
@@ -39,7 +42,7 @@
           class="project-name-input"
         />
 
-        <!-- List of all runs -->
+        <!-- All runs are listed with their input parameters. -->
         <div class="project-list">
           <ul>
             <li
@@ -94,12 +97,16 @@
         </div>
         
         <div class="buttons">
+
+        <!-- Back button. Users can return to EvaluationLoad.vue.-->
         <button @click="() => { toggleUserInputPreviousSide(); prjStore.clearTempEvaluationRuns(); statusStore.createNewRunPage=false;}" class="back-button">
           Back
         </button>
+
+        <!-- Evaluate button. The selected runs can be evaluated, opening up the window EvaluationRun.vue.-->
         <button @click="statusStore.toggleEvaluationRunPage">
-    Evaluate
-  </button>
+          Evaluate
+        </button>
       
     </div>
       </div>
